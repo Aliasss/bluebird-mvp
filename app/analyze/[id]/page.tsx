@@ -315,13 +315,13 @@ export default function AnalyzePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+      <main className="min-h-screen bg-background flex flex-col items-center justify-center p-4 sm:p-6">
         <div className="max-w-md w-full space-y-6">
           <div className="text-center space-y-4">
             <div className="w-16 h-16 mx-auto">
               <div className="animate-spin rounded-full h-16 w-16 border-4 border-background-tertiary border-t-primary"></div>
             </div>
-            <h2 className="text-xl font-bold text-text-primary">
+            <h2 className="text-lg md:text-xl font-bold text-text-primary">
               AI가 사고를 분석하고 있습니다...
             </h2>
             <p className="text-text-secondary">
@@ -330,22 +330,22 @@ export default function AnalyzePage() {
           </div>
 
           {/* 분석 단계 표시 */}
-          <div className="bg-white rounded-2xl p-6 space-y-4">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 space-y-3 sm:space-y-4 border border-background-tertiary sm:border-transparent">
             <div className="flex items-center space-x-3">
               <div className={`w-6 h-6 rounded-full flex items-center justify-center ${stage === 'fetch' ? 'bg-primary animate-pulse' : 'bg-primary'}`}>
                 <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span className="text-sm text-text-primary">데이터 수신 완료</span>
+              <span className="text-xs md:text-sm text-text-primary">데이터 수신 완료</span>
             </div>
             <div className="flex items-center space-x-3">
               <div className={`w-6 h-6 rounded-full ${stage === 'analyze' ? 'bg-primary animate-pulse' : stage === 'done' || stage === 'question' ? 'bg-primary' : 'bg-background-tertiary'}`}></div>
-              <span className={`text-sm ${stage === 'analyze' || stage === 'done' || stage === 'question' ? 'text-text-primary' : 'text-text-secondary'}`}>인지 왜곡 분석</span>
+              <span className={`text-xs md:text-sm ${stage === 'analyze' || stage === 'done' || stage === 'question' ? 'text-text-primary' : 'text-text-secondary'}`}>인지 왜곡 분석</span>
             </div>
             <div className="flex items-center space-x-3">
               <div className={`w-6 h-6 rounded-full ${stage === 'question' ? 'bg-primary animate-pulse' : stage === 'done' ? 'bg-primary' : 'bg-background-tertiary'}`}></div>
-              <span className={`text-sm ${stage === 'question' || stage === 'done' ? 'text-text-primary' : 'text-text-secondary'}`}>소크라테스 질문 생성</span>
+              <span className={`text-xs md:text-sm ${stage === 'question' || stage === 'done' ? 'text-text-primary' : 'text-text-secondary'}`}>소크라테스 질문 생성</span>
             </div>
           </div>
 
@@ -359,10 +359,10 @@ export default function AnalyzePage() {
 
   if (error || !logData) {
     return (
-      <main className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+      <main className="min-h-screen bg-background flex flex-col items-center justify-center p-4 sm:p-6">
         <div className="max-w-md w-full space-y-6 text-center">
           <div className="text-6xl">⚠️</div>
-          <h2 className="text-xl font-bold text-text-primary">
+          <h2 className="text-lg md:text-xl font-bold text-text-primary">
             오류가 발생했습니다
           </h2>
           <p className="text-text-secondary">
@@ -388,26 +388,26 @@ export default function AnalyzePage() {
   }
 
   return (
-    <main className="min-h-screen bg-background p-6">
-      <div className="max-w-3xl mx-auto space-y-6">
-        <div className="bg-white rounded-2xl p-6 shadow-sm">
-          <h1 className="text-2xl font-bold text-text-primary mb-4">AI 분석 결과</h1>
+    <main className="min-h-screen bg-background p-4 sm:p-6">
+      <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
+          <h1 className="text-xl md:text-2xl font-bold text-text-primary mb-3 sm:mb-4">AI 분석 결과</h1>
           {warning && (
             <div className="mb-4 bg-warning bg-opacity-10 border border-warning rounded-xl p-3">
-              <p className="text-sm text-warning">{warning}</p>
+              <p className="text-xs md:text-sm text-warning">{warning}</p>
             </div>
           )}
-          <p className="text-sm text-text-secondary mb-2">트리거</p>
+          <p className="text-xs md:text-sm text-text-secondary mb-1.5 sm:mb-2">트리거</p>
           <p className="text-text-primary mb-4">{logData?.trigger}</p>
-          <p className="text-sm text-text-secondary mb-2">자동 사고</p>
+          <p className="text-xs md:text-sm text-text-secondary mb-1.5 sm:mb-2">자동 사고</p>
           <p className="text-text-primary leading-relaxed">
             {renderThoughtWithHighlights(logData?.thought ?? '', distortions)}
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-text-primary mb-4">이론 기반 해석</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
+          <h2 className="text-lg md:text-xl font-bold text-text-primary mb-3 sm:mb-4">이론 기반 해석</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 text-xs md:text-sm">
             <div className="border border-background-tertiary rounded-xl p-4">
               <p className="text-text-secondary mb-1">현재 프레임</p>
               <p className="font-semibold text-text-primary">
@@ -450,15 +450,15 @@ export default function AnalyzePage() {
             </div>
           </div>
           <div className="mt-4 space-y-2">
-            <p className="text-sm text-text-secondary">System 2 기동 핵심 질문</p>
+            <p className="text-xs md:text-sm text-text-secondary">System 2 기동 핵심 질문</p>
             <p className="text-sm text-text-primary">{theoryMeta.system2QuestionSeed}</p>
-            <p className="text-sm text-text-secondary">탈중심화 안내</p>
+            <p className="text-xs md:text-sm text-text-secondary">탈중심화 안내</p>
             <p className="text-sm text-text-primary">{theoryMeta.decenteringPrompt}</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-text-primary mb-4">탐지된 인지 왜곡</h2>
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
+          <h2 className="text-lg md:text-xl font-bold text-text-primary mb-3 sm:mb-4">탐지된 인지 왜곡</h2>
           {distortions.length === 0 ? (
             <p className="text-text-secondary">명확한 왜곡 패턴이 탐지되지 않았습니다.</p>
           ) : (
@@ -469,7 +469,7 @@ export default function AnalyzePage() {
                     <p className="font-semibold text-text-primary">
                       {DistortionTypeKorean[item.type]}
                     </p>
-                    <span className="text-sm text-primary">
+                    <span className="text-xs md:text-sm text-primary">
                       강도 {(item.intensity * 100).toFixed(0)}%
                     </span>
                   </div>
@@ -479,9 +479,9 @@ export default function AnalyzePage() {
                       style={{ width: `${Math.max(5, item.intensity * 100)}%` }}
                     />
                   </div>
-                  <p className="text-sm text-text-secondary">{item.segment}</p>
+                  <p className="text-xs md:text-sm text-text-secondary">{item.segment}</p>
                   {item.rationale && (
-                    <p className="text-xs text-text-secondary mt-2">
+                    <p className="text-[10px] md:text-xs text-text-secondary mt-2">
                       판단 근거: {item.rationale}
                     </p>
                   )}
@@ -491,13 +491,13 @@ export default function AnalyzePage() {
           )}
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-text-primary mb-4">소크라테스식 질문</h2>
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
+          <h2 className="text-lg md:text-xl font-bold text-text-primary mb-3 sm:mb-4">소크라테스식 질문</h2>
           {questions.length === 0 ? (
             <p className="text-text-secondary">질문을 생성하지 못했습니다. 다시 시도해주세요.</p>
           ) : (
             <div className="space-y-4">
-              <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center justify-between text-xs md:text-sm">
                 <span className="text-text-secondary">
                   질문 {currentQuestion + 1} / {questions.length}
                 </span>
@@ -521,7 +521,7 @@ export default function AnalyzePage() {
 
               {saveError && (
                 <div className="bg-danger bg-opacity-10 border border-danger rounded-xl p-3">
-                  <p className="text-sm text-danger">{saveError}</p>
+                  <p className="text-xs md:text-sm text-danger">{saveError}</p>
                 </div>
               )}
 
@@ -556,7 +556,7 @@ export default function AnalyzePage() {
           )}
         </div>
 
-        <div className="flex justify-center gap-3">
+        <div className="flex justify-center gap-2 sm:gap-3">
           <button
             onClick={() => router.push(`/visualize/${params.id}`)}
             className="bg-white border border-primary text-primary font-semibold py-3 px-8 rounded-xl"

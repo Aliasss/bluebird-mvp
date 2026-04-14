@@ -171,7 +171,7 @@ export default function ActionPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center p-6">
+      <main className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
           <p className="text-text-secondary">행동 설계 페이지를 준비 중...</p>
@@ -182,9 +182,9 @@ export default function ActionPage() {
 
   if (error && !state.log) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center p-6">
+      <main className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
         <div className="max-w-md w-full text-center space-y-4">
-          <p className="text-2xl">⚠️</p>
+          <p className="text-xl md:text-2xl">⚠️</p>
           <p className="text-text-primary font-semibold">{error}</p>
           <button
             onClick={() => router.push('/dashboard')}
@@ -198,20 +198,20 @@ export default function ActionPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="bg-white rounded-2xl p-6 shadow-sm">
-          <h1 className="text-2xl font-bold text-text-primary mb-2">행동 확약</h1>
-          <p className="text-text-secondary">
+    <main className="min-h-screen bg-background p-4 sm:p-6">
+      <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
+          <h1 className="text-xl md:text-2xl font-bold text-text-primary mb-2">행동 확약</h1>
+          <p className="text-sm text-text-secondary">
             분석 결과를 행동으로 전환하면 자율성 지수가 올라갑니다.
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm space-y-3">
-          <h2 className="text-lg font-bold text-text-primary">현재 상황 요약</h2>
-          <p className="text-sm text-text-secondary">트리거: {state.log?.trigger}</p>
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm space-y-3">
+          <h2 className="text-base md:text-lg font-bold text-text-primary">현재 상황 요약</h2>
+          <p className="text-xs md:text-sm text-text-secondary">트리거: {state.log?.trigger}</p>
           {state.distortions.length > 0 && (
-            <p className="text-sm text-text-secondary">
+            <p className="text-xs md:text-sm text-text-secondary">
               왜곡 평균 강도:{' '}
               {(
                 (state.distortions.reduce((sum, item) => sum + item.intensity, 0) /
@@ -223,17 +223,17 @@ export default function ActionPage() {
           )}
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
-          <h2 className="text-lg font-bold text-text-primary">Tiny Habit 제안</h2>
-          <ul className="space-y-2 text-sm text-text-secondary">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm space-y-4">
+          <h2 className="text-base md:text-lg font-bold text-text-primary">Tiny Habit 제안</h2>
+          <ul className="space-y-2 text-xs md:text-sm text-text-secondary">
             {suggestions.map((item, index) => (
               <li key={index}>- {item}</li>
             ))}
           </ul>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
-          <h2 className="text-lg font-bold text-text-primary">내 행동 계획</h2>
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm space-y-4">
+          <h2 className="text-base md:text-lg font-bold text-text-primary">내 행동 계획</h2>
           <textarea
             value={actionInput}
             onChange={(event) => {
@@ -248,12 +248,12 @@ export default function ActionPage() {
 
           {error && (
             <div className="bg-danger bg-opacity-10 border border-danger rounded-xl p-3">
-              <p className="text-sm text-danger">{error}</p>
+              <p className="text-xs md:text-sm text-danger">{error}</p>
             </div>
           )}
           {notice && (
             <div className="bg-success bg-opacity-10 border border-success rounded-xl p-3">
-              <p className="text-sm text-success">{notice}</p>
+              <p className="text-xs md:text-sm text-success">{notice}</p>
             </div>
           )}
 
@@ -275,18 +275,18 @@ export default function ActionPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-text-primary mb-3">자율성 지수</h2>
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
+          <h2 className="text-base md:text-lg font-bold text-text-primary mb-3">자율성 지수</h2>
           <p className="text-3xl font-bold text-primary">
             {state.autonomyScore ?? 0}
             <span className="text-base text-text-secondary ml-1">점</span>
           </p>
-          <p className="text-sm text-text-secondary mt-2">
+          <p className="text-xs md:text-sm text-text-secondary mt-2">
             행동 완료 시 자동으로 점수가 반영됩니다.
           </p>
         </div>
 
-        <div className="flex justify-center gap-3">
+        <div className="flex justify-center gap-2 sm:gap-3">
           <button
             onClick={() => router.push(`/visualize/${params.id}`)}
             className="bg-white border border-primary text-primary font-semibold py-3 px-8 rounded-xl"

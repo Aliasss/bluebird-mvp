@@ -12,6 +12,12 @@
   html {
     -webkit-tap-highlight-color: transparent;
   }
+
+  @media (max-width: 639px) {
+    html {
+      font-size: 15px;
+    }
+  }
   
   body {
     color: rgb(var(--foreground-rgb));

@@ -38,34 +38,51 @@ const curveData = buildCurveData();
 
 export default function TheoryValueCurveChart() {
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    const mediaQuery = window.matchMedia('(max-width: 639px)');
+    const update = () => setIsMobile(mediaQuery.matches);
+    update();
+    mediaQuery.addEventListener('change', update);
+    return () => mediaQuery.removeEventListener('change', update);
   }, []);
 
   if (!mounted) {
-    return <div className="w-full h-[340px]" />;
+    return <div className="w-full h-[240px] sm:h-[300px] md:h-[340px]" />;
   }
 
   return (
-    <div className="w-full h-[340px]">
+    <div className="w-full h-[240px] sm:h-[300px] md:h-[340px]">
       <ResponsiveContainer width="100%" height="100%">
-        <ComposedChart data={curveData} margin={{ top: 12, right: 20, left: 8, bottom: 18 }}>
+        <ComposedChart
+          data={curveData}
+          margin={
+            isMobile
+              ? { top: 8, right: 8, left: -10, bottom: 4 }
+              : { top: 12, right: 20, left: 8, bottom: 18 }
+          }
+        >
           <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
           <XAxis
             dataKey="x"
             type="number"
             domain={[-1, 1]}
             ticks={[-1, -0.5, 0, 0.5, 1]}
+            tick={{ fontSize: isMobile ? 10 : 12 }}
             tickFormatter={(value) => `${Math.round(value * 100)}%`}
           />
           <YAxis
             type="number"
             domain={[-3, 1.2]}
             ticks={[-3, -2, -1, 0, 1]}
+            width={isMobile ? 30 : 40}
+            tick={{ fontSize: isMobile ? 10 : 12 }}
             tickFormatter={(value) => value.toFixed(1)}
           />
           <Tooltip
+            contentStyle={{ fontSize: isMobile ? '10px' : '12px' }}
             formatter={(value: unknown) =>
               typeof value === 'number' ? value.toFixed(2) : String(value ?? '')
             }

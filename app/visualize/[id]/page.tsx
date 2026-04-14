@@ -195,7 +195,7 @@ export default function VisualizePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center p-6">
+      <main className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
           <p className="text-text-secondary">시각화 데이터를 준비하는 중...</p>
@@ -206,11 +206,11 @@ export default function VisualizePage() {
 
   if (error || !state.log) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center p-6">
+      <main className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
         <div className="max-w-md w-full text-center space-y-4">
-          <p className="text-2xl">⚠️</p>
+          <p className="text-xl md:text-2xl">⚠️</p>
           <p className="text-text-primary font-semibold">시각화를 불러오지 못했습니다.</p>
-          <p className="text-text-secondary text-sm">{error}</p>
+          <p className="text-text-secondary text-xs md:text-sm">{error}</p>
           <button
             onClick={() => router.push(`/analyze/${params.id}`)}
             className="bg-primary text-white font-semibold py-3 px-6 rounded-xl"
@@ -223,14 +223,14 @@ export default function VisualizePage() {
   }
 
   return (
-    <main className="min-h-screen bg-background p-6">
-      <div className="max-w-5xl mx-auto space-y-6">
-        <div className="bg-white rounded-2xl p-6 shadow-sm">
-          <h1 className="text-2xl font-bold text-text-primary mb-2">전망이론 시각화</h1>
-          <p className="text-text-secondary">
+    <main className="min-h-screen bg-background p-4 sm:p-6">
+      <div className="max-w-5xl mx-auto space-y-4 sm:space-y-6">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
+          <h1 className="text-xl md:text-2xl font-bold text-text-primary mb-2">전망이론 시각화</h1>
+          <p className="text-sm text-text-secondary">
             동일한 사건도 왜곡 강도에 따라 손실 체감이 과장될 수 있습니다.
           </p>
-          <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-background-secondary text-sm">
+          <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-background-secondary text-xs md:text-sm">
             <span className="text-text-secondary">현재 프레임:</span>
             <span className="font-semibold text-text-primary">
               {state.frameType === 'loss'
@@ -242,21 +242,21 @@ export default function VisualizePage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
           <ProspectValueChart
             curveData={chartMeta.curveData}
             userPoint={chartMeta.userPoint}
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl p-6 shadow-sm space-y-3">
-            <h2 className="text-lg font-bold text-text-primary">해석 가이드</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm space-y-3">
+            <h2 className="text-base md:text-lg font-bold text-text-primary">해석 가이드</h2>
             <p className="text-sm text-text-secondary">
               빨간 점은 현재 답변 기준 주관적 평가 지점입니다. 0에 가까울수록 균형적 판단이며,
               아래로 갈수록 손실 과대평가 경향이 큽니다.
             </p>
-            <ul className="text-sm text-text-secondary space-y-1">
+            <ul className="text-xs md:text-sm text-text-secondary space-y-1">
               <li>객관 확률(답변1): {(chartMeta.objectiveProbability * 100).toFixed(0)}%</li>
               <li>평균 왜곡 강도: {(chartMeta.averageIntensity * 100).toFixed(0)}%</li>
               <li>주관 손실 가중치: {chartMeta.subjectiveLossWeight.toFixed(2)}</li>
@@ -264,14 +264,14 @@ export default function VisualizePage() {
             </ul>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-sm space-y-3">
-            <h2 className="text-lg font-bold text-text-primary">탐지된 왜곡 요약</h2>
+          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm space-y-3">
+            <h2 className="text-base md:text-lg font-bold text-text-primary">탐지된 왜곡 요약</h2>
             {state.distortions.length === 0 ? (
-              <p className="text-sm text-text-secondary">명확한 왜곡이 탐지되지 않았습니다.</p>
+              <p className="text-xs md:text-sm text-text-secondary">명확한 왜곡이 탐지되지 않았습니다.</p>
             ) : (
               <ul className="space-y-2">
                 {state.distortions.map((item, index) => (
-                  <li key={`${item.type}-${index}`} className="text-sm text-text-secondary">
+                  <li key={`${item.type}-${index}`} className="text-xs md:text-sm text-text-secondary">
                     <span className="text-text-primary font-medium">
                       {DistortionTypeKorean[item.type]}
                     </span>{' '}
@@ -283,9 +283,9 @@ export default function VisualizePage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm space-y-3">
-          <h2 className="text-lg font-bold text-text-primary">Bluebird 이론 지표</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm space-y-3">
+          <h2 className="text-base md:text-lg font-bold text-text-primary">Bluebird 이론 지표</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs md:text-sm">
             <div className="border border-background-tertiary rounded-xl p-3">
               <p className="text-text-secondary mb-1">추정 확률</p>
               <p className="font-semibold text-text-primary">
@@ -309,33 +309,33 @@ export default function VisualizePage() {
           </div>
           {state.decenteringPrompt && (
             <div className="bg-background-secondary rounded-xl p-3">
-              <p className="text-xs text-text-secondary mb-1">탈중심화 가이드</p>
-              <p className="text-sm text-text-primary">{state.decenteringPrompt}</p>
+              <p className="text-[10px] md:text-xs text-text-secondary mb-1">탈중심화 가이드</p>
+              <p className="text-xs md:text-sm text-text-primary">{state.decenteringPrompt}</p>
             </div>
           )}
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm space-y-3">
-          <h2 className="text-lg font-bold text-text-primary">내가 입력한 답변</h2>
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm space-y-3">
+          <h2 className="text-base md:text-lg font-bold text-text-primary">내가 입력한 답변</h2>
           {state.questions.length === 3 ? (
             <ol className="space-y-3">
               {state.questions.map((question, index) => (
-                <li key={index} className="border border-background-tertiary rounded-xl p-4">
-                  <p className="text-sm font-medium text-text-primary mb-2">
+                <li key={index} className="border border-background-tertiary rounded-xl p-3 sm:p-4">
+                  <p className="text-xs md:text-sm font-medium text-text-primary mb-2">
                     {index + 1}. {question}
                   </p>
-                  <p className="text-sm text-text-secondary">
+                  <p className="text-xs md:text-sm text-text-secondary">
                     {state.answers[index] || '아직 답변하지 않았습니다.'}
                   </p>
                 </li>
               ))}
             </ol>
           ) : (
-            <p className="text-sm text-text-secondary">질문/답변 데이터가 아직 없습니다.</p>
+            <p className="text-xs md:text-sm text-text-secondary">질문/답변 데이터가 아직 없습니다.</p>
           )}
         </div>
 
-        <div className="flex justify-center gap-3">
+        <div className="flex justify-center gap-2 sm:gap-3">
           <button
             onClick={() => router.push(`/analyze/${params.id}`)}
             className="bg-white border border-primary text-primary font-semibold py-3 px-8 rounded-xl"

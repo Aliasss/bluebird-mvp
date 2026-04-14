@@ -131,8 +131,8 @@ export default function DashboardPage() {
     <main className="min-h-screen bg-background">
       {/* 헤더 */}
       <header className="bg-white border-b border-background-tertiary">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-primary">Project Bluebird</h1>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+          <h1 className="text-xl md:text-2xl font-bold text-primary">Project Bluebird</h1>
           <div className="flex items-center gap-4">
             <button
               onClick={() => router.push('/manual')}
@@ -151,53 +151,53 @@ export default function DashboardPage() {
       </header>
 
       {/* 메인 콘텐츠 */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* 환영 메시지 */}
-        <div className="bg-white rounded-2xl p-8 mb-6 shadow-sm">
-          <h2 className="text-3xl font-bold text-text-primary mb-2">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-8 mb-4 sm:mb-6 border border-background-tertiary shadow-none sm:shadow-sm">
+          <h2 className="text-xl md:text-2xl font-bold text-text-primary mb-2">
             환영합니다! 👋
           </h2>
-          <p className="text-text-secondary">
+          <p className="text-sm text-text-secondary">
             {user?.email}
           </p>
         </div>
 
         {/* 통계 카드 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-medium text-text-secondary">전체 로그</h3>
               <div className="w-10 h-10 bg-primary bg-opacity-10 rounded-full flex items-center justify-center">
                 <span className="text-primary text-lg">📝</span>
               </div>
             </div>
-            <p className="text-3xl font-bold text-text-primary">{stats.totalLogs}</p>
+            <p className="text-2xl md:text-3xl font-bold text-text-primary">{stats.totalLogs}</p>
             <p className="text-xs text-text-secondary mt-1">
               {stats.totalLogs === 0 ? '아직 기록이 없습니다' : '개의 사고를 기록했습니다'}
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-medium text-text-secondary">완료한 행동</h3>
               <div className="w-10 h-10 bg-success bg-opacity-10 rounded-full flex items-center justify-center">
                 <span className="text-success text-lg">✓</span>
               </div>
             </div>
-            <p className="text-3xl font-bold text-text-primary">{stats.completedActions}</p>
+            <p className="text-2xl md:text-3xl font-bold text-text-primary">{stats.completedActions}</p>
             <p className="text-xs text-text-secondary mt-1">
               {stats.completedActions === 0 ? '행동을 완료하면 점수가 올라갑니다' : '개의 행동을 완료했습니다'}
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-medium text-text-secondary">자율성 지수</h3>
               <div className="w-10 h-10 bg-warning bg-opacity-10 rounded-full flex items-center justify-center">
                 <span className="text-warning text-lg">⭐</span>
               </div>
             </div>
-            <p className="text-3xl font-bold text-text-primary">{stats.autonomyScore}</p>
+            <p className="text-2xl md:text-3xl font-bold text-text-primary">{stats.autonomyScore}</p>
             <p className="text-xs text-text-secondary mt-1">
               {stats.autonomyScore === 0 ? '행동 완료로 지수를 높이세요' : '점 획득했습니다'}
             </p>
@@ -205,11 +205,11 @@ export default function DashboardPage() {
         </div>
 
         {/* 액션 버튼 */}
-        <div className="bg-gradient-to-br from-primary to-primary-dark rounded-2xl p-8 text-white shadow-lg">
-          <h3 className="text-2xl font-bold mb-2">
+        <div className="bg-gradient-to-br from-primary to-primary-dark rounded-xl sm:rounded-2xl p-4 sm:p-8 text-white shadow-md">
+          <h3 className="text-xl md:text-2xl font-bold mb-2">
             새로운 사고 기록하기
           </h3>
-          <p className="mb-6 opacity-90">
+          <p className="text-sm md:text-base mb-4 sm:mb-6 opacity-90">
             트리거(사건)와 자동 사고를 기록하여 인지 왜곡을 분석해보세요
           </p>
           <button
@@ -221,14 +221,14 @@ export default function DashboardPage() {
         </div>
 
         {/* 최근 활동 */}
-        <div className="mt-8 bg-white rounded-2xl p-8 shadow-sm">
-          <h3 className="text-xl font-bold text-text-primary mb-4">
+        <div className="mt-6 sm:mt-8 bg-white rounded-xl sm:rounded-2xl p-4 sm:p-8 border border-background-tertiary shadow-none sm:shadow-sm">
+          <h3 className="text-lg md:text-xl font-bold text-text-primary mb-4">
             최근 활동
           </h3>
           {logs.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-6xl mb-4 opacity-20">📋</div>
-              <p className="text-text-secondary">
+              <p className="text-sm text-text-secondary">
                 아직 기록이 없습니다<br />
                 첫 번째 사고를 기록해보세요
               </p>
@@ -259,8 +259,8 @@ export default function DashboardPage() {
         </div>
 
         {/* 최근 행동 계획 */}
-        <div className="mt-8 bg-white rounded-2xl p-8 shadow-sm">
-          <h3 className="text-xl font-bold text-text-primary mb-4">최근 행동 계획</h3>
+        <div className="mt-6 sm:mt-8 bg-white rounded-xl sm:rounded-2xl p-4 sm:p-8 border border-background-tertiary shadow-none sm:shadow-sm">
+          <h3 className="text-lg md:text-xl font-bold text-text-primary mb-4">최근 행동 계획</h3>
           {recentActions.length === 0 ? (
             <p className="text-text-secondary text-sm">
               아직 행동 계획이 없습니다. 분석 후 행동 설계를 진행해보세요.

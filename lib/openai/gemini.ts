@@ -54,7 +54,7 @@ function isRetryableGeminiError(error: unknown): boolean {
 
 async function generateContentWithRetry(prompt: string): Promise<string> {
   const model = getGeminiModel();
-  const maxAttempts = 3;
+  const maxAttempts = 2;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
@@ -64,7 +64,9 @@ async function generateContentWithRetry(prompt: string): Promise<string> {
       if (attempt === maxAttempts || !isRetryableGeminiError(error)) {
         throw error;
       }
-      await sleep(600 * attempt);
+      const baseBackoffMs = 1200 * 2 ** (attempt - 1);
+      const jitterMs = Math.floor(Math.random() * 300);
+      await sleep(baseBackoffMs + jitterMs);
     }
   }
 

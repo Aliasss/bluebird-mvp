@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { analyzeDistortionsWithGemini } from '@/lib/openai/gemini';
+import { isAiInputTooLong, MAX_AI_TEXT_LENGTH } from '@/lib/security/ai-guard';
+import { consumeRateLimit, getClientIp } from '@/lib/security/rate-limit';
 import type { AIAnalysisResult, DistortionAnalysis } from '@/types';
 import { z } from 'zod';
 
@@ -62,6 +64,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 });
     }
 
+    const rateKey = `analyze:${user.id}:${getClientIp(request)}`;
+    const rate = consumeRateLimit(rateKey, { windowMs: 60_000, maxRequests: 5 });
+    if (!rate.allowed) {
+      return NextResponse.json(
+        {
+          error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
+          retryAfterSec: rate.retryAfterSec,
+        },
+        { status: 429, headers: { 'Retry-After': String(rate.retryAfterSec) } }
+      );
+    }
+
     const { data: logData, error: logError } = await supabase
       .from('logs')
       .select('id, trigger, thought, user_id')
@@ -71,6 +85,55 @@ export async function POST(request: Request) {
 
     if (logError || !logData) {
       return NextResponse.json({ error: '로그를 찾을 수 없습니다.' }, { status: 404 });
+    }
+
+    if (isAiInputTooLong({ trigger: logData.trigger, thought: logData.thought })) {
+      return NextResponse.json(
+        { error: `입력 길이가 너무 깁니다. 트리거/자동사고를 ${MAX_AI_TEXT_LENGTH}자 이하로 줄여주세요.` },
+        { status: 400 }
+      );
+    }
+
+    const { data: existingRows, error: existingError } = await supabase
+      .from('analysis')
+      .select(
+        'distortion_type, intensity, logic_error_segment, rationale, frame_type, reference_point, probability_estimate, loss_aversion_signal, cas_rumination, cas_worry, system2_question_seed, decentering_prompt'
+      )
+      .eq('log_id', logId);
+
+    if (!existingError && (existingRows?.length ?? 0) > 0) {
+      const rows = existingRows as Array<Record<string, unknown>>;
+      const first = rows[0] ?? {};
+      const cachedDistortions: DistortionAnalysis[] = rows.map((row) => ({
+        type: row.distortion_type as DistortionAnalysis['type'],
+        intensity: Number(row.intensity ?? 0),
+        segment: String(row.logic_error_segment ?? ''),
+        rationale: row.rationale ? String(row.rationale) : undefined,
+      }));
+
+      return NextResponse.json(
+        {
+          distortions: cachedDistortions,
+          frame_type: (first.frame_type as AIAnalysisResult['frame_type']) ?? 'mixed',
+          reference_point: String(first.reference_point ?? '사용자 준거점 정보 없음'),
+          probability_estimate:
+            typeof first.probability_estimate === 'number' ? first.probability_estimate : null,
+          loss_aversion_signal:
+            typeof first.loss_aversion_signal === 'number' ? first.loss_aversion_signal : 0.3,
+          cas_signal: {
+            rumination: typeof first.cas_rumination === 'number' ? first.cas_rumination : 0.3,
+            worry: typeof first.cas_worry === 'number' ? first.cas_worry : 0.3,
+          },
+          system2_question_seed:
+            String(first.system2_question_seed ?? '') ||
+            '이 판단을 지지/반박하는 근거 비율은 각각 몇 %인가요?',
+          decentering_prompt:
+            String(first.decentering_prompt ?? '') ||
+            '생각을 사실이 아닌 가설로 두고 증거를 분리하세요.',
+          warning: null,
+        },
+        { status: 200 }
+      );
     }
 
     let analysisResult: AIAnalysisResult = {

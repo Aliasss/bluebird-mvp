@@ -1,10 +1,17 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { consumeRateLimit, getClientIp } from '@/lib/security/rate-limit';
+import { z } from 'zod';
 
 type SaveAnswersRequestBody = {
   logId?: string;
   answers?: string[];
 };
+
+const saveAnswersSchema = z.object({
+  logId: z.string().uuid(),
+  answers: z.array(z.string().trim().min(1).max(500)).length(3),
+});
 
 function hasNumericContent(value: string): boolean {
   return /\d+/.test(value);
@@ -13,16 +20,14 @@ function hasNumericContent(value: string): boolean {
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as SaveAnswersRequestBody;
-    const logId = body.logId?.trim();
-    const answers = Array.isArray(body.answers) ? body.answers.map((v) => String(v).trim()) : [];
-
-    if (!logId) {
-      return NextResponse.json({ error: 'logId가 필요합니다.' }, { status: 400 });
+    const parsedBody = saveAnswersSchema.safeParse({
+      logId: body.logId?.trim(),
+      answers: Array.isArray(body.answers) ? body.answers.map((v) => String(v).trim()) : [],
+    });
+    if (!parsedBody.success) {
+      return NextResponse.json({ error: '입력 형식이 올바르지 않습니다.' }, { status: 400 });
     }
-
-    if (answers.length !== 3) {
-      return NextResponse.json({ error: '답변은 정확히 3개여야 합니다.' }, { status: 400 });
-    }
+    const { logId, answers } = parsedBody.data;
 
     if (answers.some((answer) => !hasNumericContent(answer))) {
       return NextResponse.json(
@@ -39,6 +44,18 @@ export async function POST(request: Request) {
 
     if (userError || !user) {
       return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 });
+    }
+
+    const rateKey = `answers:${user.id}:${getClientIp(request)}`;
+    const rate = consumeRateLimit(rateKey, { windowMs: 60_000, maxRequests: 20 });
+    if (!rate.allowed) {
+      return NextResponse.json(
+        {
+          error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
+          retryAfterSec: rate.retryAfterSec,
+        },
+        { status: 429, headers: { 'Retry-After': String(rate.retryAfterSec) } }
+      );
     }
 
     const { data: logData, error: logError } = await supabase

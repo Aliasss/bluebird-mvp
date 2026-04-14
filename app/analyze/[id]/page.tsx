@@ -1,6 +1,6 @@
 'use client';
 
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import {
@@ -91,6 +91,7 @@ export default function AnalyzePage() {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [savingAnswers, setSavingAnswers] = useState(false);
   const [warning, setWarning] = useState<string | null>(null);
+  const isRequestInFlightRef = useRef(false);
   const [theoryMeta, setTheoryMeta] = useState<TheoryMeta>({
     frameType: 'mixed',
     referencePoint: '준거점 정보 없음',
@@ -111,6 +112,10 @@ export default function AnalyzePage() {
     }
 
     const runAnalysis = async () => {
+      if (isRequestInFlightRef.current) {
+        return;
+      }
+      isRequestInFlightRef.current = true;
       try {
         const {
           data: { user },
@@ -233,6 +238,7 @@ export default function AnalyzePage() {
         console.error('로그 조회 실패:', err);
         setError(err.message || '분석 중 오류가 발생했습니다.');
       } finally {
+        isRequestInFlightRef.current = false;
         setLoading(false);
       }
     };

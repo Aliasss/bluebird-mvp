@@ -18,13 +18,13 @@
   "author": "Project Bluebird Team",
   "license": "MIT",
   "dependencies": {
+    "@ducanh2912/next-pwa": "^10.2.9",
     "@google/generative-ai": "^0.24.1",
     "@supabase/auth-helpers-nextjs": "^0.15.0",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.103.0",
     "clsx": "^2.1.1",
     "next": "^16.2.3",
-    "next-pwa": "^5.6.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "recharts": "^3.8.1",
@@ -40,5 +40,9 @@
     "postcss": "^8.5.9",
     "tailwindcss": "^3.4.19",
     "typescript": "^6.0.2"
+  },
+  "overrides": {
+    "serialize-javascript": "7.0.5",
+    "terser-webpack-plugin": "5.4.0"
   }
 }

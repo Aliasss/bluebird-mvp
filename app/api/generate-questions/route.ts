@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { generateSocraticQuestionsWithGemini } from '@/lib/openai/gemini';
+import { isAiInputTooLong, MAX_AI_TEXT_LENGTH } from '@/lib/security/ai-guard';
+import { consumeRateLimit, getClientIp } from '@/lib/security/rate-limit';
 import type { DistortionAnalysis } from '@/types';
 import { z } from 'zod';
 
@@ -52,6 +54,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 });
     }
 
+    const rateKey = `questions:${user.id}:${getClientIp(request)}`;
+    const rate = consumeRateLimit(rateKey, { windowMs: 60_000, maxRequests: 6 });
+    if (!rate.allowed) {
+      return NextResponse.json(
+        {
+          error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
+          retryAfterSec: rate.retryAfterSec,
+        },
+        { status: 429, headers: { 'Retry-After': String(rate.retryAfterSec) } }
+      );
+    }
+
     const { data: logData, error: logError } = await supabase
       .from('logs')
       .select('id, trigger, thought, user_id')
@@ -61,6 +75,31 @@ export async function POST(request: Request) {
 
     if (logError || !logData) {
       return NextResponse.json({ error: '로그를 찾을 수 없습니다.' }, { status: 404 });
+    }
+
+    if (isAiInputTooLong({ trigger: logData.trigger, thought: logData.thought })) {
+      return NextResponse.json(
+        { error: `입력 길이가 너무 깁니다. 트리거/자동사고를 ${MAX_AI_TEXT_LENGTH}자 이하로 줄여주세요.` },
+        { status: 400 }
+      );
+    }
+
+    const existingInterventionCheck = await supabase
+      .from('intervention')
+      .select('id, socratic_questions')
+      .eq('log_id', logId)
+      .maybeSingle();
+
+    if (
+      !existingInterventionCheck.error &&
+      existingInterventionCheck.data &&
+      Array.isArray(existingInterventionCheck.data.socratic_questions) &&
+      existingInterventionCheck.data.socratic_questions.length === 3
+    ) {
+      return NextResponse.json(
+        { questions: existingInterventionCheck.data.socratic_questions.map((q) => String(q)) },
+        { status: 200 }
+      );
     }
 
     const primaryQuery = await supabase

@@ -1,11 +1,19 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { consumeRateLimit, getClientIp } from '@/lib/security/rate-limit';
+import { z } from 'zod';
 
 type ActionRequestBody = {
   logId?: string;
   finalAction?: string;
   markCompleted?: boolean;
 };
+
+const actionRequestSchema = z.object({
+  logId: z.string().uuid(),
+  finalAction: z.string().trim().max(500).optional(),
+  markCompleted: z.boolean().optional(),
+});
 
 function calcAutonomyScore(params: { averageIntensity: number; answerCount: number }): number {
   const base = 10;
@@ -17,13 +25,17 @@ function calcAutonomyScore(params: { averageIntensity: number; answerCount: numb
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as ActionRequestBody;
-    const logId = body.logId?.trim();
-    const finalAction = body.finalAction?.trim() ?? '';
-    const markCompleted = Boolean(body.markCompleted);
-
-    if (!logId) {
-      return NextResponse.json({ error: 'logId가 필요합니다.' }, { status: 400 });
+    const parsedBody = actionRequestSchema.safeParse({
+      logId: body.logId?.trim(),
+      finalAction: body.finalAction,
+      markCompleted: body.markCompleted,
+    });
+    if (!parsedBody.success) {
+      return NextResponse.json({ error: '입력 형식이 올바르지 않습니다.' }, { status: 400 });
     }
+    const { logId } = parsedBody.data;
+    const finalAction = parsedBody.data.finalAction?.trim() ?? '';
+    const markCompleted = Boolean(parsedBody.data.markCompleted);
 
     const supabase = await createServerSupabaseClient();
     const {
@@ -33,6 +45,18 @@ export async function POST(request: Request) {
 
     if (userError || !user) {
       return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 });
+    }
+
+    const rateKey = `action:${user.id}:${getClientIp(request)}`;
+    const rate = consumeRateLimit(rateKey, { windowMs: 60_000, maxRequests: 20 });
+    if (!rate.allowed) {
+      return NextResponse.json(
+        {
+          error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
+          retryAfterSec: rate.retryAfterSec,
+        },
+        { status: 429, headers: { 'Retry-After': String(rate.retryAfterSec) } }
+      );
     }
 
     const { data: logData, error: logError } = await supabase

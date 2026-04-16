@@ -11,11 +11,11 @@ import {
 } from '@/lib/content/technical-manual';
 
 const SECTION_LINKS = [
-  { id: 'intro', label: '개요' },
-  { id: 'core-01', label: '[CORE-01] 이중 프로세스 시스템' },
-  { id: 'dyn-02', label: '[DYN-02] 전망이론과 가치 함수' },
-  { id: 'dbug-03', label: '[DBUG-03] 인지 오류 Taxonomy' },
-  { id: 'goal-04', label: '[GOAL-04] 실존적 자율성' },
+  { id: 'intro', label: '개요', shortLabel: '개요' },
+  { id: 'core-01', label: '[CORE-01] 이중 프로세스 시스템', shortLabel: '이중 프로세스' },
+  { id: 'dyn-02', label: '[DYN-02] 전망이론과 가치 함수', shortLabel: '전망이론' },
+  { id: 'dbug-03', label: '[DBUG-03] 인지 오류 Taxonomy', shortLabel: '인지 오류' },
+  { id: 'goal-04', label: '[GOAL-04] 실존적 자율성', shortLabel: '실존적 자율성' },
 ] as const;
 
 export default function ManualPage() {
@@ -26,7 +26,7 @@ export default function ManualPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-6 sm:gap-8">
         <aside className="lg:sticky lg:top-8 lg:self-start">
           <div className="bg-white border border-background-tertiary rounded-2xl p-4 space-y-3">
             <p className="text-xs text-text-secondary">Technical Manual Navigation</p>
@@ -37,7 +37,8 @@ export default function ManualPage() {
                   href={`#${item.id}`}
                   className="block text-sm text-text-primary hover:text-primary transition-colors"
                 >
-                  {item.label}
+                  <span className="lg:hidden">{item.shortLabel}</span>
+                  <span className="hidden lg:inline">{item.label}</span>
                 </a>
               ))}
             </nav>
@@ -53,9 +54,9 @@ export default function ManualPage() {
         </aside>
 
         <div className="space-y-8">
-          <section id="intro" className="bg-white rounded-2xl p-8 border border-background-tertiary">
+          <section id="intro" className="bg-white rounded-2xl p-5 sm:p-8 border border-background-tertiary">
             <p className="text-xs uppercase tracking-wide text-text-secondary mb-3">Bluebird Knowledge Base</p>
-            <h1 className="text-3xl md:text-4xl font-semibold text-text-primary leading-tight mb-4">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-text-primary leading-tight mb-4">
               {TECHNICAL_MANUAL_HEADER.title}
             </h1>
             <p className="text-base text-text-secondary mb-3">
@@ -66,8 +67,8 @@ export default function ManualPage() {
             </p>
           </section>
 
-          <section id="core-01" className="bg-white rounded-2xl p-8 border border-background-tertiary space-y-5">
-            <h2 className="text-2xl font-semibold text-text-primary">{coreSection?.title}</h2>
+          <section id="core-01" className="bg-white rounded-2xl p-5 sm:p-8 border border-background-tertiary space-y-5">
+            <h2 className="text-xl sm:text-2xl font-semibold text-text-primary">{coreSection?.title}</h2>
             <p className="text-text-secondary leading-relaxed">{coreSection?.content}</p>
             <div className="overflow-x-auto rounded-xl border border-background-tertiary">
               <table className="min-w-full text-sm">
@@ -95,8 +96,8 @@ export default function ManualPage() {
             </div>
           </section>
 
-          <section id="dyn-02" className="bg-white rounded-2xl p-8 border border-background-tertiary space-y-5">
-            <h2 className="text-2xl font-semibold text-text-primary">{dynSection?.title}</h2>
+          <section id="dyn-02" className="bg-white rounded-2xl p-5 sm:p-8 border border-background-tertiary space-y-5">
+            <h2 className="text-xl sm:text-2xl font-semibold text-text-primary">{dynSection?.title}</h2>
             <p className="text-text-secondary leading-relaxed">{dynSection?.content}</p>
             <div className="bg-background-secondary rounded-xl p-5">
               <p className="text-sm text-text-secondary mb-3">Prospect Theory Value Function (S-Curve Simulation)</p>
@@ -113,8 +114,8 @@ export default function ManualPage() {
             </div>
           </section>
 
-          <section id="dbug-03" className="bg-white rounded-2xl p-8 border border-background-tertiary space-y-5">
-            <h2 className="text-2xl font-semibold text-text-primary">{dbugSection?.title}</h2>
+          <section id="dbug-03" className="bg-white rounded-2xl p-5 sm:p-8 border border-background-tertiary space-y-5">
+            <h2 className="text-xl sm:text-2xl font-semibold text-text-primary">{dbugSection?.title}</h2>
             <p className="text-text-secondary leading-relaxed">{dbugSection?.content}</p>
             <div className="space-y-3">
               {DISTORTION_GLOSSARY.map((item, index) => (
@@ -134,8 +135,8 @@ export default function ManualPage() {
             </div>
           </section>
 
-          <section id="goal-04" className="bg-white rounded-2xl p-8 border border-background-tertiary space-y-5">
-            <h2 className="text-2xl font-semibold text-text-primary">{goalSection?.title}</h2>
+          <section id="goal-04" className="bg-white rounded-2xl p-5 sm:p-8 border border-background-tertiary space-y-5">
+            <h2 className="text-xl sm:text-2xl font-semibold text-text-primary">{goalSection?.title}</h2>
             <p className="text-text-secondary leading-relaxed">{goalSection?.content}</p>
           </section>
         </div>

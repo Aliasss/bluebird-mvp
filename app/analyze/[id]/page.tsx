@@ -266,10 +266,6 @@ export default function AnalyzePage() {
       setSaveError('답변을 입력해주세요.');
       return;
     }
-    if (!hasNumericContent(answers[currentQuestion])) {
-      setSaveError('답변에 숫자 또는 %를 포함해주세요.');
-      return;
-    }
     setSaveError(null);
     setCurrentQuestion((prev) => Math.min(prev + 1, questions.length - 1));
   };
@@ -282,10 +278,6 @@ export default function AnalyzePage() {
   const handleSaveAnswers = async () => {
     if (answers.some((answer) => !answer.trim())) {
       setSaveError('세 질문에 모두 답변해주세요.');
-      return;
-    }
-    if (answers.some((answer) => !hasNumericContent(answer))) {
-      setSaveError('각 답변에 숫자 또는 %가 포함되어야 합니다.');
       return;
     }
 
@@ -316,13 +308,34 @@ export default function AnalyzePage() {
   };
 
   if (loading) {
+    const stageMessages: Record<Stage, { title: string; sub: string }> = {
+      fetch: { title: '데이터를 불러오는 중...', sub: '' },
+      analyze: { title: 'AI가 인지 왜곡을 분석하고 있습니다', sub: '잠시만 기다려주세요. 보통 10~20초 정도 소요됩니다.' },
+      question: { title: '소크라테스식 질문을 생성하고 있습니다', sub: '분석 결과를 바탕으로 맞춤 질문을 만들고 있습니다.' },
+      done: { title: '완료', sub: '' },
+    };
+    const msg = stageMessages[stage];
+
     return (
       <main className="min-h-screen bg-background">
         <PageHeader title="분석 결과" backHref="/dashboard" />
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 space-y-4">
-          <SkeletonCard lines={4} />
-          <SkeletonCard lines={3} />
-        </div>
+        {stage === 'fetch' ? (
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 space-y-4">
+            <SkeletonCard lines={4} />
+            <SkeletonCard lines={3} />
+          </div>
+        ) : (
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 py-16 flex flex-col items-center text-center gap-6">
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 rounded-full border-4 border-background-tertiary" />
+              <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-base font-semibold text-text-primary">{msg.title}</p>
+              {msg.sub && <p className="text-sm text-text-secondary">{msg.sub}</p>}
+            </div>
+          </div>
+        )}
       </main>
     );
   }

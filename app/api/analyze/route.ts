@@ -136,6 +136,24 @@ export async function POST(request: Request) {
       );
     }
 
+    // 일별 분석 한도 체크 (하루 6회, 계정당)
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const { data: todayAnalyses } = await supabase
+      .from('analysis')
+      .select('log_id, logs!inner(user_id)')
+      .eq('logs.user_id', user.id)
+      .gte('created_at', todayStart.toISOString());
+
+    const analyzedTodayCount = new Set((todayAnalyses ?? []).map((r) => (r as { log_id: string }).log_id)).size;
+    if (analyzedTodayCount >= 6) {
+      return NextResponse.json(
+        { error: '오늘의 분석 한도(6회)에 도달했습니다. 내일 다시 시도해주세요.' },
+        { status: 429 }
+      );
+    }
+
     let analysisResult: AIAnalysisResult = {
       distortions: [] as DistortionAnalysis[],
       questions: [],

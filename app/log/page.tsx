@@ -103,7 +103,7 @@ export default function LogPage() {
                 <textarea
                   value={trigger}
                   onChange={(e) => setTrigger(e.target.value)}
-                  placeholder="예: 상사가 회의에서 내 의견을 무시했다"
+                  placeholder="예: 팀장이 내 보고서에 피드백을 주지 않았다"
                   className="w-full h-40 p-4 border border-background-tertiary rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   disabled={loading}
                   autoFocus
@@ -167,7 +167,7 @@ export default function LogPage() {
                 <textarea
                   value={thought}
                   onChange={(e) => setThought(e.target.value)}
-                  placeholder="예: 나는 무능하고 아무도 내 의견을 중요하게 생각하지 않는다"
+                  placeholder="예: 내가 일을 못하니까 무시하는 거겠지. 앞으로도 이럴 거야"
                   className="w-full h-40 p-4 border border-background-tertiary rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   disabled={loading}
                   autoFocus

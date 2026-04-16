@@ -228,12 +228,20 @@ export default function DashboardPage() {
             최근 활동
           </h3>
           {logs.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4 opacity-20">📋</div>
-              <p className="text-sm text-text-secondary">
-                아직 기록이 없습니다<br />
-                첫 번째 사고를 기록해보세요
-              </p>
+            <div className="space-y-3 py-4">
+              <p className="text-sm font-medium text-text-primary mb-4">시작하는 방법</p>
+              {[
+                { step: '1', text: '오늘 마음에 걸리는 사건이나 생각을 적어보세요' },
+                { step: '2', text: 'AI가 어떤 인지 왜곡인지 자동으로 분석해드립니다' },
+                { step: '3', text: '소크라테스식 질문으로 사고를 직접 교정해보세요' },
+              ].map(({ step, text }) => (
+                <div key={step} className="flex items-start gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 bg-primary text-white text-xs font-bold rounded-full flex items-center justify-center mt-0.5">
+                    {step}
+                  </span>
+                  <p className="text-sm text-text-secondary">{text}</p>
+                </div>
+              ))}
             </div>
           ) : (
             <div className="space-y-4">

@@ -10,6 +10,8 @@ import {
   type FrameType,
   type Log,
 } from '@/types';
+import PageHeader from '@/components/ui/PageHeader';
+import SkeletonCard from '@/components/ui/SkeletonCard';
 
 type Stage = 'fetch' | 'analyze' | 'question' | 'done';
 type InterventionRow = {
@@ -315,43 +317,11 @@ export default function AnalyzePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-background flex flex-col items-center justify-center p-4 sm:p-6">
-        <div className="max-w-md w-full space-y-6">
-          <div className="text-center space-y-4">
-            <div className="w-16 h-16 mx-auto">
-              <div className="animate-spin rounded-full h-16 w-16 border-4 border-background-tertiary border-t-primary"></div>
-            </div>
-            <h2 className="text-lg md:text-xl font-bold text-text-primary">
-              AI가 사고를 분석하고 있습니다...
-            </h2>
-            <p className="text-text-secondary">
-              인지 왜곡 패턴과 질문을 생성하는 중입니다
-            </p>
-          </div>
-
-          {/* 분석 단계 표시 */}
-          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 space-y-3 sm:space-y-4 border border-background-tertiary sm:border-transparent">
-            <div className="flex items-center space-x-3">
-              <div className={`w-6 h-6 rounded-full flex items-center justify-center ${stage === 'fetch' ? 'bg-primary animate-pulse' : 'bg-primary'}`}>
-                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <span className="text-xs md:text-sm text-text-primary">데이터 수신 완료</span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className={`w-6 h-6 rounded-full ${stage === 'analyze' ? 'bg-primary animate-pulse' : stage === 'done' || stage === 'question' ? 'bg-primary' : 'bg-background-tertiary'}`}></div>
-              <span className={`text-xs md:text-sm ${stage === 'analyze' || stage === 'done' || stage === 'question' ? 'text-text-primary' : 'text-text-secondary'}`}>인지 왜곡 분석</span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className={`w-6 h-6 rounded-full ${stage === 'question' ? 'bg-primary animate-pulse' : stage === 'done' ? 'bg-primary' : 'bg-background-tertiary'}`}></div>
-              <span className={`text-xs md:text-sm ${stage === 'question' || stage === 'done' ? 'text-text-primary' : 'text-text-secondary'}`}>소크라테스 질문 생성</span>
-            </div>
-          </div>
-
-          <p className="text-xs text-center text-text-secondary">
-            잠시만 기다려주세요. 약 10-15초 소요됩니다.
-          </p>
+      <main className="min-h-screen bg-background">
+        <PageHeader title="분석 결과" backHref="/dashboard" />
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 space-y-4">
+          <SkeletonCard lines={4} />
+          <SkeletonCard lines={3} />
         </div>
       </main>
     );

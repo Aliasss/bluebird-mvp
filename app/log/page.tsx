@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
+import PageHeader from '@/components/ui/PageHeader';
 
 type Step = 'trigger' | 'thought';
 
@@ -77,30 +78,11 @@ export default function LogPage() {
 
   return (
     <main className="min-h-screen bg-background flex flex-col">
-      {/* 헤더 */}
-      <header className="bg-white border-b border-background-tertiary px-4 sm:px-6 py-3 sm:py-4 flex items-center">
-        <button
-          onClick={handleBack}
-          className="text-primary font-semibold"
-          disabled={loading}
-        >
-          ← 뒤로
-        </button>
-        <div className="flex-1 text-center">
-          <p className="text-sm text-text-secondary">
-            {step === 'trigger' ? '1/2 단계' : '2/2 단계'}
-          </p>
-        </div>
-        <div className="w-16"></div>
-      </header>
-
-      {/* 진행 바 */}
-      <div className="bg-background-secondary h-1">
-        <div
-          className="bg-primary h-full transition-all duration-300"
-          style={{ width: step === 'trigger' ? '50%' : '100%' }}
-        ></div>
-      </div>
+      <PageHeader
+        title="생각 기록"
+        onBack={handleBack}
+        step={{ current: step === 'trigger' ? 1 : 2, total: 2 }}
+      />
 
       {/* 메인 콘텐츠 */}
       <div className="flex-1 overflow-y-auto p-4 sm:p-6">

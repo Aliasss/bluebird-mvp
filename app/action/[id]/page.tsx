@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import type { DistortionAnalysis, Log } from '@/types';
+import PageHeader from '@/components/ui/PageHeader';
+import SkeletonCard from '@/components/ui/SkeletonCard';
 
 type ActionState = {
   log: Log | null;
@@ -171,10 +173,11 @@ export default function ActionPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
-          <p className="text-text-secondary">행동 설계 페이지를 준비 중...</p>
+      <main className="min-h-screen bg-background">
+        <PageHeader title="행동 설계" />
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 space-y-4">
+          <SkeletonCard lines={4} />
+          <SkeletonCard lines={3} />
         </div>
       </main>
     );
@@ -198,8 +201,9 @@ export default function ActionPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+    <main className="min-h-screen bg-background">
+      <PageHeader title="행동 설계" />
+      <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
         <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
           <h1 className="text-xl md:text-2xl font-bold text-text-primary mb-2">행동 확약</h1>
           <p className="text-sm text-text-secondary">

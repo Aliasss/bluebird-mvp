@@ -136,9 +136,12 @@ export async function POST(request: Request) {
       );
     }
 
-    // 일별 분석 한도 체크 (하루 6회, 계정당)
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
+    // 일별 분석 한도 체크 (하루 6회, 계정당 / 한국시간 자정 기준 리셋)
+    const KST_OFFSET = 9 * 60 * 60 * 1000;
+    const kstDate = new Date(Date.now() + KST_OFFSET);
+    const todayStart = new Date(
+      Date.UTC(kstDate.getUTCFullYear(), kstDate.getUTCMonth(), kstDate.getUTCDate()) - KST_OFFSET
+    );
 
     const { data: todayAnalyses } = await supabase
       .from('analysis')

@@ -37,7 +37,8 @@ export async function proxy(request: NextRequest) {
       request.nextUrl.pathname.startsWith('/log') ||
       request.nextUrl.pathname.startsWith('/analyze') ||
       request.nextUrl.pathname.startsWith('/visualize') ||
-      request.nextUrl.pathname.startsWith('/action'))
+      request.nextUrl.pathname.startsWith('/action') ||
+      request.nextUrl.pathname.startsWith('/insights'))
   ) {
     return NextResponse.redirect(new URL('/auth/login', request.url));
   }
@@ -60,6 +61,7 @@ export const config = {
     '/analyze/:path*',
     '/visualize/:path*',
     '/action/:path*',
+    '/insights/:path*',
     '/auth/:path*',
   ],
 };

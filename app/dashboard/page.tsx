@@ -135,10 +135,16 @@ export default function DashboardPage() {
           <h1 className="text-xl md:text-2xl font-bold text-primary">Project Bluebird</h1>
           <div className="flex items-center gap-4">
             <button
-              onClick={() => router.push('/manual')}
+              onClick={() => router.push('/insights')}
               className="text-sm text-primary hover:underline transition-colors"
             >
-              Technical Manual
+              인사이트
+            </button>
+            <button
+              onClick={() => router.push('/manual')}
+              className="text-sm text-text-secondary hover:underline transition-colors"
+            >
+              Manual
             </button>
             <button
               onClick={handleLogout}

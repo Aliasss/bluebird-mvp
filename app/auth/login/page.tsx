@@ -56,12 +56,8 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         {/* 헤더 */}
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-primary">
-            로그인
-          </h1>
-          <p className="text-text-secondary">
-            Project Bluebird에 오신 것을 환영합니다
-          </p>
+          <p className="text-sm font-semibold text-primary tracking-wide">Project Bluebird</p>
+          <h1 className="text-2xl font-bold text-text-primary">로그인</h1>
         </div>
 
         {/* 로그인 폼 */}
@@ -135,7 +131,6 @@ export default function LoginPage() {
               회원가입
             </button>
           </p>
-          <p className="text-xs text-text-secondary opacity-60">auth-login-fix-v2</p>
         </div>
       </div>
     </main>

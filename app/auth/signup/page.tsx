@@ -92,12 +92,8 @@ export default function SignupPage() {
       <div className="max-w-md w-full space-y-8">
         {/* 헤더 */}
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-primary">
-            회원가입
-          </h1>
-          <p className="text-text-secondary">
-            자율성 회복 여정을 시작하세요
-          </p>
+          <p className="text-sm font-semibold text-primary tracking-wide">Project Bluebird</p>
+          <h1 className="text-2xl font-bold text-text-primary">회원가입</h1>
         </div>
 
         {/* 회원가입 폼 */}

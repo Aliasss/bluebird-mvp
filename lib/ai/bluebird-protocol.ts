@@ -43,32 +43,42 @@ export const BLUEBIRD_THEORY_SUMMARY = {
 
 export const BLUEBIRD_DISTORTION_TAXONOMY: Record<
   DistortionType,
-  { label: string; diagnosticRule: string }
+  { label: string; diagnosticRule: string; differentialRule: string }
 > = {
   [DistortionType.CATASTROPHIZING]: {
     label: '파국화',
     diagnosticRule:
       '최악 시나리오를 단정하고 발생 확률을 비정상적으로 높게 추정한다.',
+    differentialRule:
+      '흑백논리와 구분: 파국화는 단일 사건에서 장기 재앙으로 시간적 확장을 한다. 흑백논리는 결과를 이분화하지만 미래 재앙을 단정하지 않는다. 감정적 추론과 구분: 파국화는 확률 추정이 왜곡되고, 감정적 추론은 감정을 사실 근거로 사용한다.',
   },
   [DistortionType.ALL_OR_NOTHING]: {
     label: '흑백논리',
     diagnosticRule:
       '중간 대안을 제거하고 성공/실패의 이분법으로만 상황을 해석한다.',
+    differentialRule:
+      '파국화와 구분: 흑백논리는 스펙트럼을 이분화하며 중간 가능성을 배제한다. 파국화처럼 미래 재앙을 단정하지 않아도 된다. 개인화와 구분: 흑백논리는 결과 평가의 이분화가 핵심이고, 개인화는 원인 귀속이 핵심이다.',
   },
   [DistortionType.EMOTIONAL_REASONING]: {
     label: '감정적 추론',
     diagnosticRule:
       '현재 감정 상태를 사실 판단의 직접 근거로 사용한다.',
+    differentialRule:
+      '파국화와 구분: 감정적 추론은 "불안하니까 위험하다"처럼 감정이 증거가 된다. 파국화는 위험 확률을 과대평가하지만 감정이 직접 근거가 아닐 수 있다. 임의적 추론과 구분: 감정적 추론은 감정이 근거이고, 임의적 추론은 증거 부재에도 결론을 확정한다.',
   },
   [DistortionType.PERSONALIZATION]: {
     label: '개인화',
     diagnosticRule:
       '통제 불가능한 외부 결과를 자신의 책임이나 결함으로 귀속한다.',
+    differentialRule:
+      '흑백논리와 구분: 개인화는 원인을 자신에게 과도하게 귀속하는 것이 핵심이다. 흑백논리는 결과 평가의 이분화가 핵심으로 원인 귀속 없이도 발생한다. 임의적 추론과 구분: 개인화는 "내 탓"이라는 귀속이 특징이고, 임의적 추론은 근거 없는 부정적 결론 확정이다.',
   },
   [DistortionType.ARBITRARY_INFERENCE]: {
     label: '임의적 추론',
     diagnosticRule:
       '증거 불충분 또는 반증이 존재하는데도 부정적 결론을 선행 확정한다.',
+    differentialRule:
+      '감정적 추론과 구분: 임의적 추론은 감정과 무관하게 논리적 비약으로 결론을 확정한다. 개인화와 구분: 임의적 추론은 타인/상황에 대한 결론도 포함한다(예: "저 사람이 나를 싫어한다"). 개인화는 자신에게 귀속되는 결론이다.',
   },
 };
 

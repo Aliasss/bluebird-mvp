@@ -162,7 +162,7 @@ ${JSON.stringify(example.output, null, 2)}`;
 
 function buildAnalysisPrompt(input: { trigger: string; thought: string }) {
   const distortionRules = Object.entries(BLUEBIRD_DISTORTION_TAXONOMY)
-    .map(([key, value]) => `- ${key}: ${value.diagnosticRule}`)
+    .map(([key, value]) => `- ${key}:\n  진단: ${value.diagnosticRule}\n  감별: ${value.differentialRule}`)
     .join('\n');
 
   return [
@@ -189,6 +189,8 @@ function buildAnalysisPrompt(input: { trigger: string; thought: string }) {
     '- 응답은 감정적 위로가 아니라 검증 가능한 분석만 포함한다.',
     '- probability_estimate는 0~100 정수 또는 null.',
     '- cas_signal 값은 0~1 범위.',
+    '- 경계 케이스에서는 반드시 differentialRule을 참조해 왜곡 유형을 확정하라.',
+    '- 복수 왜곡이 탐지되면 모두 포함하되, intensity로 주도 왜곡을 구분하라.',
     '',
     '[Few-shot Examples]',
     buildFewShotPromptBlock(),

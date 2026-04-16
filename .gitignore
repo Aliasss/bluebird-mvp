@@ -46,6 +46,7 @@ yarn-error.log*
 # Documentation (private)
 docs/**/*.md
 !docs/superpowers/specs/*.md
+!docs/superpowers/plans/*.md
 
 # Superpowers brainstorm sessions
 .superpowers/brainstorm/

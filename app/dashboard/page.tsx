@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { BookOpen, CheckCircle, Star } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { formatDate } from '@/lib/utils';
 import type { User } from '@supabase/supabase-js';
@@ -159,13 +160,8 @@ export default function DashboardPage() {
       {/* 메인 콘텐츠 */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* 환영 메시지 */}
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-8 mb-4 sm:mb-6 border border-background-tertiary shadow-none sm:shadow-sm">
-          <h2 className="text-xl md:text-2xl font-bold text-text-primary mb-2">
-            환영합니다! 👋
-          </h2>
-          <p className="text-sm text-text-secondary">
-            {user?.email}
-          </p>
+        <div className="mb-4 sm:mb-6">
+          <p className="text-sm text-text-secondary">{user?.email}</p>
         </div>
 
         {/* 통계 카드 */}
@@ -174,7 +170,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-medium text-text-secondary">전체 로그</h3>
               <div className="w-10 h-10 bg-primary bg-opacity-10 rounded-full flex items-center justify-center">
-                <span className="text-primary text-lg">📝</span>
+                <BookOpen size={20} className="text-primary" />
               </div>
             </div>
             <p className="text-2xl md:text-3xl font-bold text-text-primary">{stats.totalLogs}</p>
@@ -187,7 +183,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-medium text-text-secondary">완료한 행동</h3>
               <div className="w-10 h-10 bg-success bg-opacity-10 rounded-full flex items-center justify-center">
-                <span className="text-success text-lg">✓</span>
+                <CheckCircle size={20} className="text-success" />
               </div>
             </div>
             <p className="text-2xl md:text-3xl font-bold text-text-primary">{stats.completedActions}</p>
@@ -200,7 +196,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-medium text-text-secondary">자율성 지수</h3>
               <div className="w-10 h-10 bg-warning bg-opacity-10 rounded-full flex items-center justify-center">
-                <span className="text-warning text-lg">⭐</span>
+                <Star size={20} className="text-warning" />
               </div>
             </div>
             <p className="text-2xl md:text-3xl font-bold text-text-primary">{stats.autonomyScore}</p>

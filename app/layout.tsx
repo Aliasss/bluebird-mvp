@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
-import Link from 'next/link';
 import Script from 'next/script';
+import BottomTabBar from '@/components/ui/BottomTabBar';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -58,13 +58,7 @@ export default function RootLayout({
           `}
         </Script>
         {children}
-        <Link
-          href="/manual"
-          className="fixed bottom-6 right-6 z-50 bg-primary text-white text-sm font-medium px-4 py-3 rounded-full shadow-lg hover:bg-primary-dark transition-colors"
-          aria-label="Bluebird Technical Manual 열기"
-        >
-          Manual
-        </Link>
+        <BottomTabBar />
       </body>
     </html>
   );

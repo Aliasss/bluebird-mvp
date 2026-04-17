@@ -136,12 +136,6 @@ export default function DashboardPage() {
           <h1 className="text-xl md:text-2xl font-bold text-primary">Project Bluebird</h1>
           <div className="flex items-center gap-4">
             <button
-              onClick={() => router.push('/insights')}
-              className="text-sm text-primary hover:underline transition-colors"
-            >
-              인사이트
-            </button>
-            <button
               onClick={() => router.push('/manual')}
               className="text-sm text-text-secondary hover:underline transition-colors"
             >
@@ -158,7 +152,7 @@ export default function DashboardPage() {
       </header>
 
       {/* 메인 콘텐츠 */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-24">
         {/* 환영 메시지 */}
         <div className="mb-4 sm:mb-6">
           <p className="text-sm text-text-secondary">{user?.email}</p>

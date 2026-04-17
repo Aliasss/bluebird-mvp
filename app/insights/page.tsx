@@ -16,6 +16,11 @@ type IntensityPoint = { type: string; avgIntensity: number };
 export default function InsightsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/');
+  };
   const [totalAnalyses, setTotalAnalyses] = useState(0);
   const [topDistortion, setTopDistortion] = useState<string>('—');
   const [_avgAutonomy, setAvgAutonomy] = useState<number>(0);
@@ -124,14 +129,27 @@ export default function InsightsPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="bg-white border-b border-background-tertiary px-4 sm:px-6 py-3 sm:py-4 flex items-center gap-4">
-        <button onClick={() => router.push('/dashboard')} className="text-primary font-semibold">
-          ← 대시보드
-        </button>
-        <h1 className="text-lg font-bold text-text-primary">인사이트</h1>
+      <header className="bg-white border-b border-background-tertiary">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+          <h1 className="text-xl font-bold text-primary">Project Bluebird</h1>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => router.push('/manual')}
+              className="text-sm text-text-secondary hover:underline transition-colors"
+            >
+              Manual
+            </button>
+            <button
+              onClick={handleLogout}
+              className="text-sm text-text-secondary hover:text-primary transition-colors"
+            >
+              로그아웃
+            </button>
+          </div>
+        </div>
       </header>
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-24 space-y-6">
 
         {/* 요약 카드 */}
         <div className="grid grid-cols-3 gap-3">

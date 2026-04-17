@@ -8,6 +8,8 @@ import {
 } from 'recharts';
 import { supabase } from '@/lib/supabase/client';
 import { DistortionType, DistortionTypeKorean } from '@/types';
+import ArchetypePanel from '@/components/ui/ArchetypePanel';
+import { getArchetypeResult, type ArchetypeResult } from '@/lib/utils/archetype';
 
 type Period = '7d' | '30d' | 'all';
 type DistortionFreq = { name: string; count: number };
@@ -48,6 +50,7 @@ export default function InsightsPage() {
   const [autonomyTrend, setAutonomyTrend] = useState<AutonomyPoint[]>([]);
   const [intensityData, setIntensityData] = useState<IntensityPoint[]>([]);
   const [growth, setGrowth] = useState<GrowthMetrics>({ intensityDelta: null, completionDelta: null, mostImprovedType: null });
+  const [archetypeResult, setArchetypeResult] = useState<ArchetypeResult | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -150,6 +153,20 @@ export default function InsightsPage() {
         setGrowth({ intensityDelta: null, completionDelta: null, mostImprovedType: null });
       }
 
+      // 아키타입 계산 (전체 기간 기준 — period 무관)
+      const { data: allAnalysis } = await supabase
+        .from('analysis')
+        .select('distortion_type, logs!inner(user_id)')
+        .eq('logs.user_id', user.id);
+
+      const allRows = (allAnalysis ?? []) as Array<{ distortion_type: string }>;
+      const distortionCounts: Partial<Record<DistortionType, number>> = {};
+      allRows.forEach((r) => {
+        const t = r.distortion_type as DistortionType;
+        distortionCounts[t] = (distortionCounts[t] ?? 0) + 1;
+      });
+      setArchetypeResult(getArchetypeResult(distortionCounts, allRows.length));
+
       setLoading(false);
     };
     load();
@@ -178,6 +195,9 @@ export default function InsightsPage() {
       </header>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-24 space-y-6">
+
+        {/* 아키타입 패널 */}
+        <ArchetypePanel result={archetypeResult} />
 
         {/* 기간 필터 */}
         <div className="flex gap-2">

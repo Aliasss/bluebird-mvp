@@ -6,9 +6,11 @@ import { BookOpen, CheckCircle, Star } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { formatDate } from '@/lib/utils';
 import StreakBanner from '@/components/ui/StreakBanner';
+import ArchetypeCard from '@/components/ui/ArchetypeCard';
 import { calculateStreak, type StreakResult } from '@/lib/utils/streak';
+import { getArchetypeResult, type ArchetypeResult } from '@/lib/utils/archetype';
 import type { User } from '@supabase/supabase-js';
-import type { Log } from '@/types';
+import type { Log, DistortionType } from '@/types';
 
 type RecentActionItem = {
   id: string;
@@ -34,6 +36,7 @@ export default function DashboardPage() {
     autonomyScore: 0,
   });
   const [streak, setStreak] = useState<StreakResult>({ current: 0, best: 0, doneToday: false });
+  const [archetype, setArchetype] = useState<ArchetypeResult | null>(null);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -111,7 +114,7 @@ export default function DashboardPage() {
       // 스트릭 계산
       const { data: analysisData } = await supabase
         .from('analysis')
-        .select('created_at, logs!inner(user_id)')
+        .select('distortion_type, created_at, logs!inner(user_id)')
         .eq('logs.user_id', userId);
 
       const KST_OFFSET = 9 * 60 * 60 * 1000;
@@ -125,6 +128,17 @@ export default function DashboardPage() {
         ),
       ];
       setStreak(calculateStreak(analysisDateStrings));
+
+      // 아키타입 계산
+      const distortionCounts: Partial<Record<DistortionType, number>> = {};
+      (analysisData ?? []).forEach((r) => {
+        const t = (r as { distortion_type: string }).distortion_type as DistortionType;
+        distortionCounts[t] = (distortionCounts[t] ?? 0) + 1;
+      });
+      const totalAnalysisCount = new Set(analysisDateStrings).size > 0
+        ? (analysisData ?? []).length
+        : 0;
+      setArchetype(getArchetypeResult(distortionCounts, totalAnalysisCount));
 
       setStats({
         totalLogs: totalLogs || 0,
@@ -180,6 +194,7 @@ export default function DashboardPage() {
         </div>
 
         <StreakBanner streak={streak} />
+        <ArchetypeCard result={archetype} onClick={() => router.push('/insights')} />
 
         {/* 통계 카드 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">

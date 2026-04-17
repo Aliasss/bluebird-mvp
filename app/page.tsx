@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { ExternalLink } from 'lucide-react';
 
 export default function HomePage() {
   const router = useRouter();
@@ -39,6 +40,9 @@ export default function HomePage() {
 
         {/* CTA */}
         <div className="space-y-3 pt-2">
+          <p className="text-xs text-text-tertiary text-center">
+            CBT, CAS, 전망이론을 기반으로 설계된 인지 분석 도구
+          </p>
           <button
             className="w-full bg-primary text-white font-semibold py-4 px-6 rounded-2xl touch-manipulation active:scale-95 transition-transform"
             onClick={() => router.push('/auth/signup')}
@@ -53,9 +57,13 @@ export default function HomePage() {
           </button>
         </div>
 
-        <p className="text-xs text-text-tertiary">
-          PWA — 홈 화면에 추가하면 앱처럼 사용할 수 있습니다
-        </p>
+        <button
+          onClick={() => router.push('/install')}
+          className="flex items-center justify-center gap-1.5 text-xs text-text-tertiary hover:text-primary transition-colors mx-auto"
+        >
+          <ExternalLink size={11} />
+          홈 화면에 추가하고 Daily 스트릭을 시작하세요
+        </button>
       </div>
     </main>
   );

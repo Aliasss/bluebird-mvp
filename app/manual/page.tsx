@@ -3,142 +3,118 @@
 import Link from 'next/link';
 import TheoryValueCurveChart from '@/components/charts/theory-value-curve-chart';
 import {
-  DISTORTION_GLOSSARY,
-  DUAL_PROCESS_TABLE,
-  PROSPECT_THEORY_TERMS,
-  TECHNICAL_MANUAL_HEADER,
-  TECHNICAL_MANUAL_SECTIONS,
+  MANUAL_HEADER,
+  MANUAL_PREFACE,
+  MANUAL_SECTIONS,
+  PROSPECT_THEORY_CHART_NOTE,
+  type ManualSubSection,
 } from '@/lib/content/technical-manual';
 
-const SECTION_LINKS = [
-  { id: 'intro', label: '개요', shortLabel: '개요' },
-  { id: 'core-01', label: '[CORE-01] 이중 프로세스 시스템', shortLabel: '이중 프로세스' },
-  { id: 'dyn-02', label: '[DYN-02] 전망이론과 가치 함수', shortLabel: '전망이론' },
-  { id: 'dbug-03', label: '[DBUG-03] 인지 오류 Taxonomy', shortLabel: '인지 오류' },
-  { id: 'goal-04', label: '[GOAL-04] 실존적 자율성', shortLabel: '실존적 자율성' },
-] as const;
+function SubSectionBlock({ sub }: { sub: ManualSubSection }) {
+  return (
+    <div className="rounded-xl border border-background-tertiary p-4 sm:p-5 space-y-3">
+      <h3 className="text-base font-semibold text-text-primary">{sub.title}</h3>
+      <p className="text-sm text-text-secondary leading-relaxed">{sub.body}</p>
+      {sub.items && sub.items.length > 0 && (
+        <ul className="space-y-2">
+          {sub.items.map((item) => (
+            <li key={item.label} className="text-sm text-text-secondary">
+              <span className="font-medium text-text-primary">{item.label}: </span>
+              {item.text}
+            </li>
+          ))}
+        </ul>
+      )}
+      {sub.debuggingQuestion && (
+        <div className="mt-2 bg-primary bg-opacity-5 border border-primary border-opacity-20 rounded-lg px-4 py-2">
+          <p className="text-xs font-semibold text-primary mb-1">디버깅 질문</p>
+          <p className="text-sm text-text-primary italic">{sub.debuggingQuestion}</p>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function ManualPage() {
-  const coreSection = TECHNICAL_MANUAL_SECTIONS.find((section) => section.id === 'core-01');
-  const dynSection = TECHNICAL_MANUAL_SECTIONS.find((section) => section.id === 'dyn-02');
-  const dbugSection = TECHNICAL_MANUAL_SECTIONS.find((section) => section.id === 'dbug-03');
-  const goalSection = TECHNICAL_MANUAL_SECTIONS.find((section) => section.id === 'goal-04');
-
   return (
     <main className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-6 sm:gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)] gap-6 sm:gap-8">
+
+        {/* 사이드바 */}
         <aside className="lg:sticky lg:top-8 lg:self-start">
-          <div className="bg-white border border-background-tertiary rounded-2xl p-4 space-y-3">
-            <p className="text-xs text-text-secondary">Technical Manual Navigation</p>
-            <nav className="space-y-2">
-              {SECTION_LINKS.map((item) => (
-                <a
-                  key={item.id}
-                  href={`#${item.id}`}
-                  className="block text-sm text-text-primary hover:text-primary transition-colors"
-                >
-                  <span className="lg:hidden">{item.shortLabel}</span>
-                  <span className="hidden lg:inline">{item.label}</span>
-                </a>
-              ))}
-            </nav>
-            <div className="pt-3 border-t border-background-tertiary">
-              <Link
-                href="/dashboard"
-                className="text-sm text-primary hover:underline"
+          <div className="bg-white border border-background-tertiary rounded-2xl p-4 space-y-2">
+            <p className="text-xs text-text-secondary mb-1">목차</p>
+            <a href="#preface" className="block text-sm text-text-primary hover:text-primary transition-colors py-0.5">
+              <span className="lg:hidden">서문</span>
+              <span className="hidden lg:inline">0. 서문</span>
+            </a>
+            {MANUAL_SECTIONS.map((section) => (
+              <a
+                key={section.id}
+                href={`#${section.id}`}
+                className="block text-sm text-text-primary hover:text-primary transition-colors py-0.5"
               >
+                <span className="lg:hidden">{section.navLabel}</span>
+                <span className="hidden lg:inline">{section.title.split(':')[0]}.</span>
+              </a>
+            ))}
+            <div className="pt-3 border-t border-background-tertiary">
+              <Link href="/dashboard" className="text-sm text-primary hover:underline">
                 대시보드로 돌아가기
               </Link>
             </div>
           </div>
         </aside>
 
-        <div className="space-y-8">
-          <section id="intro" className="bg-white rounded-2xl p-5 sm:p-8 border border-background-tertiary">
-            <p className="text-xs uppercase tracking-wide text-text-secondary mb-3">Bluebird Knowledge Base</p>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-text-primary leading-tight mb-4">
-              {TECHNICAL_MANUAL_HEADER.title}
+        {/* 본문 */}
+        <div className="space-y-6 sm:space-y-8">
+
+          {/* 헤더 */}
+          <section className="bg-white rounded-2xl p-5 sm:p-8 border border-background-tertiary">
+            <p className="text-xs uppercase tracking-wide text-text-secondary mb-2">Bluebird Knowledge Base</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary leading-tight mb-1">
+              {MANUAL_HEADER.title}
             </h1>
-            <p className="text-base text-text-secondary mb-3">
-              {TECHNICAL_MANUAL_HEADER.subtitle}
-            </p>
-            <p className="text-sm text-text-secondary">
-              Tone: {TECHNICAL_MANUAL_HEADER.tone}
-            </p>
+            <p className="text-sm sm:text-base text-text-secondary">{MANUAL_HEADER.subtitle}</p>
           </section>
 
-          <section id="core-01" className="bg-white rounded-2xl p-5 sm:p-8 border border-background-tertiary space-y-5">
-            <h2 className="text-xl sm:text-2xl font-semibold text-text-primary">{coreSection?.title}</h2>
-            <p className="text-text-secondary leading-relaxed">{coreSection?.content}</p>
-            <div className="overflow-x-auto rounded-xl border border-background-tertiary">
-              <table className="min-w-full text-sm">
-                <thead className="bg-background-secondary">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-text-secondary font-medium">구분</th>
-                    <th className="px-4 py-3 text-left text-text-secondary font-medium">특징</th>
-                    <th className="px-4 py-3 text-left text-text-secondary font-medium">속도</th>
-                    <th className="px-4 py-3 text-left text-text-secondary font-medium">에너지 소모</th>
-                    <th className="px-4 py-3 text-left text-text-secondary font-medium">Bluebird 정의</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {DUAL_PROCESS_TABLE.map((row) => (
-                    <tr key={row.name} className="border-t border-background-tertiary">
-                      <td className="px-4 py-4 text-text-primary">{row.name}</td>
-                      <td className="px-4 py-4 text-text-secondary">{row.trait}</td>
-                      <td className="px-4 py-4 text-text-secondary">{row.speed}</td>
-                      <td className="px-4 py-4 text-text-secondary">{row.energy}</td>
-                      <td className="px-4 py-4 text-text-secondary">{row.bluebirdDefinition}</td>
-                    </tr>
+          {/* 서문 */}
+          <section id="preface" className="bg-white rounded-2xl p-5 sm:p-8 border border-background-tertiary space-y-4">
+            <h2 className="text-lg sm:text-xl font-semibold text-text-primary">0. 서문: 왜 당신의 뇌는 디버깅이 필요한가?</h2>
+            {MANUAL_PREFACE.paragraphs.map((p, i) => (
+              <p key={i} className="text-sm sm:text-base text-text-secondary leading-relaxed">{p}</p>
+            ))}
+          </section>
+
+          {/* 각 섹션 */}
+          {MANUAL_SECTIONS.map((section) => (
+            <section
+              key={section.id}
+              id={section.id}
+              className="bg-white rounded-2xl p-5 sm:p-8 border border-background-tertiary space-y-4 sm:space-y-5"
+            >
+              <h2 className="text-lg sm:text-xl font-semibold text-text-primary">{section.title}</h2>
+              <p className="text-sm sm:text-base text-text-secondary leading-relaxed">{section.intro}</p>
+
+              {/* 전망이론 섹션에만 차트 삽입 */}
+              {section.id === 'dyn-02' && (
+                <div className="bg-background-secondary rounded-xl p-4 sm:p-5">
+                  <p className="text-xs text-text-secondary mb-3">{PROSPECT_THEORY_CHART_NOTE}</p>
+                  <TheoryValueCurveChart />
+                </div>
+              )}
+
+              {/* 서브섹션 */}
+              {section.subSections && section.subSections.length > 0 && (
+                <div className="space-y-3">
+                  {section.subSections.map((sub) => (
+                    <SubSectionBlock key={sub.id} sub={sub} />
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
+                </div>
+              )}
+            </section>
+          ))}
 
-          <section id="dyn-02" className="bg-white rounded-2xl p-5 sm:p-8 border border-background-tertiary space-y-5">
-            <h2 className="text-xl sm:text-2xl font-semibold text-text-primary">{dynSection?.title}</h2>
-            <p className="text-text-secondary leading-relaxed">{dynSection?.content}</p>
-            <div className="bg-background-secondary rounded-xl p-5">
-              <p className="text-sm text-text-secondary mb-3">Prospect Theory Value Function (S-Curve Simulation)</p>
-              <TheoryValueCurveChart />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {PROSPECT_THEORY_TERMS.map((term) => (
-                <article key={term.term} className="rounded-xl border border-background-tertiary p-4 space-y-2">
-                  <h3 className="text-text-primary font-medium">{term.term}</h3>
-                  <p className="text-sm text-text-secondary">{term.definition}</p>
-                  <p className="text-sm text-text-secondary">{term.mechanism}</p>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          <section id="dbug-03" className="bg-white rounded-2xl p-5 sm:p-8 border border-background-tertiary space-y-5">
-            <h2 className="text-xl sm:text-2xl font-semibold text-text-primary">{dbugSection?.title}</h2>
-            <p className="text-text-secondary leading-relaxed">{dbugSection?.content}</p>
-            <div className="space-y-3">
-              {DISTORTION_GLOSSARY.map((item, index) => (
-                <article key={item.term} className="rounded-xl border border-background-tertiary p-5">
-                  <p className="text-xs text-text-secondary mb-2">ITEM {index + 1}</p>
-                  <h3 className="text-lg text-text-primary mb-2">{item.term}</h3>
-                  <div className="space-y-2 text-sm">
-                    <p className="text-text-secondary">
-                      기술적 정의: {item.technicalDefinition}
-                    </p>
-                    <p className="text-text-secondary">
-                      Bluebird 분석: {item.bluebirdAnalysis}
-                    </p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          <section id="goal-04" className="bg-white rounded-2xl p-5 sm:p-8 border border-background-tertiary space-y-5">
-            <h2 className="text-xl sm:text-2xl font-semibold text-text-primary">{goalSection?.title}</h2>
-            <p className="text-text-secondary leading-relaxed">{goalSection?.content}</p>
-          </section>
         </div>
       </div>
     </main>

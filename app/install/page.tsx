@@ -16,7 +16,7 @@ export default function InstallPage() {
           </div>
           <h1 className="text-2xl font-bold text-text-primary">홈 화면에 추가하기</h1>
           <p className="text-sm text-text-secondary">
-            홈 화면에 추가하면 스트릭을 유지하기 훨씬 쉬워집니다.
+            홈 화면에 추가하면 연속 기록을 유지하기 훨씬 쉬워집니다.
           </p>
         </div>
 

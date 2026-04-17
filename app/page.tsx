@@ -62,7 +62,7 @@ export default function HomePage() {
           className="flex items-center justify-center gap-1.5 text-xs text-text-tertiary hover:text-primary transition-colors mx-auto"
         >
           <ExternalLink size={11} />
-          홈 화면에 추가하고 Daily 스트릭을 시작하세요
+          홈 화면에 추가하고 연속 기록을 시작하세요
         </button>
       </div>
     </main>

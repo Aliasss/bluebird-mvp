@@ -5,7 +5,7 @@ export default function StreakBanner({ streak }: { streak: StreakResult }) {
     return (
       <div className="bg-background-secondary border border-background-tertiary rounded-xl p-4 flex items-center gap-3 mb-4 sm:mb-6">
         <span className="text-2xl">🔥</span>
-        <p className="text-sm text-text-secondary">오늘 첫 분석으로 스트릭을 시작해보세요</p>
+        <p className="text-sm text-text-secondary">오늘 첫 분석으로 연속 기록을 시작해보세요</p>
       </div>
     );
   }

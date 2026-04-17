@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { BookOpen, CheckCircle, Star } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { formatDate } from '@/lib/utils';
+import StreakBanner from '@/components/ui/StreakBanner';
+import { calculateStreak, type StreakResult } from '@/lib/utils/streak';
 import type { User } from '@supabase/supabase-js';
 import type { Log } from '@/types';
 
@@ -31,6 +33,7 @@ export default function DashboardPage() {
     completedActions: 0,
     autonomyScore: 0,
   });
+  const [streak, setStreak] = useState<StreakResult>({ current: 0, best: 0, doneToday: false });
 
   useEffect(() => {
     const checkUser = async () => {
@@ -105,6 +108,24 @@ export default function DashboardPage() {
 
       const totalScore = interventionsData?.reduce((sum, item) => sum + (item.autonomy_score || 0), 0) || 0;
 
+      // 스트릭 계산
+      const { data: analysisData } = await supabase
+        .from('analysis')
+        .select('created_at, logs!inner(user_id)')
+        .eq('logs.user_id', userId);
+
+      const KST_OFFSET = 9 * 60 * 60 * 1000;
+      const analysisDateStrings = [
+        ...new Set(
+          (analysisData ?? []).map((r) =>
+            new Date(new Date((r as { created_at: string }).created_at).getTime() + KST_OFFSET)
+              .toISOString()
+              .slice(0, 10)
+          )
+        ),
+      ];
+      setStreak(calculateStreak(analysisDateStrings));
+
       setStats({
         totalLogs: totalLogs || 0,
         completedActions: completedActions || 0,
@@ -157,6 +178,8 @@ export default function DashboardPage() {
         <div className="mb-4 sm:mb-6">
           <p className="text-sm text-text-secondary">{user?.email}</p>
         </div>
+
+        <StreakBanner streak={streak} />
 
         {/* 통계 카드 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">

@@ -30,7 +30,7 @@ export default function BottomTabBar() {
         </button>
 
         {/* FAB — 기록 */}
-        <div className="flex-1 flex flex-col items-center relative">
+        <div className="flex-1 flex justify-center relative">
           <button
             onClick={() => router.push('/log')}
             className="absolute -top-7 w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform touch-manipulation"
@@ -38,7 +38,6 @@ export default function BottomTabBar() {
           >
             <PenLine size={24} className="text-white" />
           </button>
-          <span className="text-[11px] text-text-tertiary mt-6">기록</span>
         </div>
 
         {/* 인사이트 탭 */}

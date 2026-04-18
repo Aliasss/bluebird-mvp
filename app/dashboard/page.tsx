@@ -171,6 +171,12 @@ export default function DashboardPage() {
           <h1 className="text-xl md:text-2xl font-bold text-primary">Project Bluebird</h1>
           <div className="flex items-center gap-4">
             <button
+              onClick={() => router.push('/our-philosophy')}
+              className="text-sm text-text-secondary hover:underline transition-colors"
+            >
+              철학
+            </button>
+            <button
               onClick={() => router.push('/manual')}
               className="text-sm text-text-secondary hover:underline transition-colors"
             >

@@ -38,6 +38,14 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* 철학 페이지 링크 */}
+        <button
+          onClick={() => router.push('/our-philosophy')}
+          className="w-full text-sm text-text-secondary hover:text-primary transition-colors py-1"
+        >
+          인지 왜곡이 왜 중요한가요? →
+        </button>
+
         {/* CTA */}
         <div className="space-y-3 pt-2">
           <p className="text-xs text-text-tertiary text-center">

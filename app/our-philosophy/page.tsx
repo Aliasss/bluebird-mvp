@@ -75,7 +75,7 @@ export default function OurPhilosophyPage() {
     <main className="min-h-screen bg-background">
 
       {/* 헤더 내비게이션 */}
-      <header className="bg-white border-b border-background-tertiary">
+      <header className="sticky top-0 z-40 bg-white border-b border-background-tertiary">
         <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
           <button
             onClick={() => router.push('/')}

@@ -244,7 +244,7 @@ function DashboardContent() {
         </div>
       )}
       {/* 헤더 */}
-      <header className="bg-white border-b border-background-tertiary">
+      <header className="sticky top-0 z-40 bg-white border-b border-background-tertiary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <h1 className="text-xl md:text-2xl font-bold text-primary">Project Bluebird</h1>
           <div className="flex items-center gap-4">

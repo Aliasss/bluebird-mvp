@@ -10,15 +10,62 @@ import SkeletonCard from '@/components/ui/SkeletonCard';
 type ActionState = {
   log: Log | null;
   distortions: DistortionAnalysis[];
+  dominantDistortion: string | undefined;
   existingAction: string;
   isCompleted: boolean;
   autonomyScore: number | null;
 };
 
-function suggestTinyHabit(trigger: string): string[] {
-  const shortTrigger = trigger.slice(0, 24);
+type DistortionSuggestions = {
+  cue: string;
+  action: string;
+  reflection: string;
+};
+
+const DISTORTION_HABITS: Record<string, DistortionSuggestions> = {
+  catastrophizing: {
+    cue: '최악의 시나리오가 머릿속에 떠오르는 순간',
+    action: '그 결과가 실제로 일어날 확률을 0~100%로 적고, 반대 증거 1가지를 찾는다. (5분)',
+    reflection: '실제 확률이 내가 체감한 것보다 낮았는지 1문장으로 기록한다.',
+  },
+  all_or_nothing: {
+    cue: '"완전히 실패했다"는 생각이 드는 순간',
+    action: '오늘 완전히 실패하지 않은 것 3가지를 메모 앱에 적는다. (3분)',
+    reflection: '부분적으로 잘 된 점 1가지를 인정하는 문장을 남긴다.',
+  },
+  emotional_reasoning: {
+    cue: '감정이 사실처럼 느껴지는 순간',
+    action: '"나는 _라고 느낀다(감정)"와 "실제로 _이다(사실)"를 분리해서 적는다. (3분)',
+    reflection: '감정과 사실 중 어느 쪽이 더 객관적 근거를 갖는지 1문장으로 쓴다.',
+  },
+  personalization: {
+    cue: '모든 책임이 나에게 있다는 생각이 드는 순간',
+    action: '이 상황에 영향을 준 외부 요인 3가지를 적는다. (5분)',
+    reflection: '내 책임의 비율을 % 단위로 추정하고, 나머지의 원인을 1문장으로 쓴다.',
+  },
+  arbitrary_inference: {
+    cue: '증거 없이 결론을 내린다는 느낌이 드는 순간',
+    action: '지금 내린 결론을 가설로 바꾸고, 이를 뒷받침하는 증거와 반박하는 증거를 각 1개씩 찾는다. (5분)',
+    reflection: '가설이 확정된 사실인지, 아직 미확인인지를 1문장으로 판단한다.',
+  },
+};
+
+function suggestTinyHabit(trigger: string, dominantDistortion?: string): string[] {
+  const shortTrigger = trigger.slice(0, 30);
+  const habits = dominantDistortion
+    ? DISTORTION_HABITS[dominantDistortion]
+    : null;
+
+  if (habits) {
+    return [
+      `[${habits.cue}] "${shortTrigger}" 같은 상황에서 → ${habits.action}`,
+      habits.reflection,
+      '완료 직후 오늘의 기분 변화를 1점(나쁨)~5점(좋음)으로 Bluebird에 기록한다.',
+    ];
+  }
+
   return [
-    `오늘 ${shortTrigger} 상황이 오면, 2분 동안 메모 앱에 사실/해석을 분리해서 적는다.`,
+    `"${shortTrigger}" 상황이 다시 오면, 2분 동안 사실과 해석을 분리해서 적는다.`,
     '지금 바로 5분 타이머를 켜고 실행 가능한 가장 작은 행동 1가지를 시작한다.',
     '실행 직후 체크박스에 완료 표시하고, 체감 변화를 1문장으로 남긴다.',
   ];
@@ -31,6 +78,7 @@ export default function ActionPage() {
   const [state, setState] = useState<ActionState>({
     log: null,
     distortions: [],
+    dominantDistortion: undefined,
     existingAction: '',
     isCompleted: false,
     autonomyScore: null,
@@ -82,10 +130,15 @@ export default function ActionPage() {
           segment: row.logic_error_segment,
         })) as DistortionAnalysis[];
 
+        const dominantDistortion = distortions.length > 0
+          ? distortions.reduce((a, b) => a.intensity >= b.intensity ? a : b).type
+          : undefined;
+
         const existingAction = String(interventionResult.data?.final_action ?? '');
         setState({
           log: logResult.data,
           distortions,
+          dominantDistortion,
           existingAction,
           isCompleted: Boolean(interventionResult.data?.is_completed),
           autonomyScore:
@@ -106,8 +159,8 @@ export default function ActionPage() {
   }, [params.id, router]);
 
   const suggestions = useMemo(
-    () => suggestTinyHabit(state.log?.trigger ?? '이 상황'),
-    [state.log?.trigger]
+    () => suggestTinyHabit(state.log?.trigger ?? '이 상황', state.dominantDistortion),
+    [state.log?.trigger, state.dominantDistortion]
   );
 
   const validateAction = (value: string) => {

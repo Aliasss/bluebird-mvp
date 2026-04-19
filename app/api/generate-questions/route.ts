@@ -196,40 +196,18 @@ export async function POST(request: Request) {
     }
 
     if (existingIntervention?.id) {
-      let { error: updateError } = await supabase
+      const { error: updateError } = await supabase
         .from('intervention')
-        .update({
-          socratic_questions: normalizedQuestions,
-          theory_context: theoryContext,
-        })
+        .update({ socratic_questions: normalizedQuestions, theory_context: theoryContext })
         .eq('id', existingIntervention.id);
-
-      if (updateError) {
-        const legacyUpdate = await supabase
-          .from('intervention')
-          .update({ socratic_questions: normalizedQuestions })
-          .eq('id', existingIntervention.id);
-        updateError = legacyUpdate.error;
-      }
 
       if (updateError) {
         return NextResponse.json({ error: '질문 저장에 실패했습니다.' }, { status: 500 });
       }
     } else {
-      let { error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from('intervention')
-        .insert({
-          log_id: logId,
-          socratic_questions: normalizedQuestions,
-          theory_context: theoryContext,
-        });
-
-      if (insertError) {
-        const legacyInsert = await supabase
-          .from('intervention')
-          .insert({ log_id: logId, socratic_questions: normalizedQuestions });
-        insertError = legacyInsert.error;
-      }
+        .insert({ log_id: logId, socratic_questions: normalizedQuestions, theory_context: theoryContext });
 
       if (insertError) {
         return NextResponse.json({ error: '질문 저장에 실패했습니다.' }, { status: 500 });

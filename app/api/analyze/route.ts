@@ -219,18 +219,7 @@ export async function POST(request: Request) {
           '생각을 사실이 아닌 가설로 두고 증거를 분리하세요.',
       }));
 
-      let insertError = (await supabase.from('analysis').insert(rowsWithProtocolFields)).error;
-
-      if (insertError) {
-        const rowsLegacy = distortions.map((item) => ({
-          log_id: logId,
-          distortion_type: item.type,
-          intensity: item.intensity,
-          logic_error_segment: item.segment,
-        }));
-        const legacyInsert = await supabase.from('analysis').insert(rowsLegacy);
-        insertError = legacyInsert.error;
-      }
+      const { error: insertError } = await supabase.from('analysis').insert(rowsWithProtocolFields);
 
       if (insertError) {
         return NextResponse.json(

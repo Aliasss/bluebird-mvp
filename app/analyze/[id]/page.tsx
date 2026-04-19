@@ -485,7 +485,7 @@ export default function AnalyzePage() {
                   질문 {currentQuestion + 1} / {questions.length}
                 </span>
                 <span className="text-primary font-medium">
-                  숫자 또는 %를 포함해 답변해주세요
+                  구체적인 근거를 담아 답변해주세요
                 </span>
               </div>
 

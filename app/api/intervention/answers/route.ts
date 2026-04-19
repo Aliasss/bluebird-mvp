@@ -13,10 +13,6 @@ const saveAnswersSchema = z.object({
   answers: z.array(z.string().trim().min(1).max(500)).length(3),
 });
 
-function hasNumericContent(value: string): boolean {
-  return /\d+/.test(value);
-}
-
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as SaveAnswersRequestBody;
@@ -28,13 +24,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: '입력 형식이 올바르지 않습니다.' }, { status: 400 });
     }
     const { logId, answers } = parsedBody.data;
-
-    if (answers.some((answer) => !hasNumericContent(answer))) {
-      return NextResponse.json(
-        { error: '각 답변에는 숫자 또는 % 정보가 포함되어야 합니다.' },
-        { status: 400 }
-      );
-    }
 
     const supabase = await createServerSupabaseClient();
     const {

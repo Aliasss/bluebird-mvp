@@ -202,7 +202,7 @@ export default function LogPage() {
                 disabled={loading || thought.length < 10}
                 className="w-full bg-primary text-white font-semibold py-4 px-6 rounded-2xl touch-manipulation active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? '분석 중...' : '분석 시작'}
+                {loading ? '저장 중...' : '저장하기'}
               </button>
             </>
           )}

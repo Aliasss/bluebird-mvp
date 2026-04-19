@@ -187,6 +187,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: '기존 분석 데이터 삭제에 실패했습니다.' }, { status: 500 });
     }
 
+    if (distortions.length === 0) {
+      // 왜곡이 없어도 스트릭 적립을 위해 분석 완료 마커 삽입
+      await supabase.from('analysis').insert({
+        log_id: logId,
+        distortion_type: null,
+        intensity: 0,
+        logic_error_segment: '',
+      });
+    }
+
     if (distortions.length > 0) {
       const rowsWithProtocolFields = distortions.map((item) => ({
         log_id: logId,

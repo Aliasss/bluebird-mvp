@@ -129,15 +129,16 @@ export default function DashboardPage() {
       ];
       setStreak(calculateStreak(analysisDateStrings));
 
-      // 아키타입 계산
+      // 아키타입 계산 (placeholder row 제외)
       const distortionCounts: Partial<Record<DistortionType, number>> = {};
-      (analysisData ?? []).forEach((r) => {
+      const distortionRows = (analysisData ?? []).filter(
+        (r) => (r as { distortion_type: string | null }).distortion_type != null
+      );
+      distortionRows.forEach((r) => {
         const t = (r as { distortion_type: string }).distortion_type as DistortionType;
         distortionCounts[t] = (distortionCounts[t] ?? 0) + 1;
       });
-      const totalAnalysisCount = new Set(analysisDateStrings).size > 0
-        ? (analysisData ?? []).length
-        : 0;
+      const totalAnalysisCount = distortionRows.length;
       setArchetype(getArchetypeResult(distortionCounts, totalAnalysisCount));
 
       setStats({

@@ -429,7 +429,7 @@ function DashboardContent() {
             </div>
           ) : (
             <div className="space-y-4">
-              {(showAllLogs ? logs : logs.slice(0, 5)).map((log) => (
+              {(showAllLogs ? logs : logs.slice(0, 3)).map((log) => (
                 <div
                   key={log.id}
                   onClick={() => router.push(`/analyze/${log.id}`)}
@@ -444,7 +444,7 @@ function DashboardContent() {
                   <p className="text-sm text-text-secondary line-clamp-2">{log.thought}</p>
                 </div>
               ))}
-              {logs.length > 5 && !showAllLogs && (
+              {logs.length > 3 && !showAllLogs && (
                 <button
                   onClick={() => setShowAllLogs(true)}
                   className="w-full py-2 text-sm text-primary font-semibold border border-primary border-opacity-30 rounded-xl hover:bg-primary hover:bg-opacity-5 transition-colors"
@@ -465,7 +465,7 @@ function DashboardContent() {
             </p>
           ) : (
             <div className="space-y-3">
-              {(showAllActions ? recentActions : recentActions.slice(0, 5)).map((item) => (
+              {(showAllActions ? recentActions : recentActions.slice(0, 3)).map((item) => (
                 <div
                   key={item.id}
                   onClick={() => router.push(`/action/${item.log_id}`)}
@@ -496,7 +496,7 @@ function DashboardContent() {
                   </div>
                 </div>
               ))}
-              {recentActions.length > 5 && !showAllActions && (
+              {recentActions.length > 3 && !showAllActions && (
                 <button
                   onClick={() => setShowAllActions(true)}
                   className="w-full py-2 text-sm text-primary font-semibold border border-primary border-opacity-30 rounded-xl hover:bg-primary hover:bg-opacity-5 transition-colors"

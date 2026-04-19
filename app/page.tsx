@@ -24,15 +24,15 @@ export default function HomePage() {
           <p className="text-xs font-semibold uppercase tracking-wide text-text-tertiary">이런 순간에 쓰세요</p>
           <div className="space-y-3">
             <div className="flex gap-3 items-start">
-              <span className="text-primary font-bold mt-0.5">—</span>
+              <span className="text-primary font-bold mt-0.5">✦</span>
               <p className="text-sm text-text-secondary">발표에서 실수한 뒤 "나는 항상 이런다"는 생각이 들 때</p>
             </div>
             <div className="flex gap-3 items-start">
-              <span className="text-primary font-bold mt-0.5">—</span>
+              <span className="text-primary font-bold mt-0.5">✦</span>
               <p className="text-sm text-text-secondary">친구 답장이 늦어서 "날 싫어하나"라는 생각이 들 때</p>
             </div>
             <div className="flex gap-3 items-start">
-              <span className="text-primary font-bold mt-0.5">—</span>
+              <span className="text-primary font-bold mt-0.5">✦</span>
               <p className="text-sm text-text-secondary">잘 될 것 같았는데 "어차피 망할 것 같다"는 느낌이 들 때</p>
             </div>
           </div>

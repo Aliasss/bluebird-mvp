@@ -539,19 +539,22 @@ export default function AnalyzePage() {
           )}
         </div>
 
-        <div className="flex justify-center gap-2 sm:gap-3">
-          <button
-            onClick={() => router.push(`/visualize/${params.id}`)}
-            className="bg-white border border-primary text-primary font-semibold py-3 px-8 rounded-xl"
-          >
-            시각화만 먼저 보기
-          </button>
-          <button
-            onClick={() => router.push('/dashboard')}
-            className="bg-primary text-white font-semibold py-3 px-8 rounded-xl"
-          >
-            대시보드로 돌아가기
-          </button>
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex justify-center gap-2 sm:gap-3">
+            <button
+              onClick={() => router.push(`/visualize/${params.id}`)}
+              className="bg-white border border-background-tertiary text-text-secondary font-medium py-3 px-6 rounded-xl text-sm"
+            >
+              답변 없이 시각화 보기
+            </button>
+            <button
+              onClick={() => router.push('/dashboard')}
+              className="bg-primary text-white font-semibold py-3 px-8 rounded-xl"
+            >
+              대시보드로 돌아가기
+            </button>
+          </div>
+          <p className="text-xs text-text-tertiary">답변은 나중에 이 페이지로 돌아와 작성할 수 있습니다</p>
         </div>
       </div>
     </main>

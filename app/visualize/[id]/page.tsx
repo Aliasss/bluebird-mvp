@@ -77,7 +77,7 @@ export default function VisualizePage() {
           supabase.from('logs').select('*').eq('id', logId).eq('user_id', user.id).single(),
           supabase
             .from('analysis')
-            .select('distortion_type, intensity, logic_error_segment')
+            .select('distortion_type, intensity, logic_error_segment, rationale')
             .eq('log_id', logId),
           supabase
             .from('intervention')
@@ -104,6 +104,7 @@ export default function VisualizePage() {
           type: row.distortion_type,
           intensity: row.intensity,
           segment: row.logic_error_segment,
+          rationale: (row as any).rationale ?? undefined,
         })) as DistortionAnalysis[];
 
         const rawAnswers = finalInterventionResult.data?.user_answers;
@@ -275,11 +276,16 @@ export default function VisualizePage() {
             ) : (
               <ul className="space-y-2">
                 {state.distortions.map((item, index) => (
-                  <li key={`${item.type}-${index}`} className="text-xs md:text-sm text-text-secondary">
-                    <span className="text-text-primary font-medium">
-                      {DistortionTypeKorean[item.type]}
-                    </span>{' '}
-                    ({(item.intensity * 100).toFixed(0)}%) - {item.segment}
+                  <li key={`${item.type}-${index}`} className="text-xs md:text-sm text-text-secondary space-y-0.5">
+                    <p>
+                      <span className="text-text-primary font-medium">
+                        {DistortionTypeKorean[item.type]}
+                      </span>{' '}
+                      ({(item.intensity * 100).toFixed(0)}%) — {item.segment}
+                    </p>
+                    {item.rationale && (
+                      <p className="text-[10px] text-text-tertiary pl-1">근거: {item.rationale}</p>
+                    )}
                   </li>
                 ))}
               </ul>

@@ -72,7 +72,7 @@ export async function POST(request: Request) {
 
     const { data: intervention, error: interventionError } = await supabase
       .from('intervention')
-      .select('id, user_answers, final_action')
+      .select('id, user_answers, final_action, is_completed, autonomy_score')
       .eq('log_id', logId)
       .maybeSingle();
 
@@ -85,6 +85,14 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: '행동 문장은 최소 8자 이상으로 구체적으로 작성해주세요.' },
         { status: 400 }
+      );
+    }
+
+    // 이미 완료 처리된 경우 중복 완료 방지
+    if (markCompleted && intervention?.is_completed) {
+      return NextResponse.json(
+        { success: true, isCompleted: true, autonomyScore: intervention.autonomy_score ?? null },
+        { status: 200 }
       );
     }
 

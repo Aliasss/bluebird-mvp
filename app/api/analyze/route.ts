@@ -175,14 +175,11 @@ export async function POST(request: Request) {
       decentering_prompt: '이 생각을 사실이 아닌 가설로 놓고 증거를 분리하세요.',
     };
     let warning: string | null = null;
-    let _debugRaw: string | null = null;
     try {
-      const { _raw, ...result } = await analyzeDistortionsWithGemini({
+      analysisResult = await analyzeDistortionsWithGemini({
         trigger: logData.trigger,
         thought: logData.thought,
-      }) as AIAnalysisResult & { _raw?: string };
-      analysisResult = result;
-      _debugRaw = _raw ?? null;
+      });
     } catch (aiError) {
       console.error('Gemini 분석 실패(폴백 적용):', aiError);
       warning = 'AI 응답 지연으로 기본 분석 결과를 사용했습니다.';
@@ -251,7 +248,6 @@ export async function POST(request: Request) {
       {
         ...normalized,
         warning,
-        _debug: { raw: _debugRaw?.slice(0, 1000) },
       },
       { status: 200 }
     );

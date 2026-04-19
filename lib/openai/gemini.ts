@@ -34,9 +34,9 @@ function getGeminiModel() {
   return genAI.getGenerativeModel({
     model: 'gemini-2.5-flash',
     generationConfig: {
-      temperature: 0.7,
-      topP: 0.95,
-      topK: 40,
+      temperature: 0.2,
+      topP: 0.9,
+      topK: 20,
       maxOutputTokens: 2048,
       responseMimeType: 'application/json',
     },
@@ -252,10 +252,9 @@ export async function analyzeDistortionsWithGemini(input: {
       cas_signal: { rumination: 0.3, worry: 0.3 },
       system2_question_seed: '이 생각을 지지/반박하는 데이터 비율은 각각 몇 %인가요?',
       decentering_prompt: '생각을 사실이 아닌 가설로 표기하고 관찰 사실만 분리하세요.',
-      _raw: text,
-    } as any;
+    };
   }
-  return { ...normalizeAnalysisPayload(parsed), _raw: text } as any;
+  return normalizeAnalysisPayload(parsed);
 }
 
 function normalizeQuestions(payload: unknown): string[] {

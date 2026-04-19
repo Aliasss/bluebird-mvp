@@ -152,11 +152,13 @@ export default function AnalyzePage() {
         ]);
 
         if ((analysisRows?.length ?? 0) > 0) {
-          const existingDistortions = (analysisRows ?? []).map((row) => ({
-            type: row.distortion_type,
-            intensity: row.intensity,
-            segment: row.logic_error_segment,
-          })) as DistortionAnalysis[];
+          const existingDistortions = (analysisRows ?? [])
+            .filter((row) => row.distortion_type !== null)
+            .map((row) => ({
+              type: row.distortion_type,
+              intensity: row.intensity,
+              segment: row.logic_error_segment,
+            })) as DistortionAnalysis[];
           setDistortions(existingDistortions);
         }
 

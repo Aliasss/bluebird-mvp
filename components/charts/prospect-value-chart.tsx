@@ -55,7 +55,22 @@ export default function ProspectValueChart({
   const xTicks = isMobile ? [-1, -0.5, 0, 0.5, 1] : [-1, -0.5, 0, 0.5, 1];
 
   return (
-    <div className="w-full h-[250px] sm:h-[320px] md:h-[360px]">
+    <div className="w-full">
+      <div className="flex items-start gap-1">
+        <div className="flex flex-col items-center justify-center" style={{ minWidth: isMobile ? 20 : 24, height: isMobile ? 250 : 320 }}>
+          <span
+            className="text-text-secondary select-none"
+            style={{
+              fontSize: isMobile ? 10 : 11,
+              writingMode: 'vertical-rl',
+              transform: 'rotate(180deg)',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            주관적 가치
+          </span>
+        </div>
+        <div className="flex-1 h-[250px] sm:h-[320px] md:h-[360px]">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={curveData} margin={chartMargin}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
@@ -75,16 +90,9 @@ export default function ProspectValueChart({
           />
           <YAxis
             type="number"
-            width={isMobile ? 42 : 68}
+            width={isMobile ? 36 : 52}
             domain={[yMin - yPadding, yMax + yPadding]}
             tick={{ fontSize: isMobile ? 10 : 12 }}
-            label={{
-              value: isMobile ? '주관 가치' : '주관적 가치',
-              angle: -90,
-              position: 'left',
-              offset: isMobile ? 2 : 4,
-              style: { fontSize: isMobile ? 10 : 12 },
-            }}
           />
           <Tooltip
             contentStyle={{ fontSize: isMobile ? '10px' : '12px' }}
@@ -115,6 +123,8 @@ export default function ProspectValueChart({
           />
         </LineChart>
       </ResponsiveContainer>
+        </div>
+      </div>
     </div>
   );
 }

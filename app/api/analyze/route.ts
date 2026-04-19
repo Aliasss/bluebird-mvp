@@ -104,37 +104,42 @@ export async function POST(request: Request) {
 
     if (!existingError && (existingRows?.length ?? 0) > 0) {
       const rows = existingRows as Array<Record<string, unknown>>;
-      const first = rows[0] ?? {};
-      const cachedDistortions: DistortionAnalysis[] = rows.map((row) => ({
-        type: row.distortion_type as DistortionAnalysis['type'],
-        intensity: Number(row.intensity ?? 0),
-        segment: String(row.logic_error_segment ?? ''),
-        rationale: row.rationale ? String(row.rationale) : undefined,
-      }));
+      const realRows = rows.filter((row) => row.distortion_type !== null);
 
-      return NextResponse.json(
-        {
-          distortions: cachedDistortions,
-          frame_type: (first.frame_type as AIAnalysisResult['frame_type']) ?? 'mixed',
-          reference_point: String(first.reference_point ?? '사용자 준거점 정보 없음'),
-          probability_estimate:
-            typeof first.probability_estimate === 'number' ? first.probability_estimate : null,
-          loss_aversion_signal:
-            typeof first.loss_aversion_signal === 'number' ? first.loss_aversion_signal : 0.3,
-          cas_signal: {
-            rumination: typeof first.cas_rumination === 'number' ? first.cas_rumination : 0.3,
-            worry: typeof first.cas_worry === 'number' ? first.cas_worry : 0.3,
+      // null-only = 스트릭 플레이스홀더. 실제 분석 결과가 아니므로 재분석으로 fall through
+      if (realRows.length > 0) {
+        const first = realRows[0] ?? {};
+        const cachedDistortions: DistortionAnalysis[] = realRows.map((row) => ({
+          type: row.distortion_type as DistortionAnalysis['type'],
+          intensity: Number(row.intensity ?? 0),
+          segment: String(row.logic_error_segment ?? ''),
+          rationale: row.rationale ? String(row.rationale) : undefined,
+        }));
+
+        return NextResponse.json(
+          {
+            distortions: cachedDistortions,
+            frame_type: (first.frame_type as AIAnalysisResult['frame_type']) ?? 'mixed',
+            reference_point: String(first.reference_point ?? '사용자 준거점 정보 없음'),
+            probability_estimate:
+              typeof first.probability_estimate === 'number' ? first.probability_estimate : null,
+            loss_aversion_signal:
+              typeof first.loss_aversion_signal === 'number' ? first.loss_aversion_signal : 0.3,
+            cas_signal: {
+              rumination: typeof first.cas_rumination === 'number' ? first.cas_rumination : 0.3,
+              worry: typeof first.cas_worry === 'number' ? first.cas_worry : 0.3,
+            },
+            system2_question_seed:
+              String(first.system2_question_seed ?? '') ||
+              '이 판단을 지지/반박하는 근거 비율은 각각 몇 %인가요?',
+            decentering_prompt:
+              String(first.decentering_prompt ?? '') ||
+              '생각을 사실이 아닌 가설로 두고 증거를 분리하세요.',
+            warning: null,
           },
-          system2_question_seed:
-            String(first.system2_question_seed ?? '') ||
-            '이 판단을 지지/반박하는 근거 비율은 각각 몇 %인가요?',
-          decentering_prompt:
-            String(first.decentering_prompt ?? '') ||
-            '생각을 사실이 아닌 가설로 두고 증거를 분리하세요.',
-          warning: null,
-        },
-        { status: 200 }
-      );
+          { status: 200 }
+        );
+      }
     }
 
     // 일별 분석 한도 체크 (하루 6회, 계정당 / 한국시간 자정 기준 리셋)
@@ -222,10 +227,20 @@ export async function POST(request: Request) {
       const { error: insertError } = await supabase.from('analysis').insert(rowsWithProtocolFields);
 
       if (insertError) {
-        return NextResponse.json(
-          { error: '분석 결과 저장에 실패했습니다.' },
-          { status: 500 }
-        );
+        // 프로토콜 컬럼 미존재 시 기본 필드로 폴백
+        const rowsBasic = distortions.map((item) => ({
+          log_id: logId,
+          distortion_type: item.type,
+          intensity: item.intensity,
+          logic_error_segment: item.segment,
+        }));
+        const { error: fallbackError } = await supabase.from('analysis').insert(rowsBasic);
+        if (fallbackError) {
+          return NextResponse.json(
+            { error: '분석 결과 저장에 실패했습니다.' },
+            { status: 500 }
+          );
+        }
       }
     }
 

@@ -23,6 +23,7 @@ type RecentActionItem = {
   created_at: string;
   logs?: {
     trigger?: string;
+    log_type?: string | null;
   } | null;
 };
 
@@ -41,14 +42,18 @@ function DashboardContent() {
   const [streak, setStreak] = useState<StreakResult>({ current: 0, best: 0, doneToday: false });
   const [archetype, setArchetype] = useState<ArchetypeResult | null>(null);
   const [successToast, setSuccessToast] = useState(false);
+  const [successLogs, setSuccessLogs] = useState<LogWithType[]>([]);
+  const [showAllLogs, setShowAllLogs] = useState(false);
+  const [showAllActions, setShowAllActions] = useState(false);
 
   useEffect(() => {
     if (searchParams.get('success') === '1') {
       setSuccessToast(true);
+      router.replace('/dashboard');
       const timer = setTimeout(() => setSuccessToast(false), 3000);
       return () => clearTimeout(timer);
     }
-  }, [searchParams]);
+  }, [searchParams, router]);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -82,26 +87,41 @@ function DashboardContent() {
 
   const fetchData = async (userId: string) => {
     try {
-      // 최근 로그 가져오기
+      // 최근 인지 왜곡 로그 (성공 로그 제외)
       const { data: logsData, error: logsError } = await supabase
         .from('logs')
         .select('*, log_type')
         .eq('user_id', userId)
+        .or('log_type.eq.distortion,log_type.is.null')
         .order('created_at', { ascending: false })
-        .limit(5);
+        .limit(20);
 
       if (logsError) throw logsError;
       setLogs(logsData || []);
 
-      const { data: actionData, error: actionError } = await supabase
-        .from('intervention')
-        .select('id, log_id, final_action, is_completed, autonomy_score, created_at, logs!inner(trigger, user_id)')
-        .eq('logs.user_id', userId)
+      // 성공 로그 별도 fetch
+      const { data: successLogsData } = await supabase
+        .from('logs')
+        .select('*, log_type')
+        .eq('user_id', userId)
+        .eq('log_type', 'success')
         .order('created_at', { ascending: false })
         .limit(5);
+      setSuccessLogs((successLogsData || []) as LogWithType[]);
+
+      const { data: actionData, error: actionError } = await supabase
+        .from('intervention')
+        .select('id, log_id, final_action, is_completed, autonomy_score, created_at, logs!inner(trigger, user_id, log_type)')
+        .eq('logs.user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(20);
 
       if (actionError) throw actionError;
-      setRecentActions((actionData as unknown as RecentActionItem[]) || []);
+      // 성공 로그에 연결된 intervention 제외
+      const filteredActions = ((actionData || []) as unknown as RecentActionItem[]).filter(
+        (item) => item.logs?.log_type !== 'success'
+      );
+      setRecentActions(filteredActions);
 
       // 통계 데이터 가져오기
       const { count: totalLogs } = await supabase
@@ -293,6 +313,24 @@ function DashboardContent() {
           </button>
         </div>
 
+        {/* 성공 순간 기록 */}
+        {successLogs.length > 0 && (
+          <div className="mt-4 bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-success border-opacity-40">
+            <h3 className="text-sm font-semibold text-text-primary mb-3">성공 순간 기록</h3>
+            <div className="space-y-3">
+              {successLogs.map((log) => (
+                <div key={log.id} className="border border-success border-opacity-30 bg-success bg-opacity-5 rounded-xl p-3">
+                  <div className="flex items-start justify-between mb-1">
+                    <p className="text-sm font-medium text-text-primary line-clamp-1">{log.trigger}</p>
+                    <span className="text-xs text-text-secondary whitespace-nowrap ml-2">{formatDate(log.created_at)}</span>
+                  </div>
+                  <p className="text-xs text-text-secondary line-clamp-2">{log.thought}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* 최근 활동 */}
         <div className="mt-6 sm:mt-8 bg-white rounded-xl sm:rounded-2xl p-4 sm:p-8 border border-background-tertiary shadow-none sm:shadow-sm">
           <h3 className="text-lg md:text-xl font-bold text-text-primary mb-4">
@@ -316,37 +354,29 @@ function DashboardContent() {
             </div>
           ) : (
             <div className="space-y-4">
-              {(logs as LogWithType[]).map((log) => {
-                const isSuccess = log.log_type === 'success';
-                return (
-                  <div
-                    key={log.id}
-                    onClick={() => !isSuccess && router.push(`/analyze/${log.id}`)}
-                    className={`border rounded-xl p-4 transition-colors ${
-                      isSuccess
-                        ? 'border-success bg-success bg-opacity-5 cursor-default'
-                        : 'border-background-tertiary hover:border-primary cursor-pointer'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        {isSuccess && (
-                          <span className="text-[10px] font-semibold text-success bg-success bg-opacity-10 px-2 py-0.5 rounded-full">
-                            성공 로그
-                          </span>
-                        )}
-                        <p className="text-sm font-medium text-text-primary line-clamp-1">
-                          {log.trigger}
-                        </p>
-                      </div>
-                      <span className="text-xs text-text-secondary whitespace-nowrap ml-2">
-                        {formatDate(log.created_at)}
-                      </span>
-                    </div>
-                    <p className="text-sm text-text-secondary line-clamp-2">{log.thought}</p>
+              {(showAllLogs ? logs : logs.slice(0, 5)).map((log) => (
+                <div
+                  key={log.id}
+                  onClick={() => router.push(`/analyze/${log.id}`)}
+                  className="border border-background-tertiary rounded-xl p-4 hover:border-primary transition-colors cursor-pointer"
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <p className="text-sm font-medium text-text-primary line-clamp-1">{log.trigger}</p>
+                    <span className="text-xs text-text-secondary whitespace-nowrap ml-2">
+                      {formatDate(log.created_at)}
+                    </span>
                   </div>
-                );
-              })}
+                  <p className="text-sm text-text-secondary line-clamp-2">{log.thought}</p>
+                </div>
+              ))}
+              {logs.length > 5 && !showAllLogs && (
+                <button
+                  onClick={() => setShowAllLogs(true)}
+                  className="w-full py-2 text-sm text-primary font-semibold border border-primary border-opacity-30 rounded-xl hover:bg-primary hover:bg-opacity-5 transition-colors"
+                >
+                  더보기 ({logs.length - 5}개 더)
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -360,7 +390,7 @@ function DashboardContent() {
             </p>
           ) : (
             <div className="space-y-3">
-              {recentActions.map((item) => (
+              {(showAllActions ? recentActions : recentActions.slice(0, 5)).map((item) => (
                 <div
                   key={item.id}
                   onClick={() => router.push(`/action/${item.log_id}`)}
@@ -391,6 +421,14 @@ function DashboardContent() {
                   </div>
                 </div>
               ))}
+              {recentActions.length > 5 && !showAllActions && (
+                <button
+                  onClick={() => setShowAllActions(true)}
+                  className="w-full py-2 text-sm text-primary font-semibold border border-primary border-opacity-30 rounded-xl hover:bg-primary hover:bg-opacity-5 transition-colors"
+                >
+                  더보기 ({recentActions.length - 5}개 더)
+                </button>
+              )}
             </div>
           )}
         </div>

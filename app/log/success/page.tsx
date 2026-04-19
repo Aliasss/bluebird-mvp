@@ -37,7 +37,13 @@ export default function SuccessLogPage() {
         body: JSON.stringify({ situation: situation.trim(), system2Action: system2Action.trim() }),
       });
       const payload = await res.json();
-      if (!res.ok) throw new Error(payload.error || '저장에 실패했습니다.');
+      if (!res.ok) {
+        if (res.status === 409 && payload.alreadyDone) {
+          router.push('/dashboard');
+          return;
+        }
+        throw new Error(payload.error || '저장에 실패했습니다.');
+      }
       router.push('/dashboard?success=1');
     } catch (err: any) {
       setError(err.message || '저장 중 오류가 발생했습니다.');

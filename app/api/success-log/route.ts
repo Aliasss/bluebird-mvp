@@ -22,6 +22,28 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 });
     }
 
+    // 오늘 KST 기준 성공 로그 중복 방지 (1일 1회)
+    const KST_OFFSET = 9 * 60 * 60 * 1000;
+    const kstNow = new Date(Date.now() + KST_OFFSET);
+    const todayStart = new Date(
+      Date.UTC(kstNow.getUTCFullYear(), kstNow.getUTCMonth(), kstNow.getUTCDate()) - KST_OFFSET
+    ).toISOString();
+
+    const { data: existing } = await supabase
+      .from('logs')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('log_type', 'success')
+      .gte('created_at', todayStart)
+      .maybeSingle();
+
+    if (existing) {
+      return NextResponse.json(
+        { error: '오늘의 성공 순간은 이미 기록했습니다.', alreadyDone: true },
+        { status: 409 }
+      );
+    }
+
     // logs 테이블에 성공 로그 저장
     const { data: logData, error: logError } = await supabase
       .from('logs')

@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { analyzeDistortionsWithGemini } from '@/lib/openai/gemini';
 import { isAiInputTooLong, MAX_AI_TEXT_LENGTH } from '@/lib/security/ai-guard';
-import { consumeRateLimit, getClientIp } from '@/lib/security/rate-limit';
 import type { AIAnalysisResult, DistortionAnalysis } from '@/types';
 import { z } from 'zod';
 
@@ -64,15 +63,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 });
     }
 
-    const rateKey = `analyze:${user.id}:${getClientIp(request)}`;
-    const rate = consumeRateLimit(rateKey, { windowMs: 60_000, maxRequests: 5 });
-    if (!rate.allowed) {
+    // 분당 요청 한도 (Supabase 기반, cross-instance 안전)
+    const oneMinuteAgo = new Date(Date.now() - 60_000).toISOString();
+    const { data: recentAnalyses } = await supabase
+      .from('analysis')
+      .select('id, logs!inner(user_id)')
+      .eq('logs.user_id', user.id)
+      .gte('created_at', oneMinuteAgo);
+    if ((recentAnalyses?.length ?? 0) >= 5) {
       return NextResponse.json(
-        {
-          error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
-          retryAfterSec: rate.retryAfterSec,
-        },
-        { status: 429, headers: { 'Retry-After': String(rate.retryAfterSec) } }
+        { error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.', retryAfterSec: 60 },
+        { status: 429, headers: { 'Retry-After': '60' } }
       );
     }
 

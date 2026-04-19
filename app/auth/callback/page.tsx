@@ -10,6 +10,8 @@ function AuthCallbackContent() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+
     const handleCallback = async () => {
       try {
         const code = searchParams.get('code');
@@ -17,17 +19,17 @@ function AuthCallbackContent() {
 
         if (error_description) {
           setError(error_description);
-          setTimeout(() => router.push('/auth/login'), 3000);
+          timer = setTimeout(() => router.push('/auth/login'), 3000);
           return;
         }
 
         if (code) {
           const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-          
+
           if (exchangeError) {
             console.error('토큰 교환 실패:', exchangeError);
             setError('인증에 실패했습니다.');
-            setTimeout(() => router.push('/auth/login'), 3000);
+            timer = setTimeout(() => router.push('/auth/login'), 3000);
             return;
           }
 
@@ -38,7 +40,7 @@ function AuthCallbackContent() {
         }
 
         const { data: { session } } = await supabase.auth.getSession();
-        
+
         if (session) {
           router.push('/dashboard');
         } else {
@@ -47,11 +49,12 @@ function AuthCallbackContent() {
       } catch (err: any) {
         console.error('Callback 처리 중 오류:', err);
         setError(err.message || '인증 처리 중 오류가 발생했습니다.');
-        setTimeout(() => router.push('/auth/login'), 3000);
+        timer = setTimeout(() => router.push('/auth/login'), 3000);
       }
     };
 
     handleCallback();
+    return () => clearTimeout(timer);
   }, [router, searchParams]);
 
   return (

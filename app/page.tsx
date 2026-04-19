@@ -40,25 +40,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* 나침반 보정 수치 */}
-        <div className="grid grid-cols-3 gap-3 text-left">
-          <div className="bg-white border border-background-tertiary rounded-2xl p-4 space-y-1">
-            <p className="text-lg font-bold text-primary">2.25×</p>
-            <p className="text-[11px] text-text-secondary leading-snug">손실은 이익보다 크게 느껴진다</p>
-            <p className="text-[10px] text-text-tertiary">전망이론</p>
-          </div>
-          <div className="bg-white border border-background-tertiary rounded-2xl p-4 space-y-1">
-            <p className="text-lg font-bold text-primary">46%</p>
-            <p className="text-[11px] text-text-secondary leading-snug">불안의 원인은 인지 왜곡</p>
-            <p className="text-[10px] text-text-tertiary">사회 불안 연구</p>
-          </div>
-          <div className="bg-white border border-background-tertiary rounded-2xl p-4 space-y-1">
-            <p className="text-lg font-bold text-primary">10ms</p>
-            <p className="text-[11px] text-text-secondary leading-snug">vs 3초, 이성이 따라잡는 시간</p>
-            <p className="text-[10px] text-text-tertiary">이중 프로세스</p>
-          </div>
-        </div>
-
         {/* 철학 페이지 링크 */}
         <button
           onClick={() => router.push('/our-philosophy')}

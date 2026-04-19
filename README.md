@@ -93,8 +93,6 @@ GEMINI_API_KEY=your_gemini_api_key
 
 ## 개발 플랜
 
-상세한 개발 플랜은 `DEVELOPMENT_PLAN.md`를 참고하세요.
-
 총 7단계로 구성:
 1. 프로젝트 초기 설정
 2. Supabase 연동 및 인증
@@ -104,32 +102,6 @@ GEMINI_API_KEY=your_gemini_api_key
 6. 행동 확약 및 자율성 지수
 7. 최적화 및 배포
 
-## 데이터베이스 스키마
-
-### logs
-- id (uuid, primary key)
-- user_id (uuid, foreign key)
-- trigger (text): 사건/트리거
-- thought (text): 자동 사고
-- created_at (timestamp)
-
-### analysis
-- id (uuid, primary key)
-- log_id (uuid, foreign key)
-- distortion_type (text): 왜곡 유형
-- intensity (float): 왜곡 강도 (0-1)
-- logic_error_segment (text): 논리 오류 구간
-- created_at (timestamp)
-
-### intervention
-- id (uuid, primary key)
-- log_id (uuid, foreign key)
-- socratic_questions (jsonb): 3가지 질문
-- user_answers (jsonb): 사용자 답변
-- final_action (text): 확약한 행동
-- is_completed (boolean): 실행 여부
-- autonomy_score (integer): 자율성 지수
-- created_at (timestamp)
 
 ## PWA 기능
 

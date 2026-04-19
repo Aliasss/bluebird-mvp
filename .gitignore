@@ -44,7 +44,7 @@ yarn-error.log*
 .env.production.local
 
 # Documentation (private)
-docs/**/*.md
+docs/superpowers/**/*.md
 !docs/superpowers/specs/*.md
 !docs/superpowers/plans/*.md
 

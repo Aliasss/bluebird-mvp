@@ -45,7 +45,8 @@ export default function DashboardPage() {
   useEffect(() => {
     if (searchParams.get('success') === '1') {
       setSuccessToast(true);
-      setTimeout(() => setSuccessToast(false), 3000);
+      const timer = setTimeout(() => setSuccessToast(false), 3000);
+      return () => clearTimeout(timer);
     }
   }, [searchParams]);
 

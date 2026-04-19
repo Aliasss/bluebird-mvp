@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import PageHeader from '@/components/ui/PageHeader';
+import { supabase } from '@/lib/supabase/client';
 
 type Step = 'situation' | 'action';
 
@@ -13,6 +14,35 @@ export default function SuccessLogPage() {
   const [system2Action, setSystem2Action] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [checking, setChecking] = useState(true);
+  const [alreadyDone, setAlreadyDone] = useState(false);
+
+  useEffect(() => {
+    const checkTodayLimit = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push('/auth/login');
+        return;
+      }
+      const KST_OFFSET = 9 * 60 * 60 * 1000;
+      const kstNow = new Date(Date.now() + KST_OFFSET);
+      const todayStart = new Date(
+        Date.UTC(kstNow.getUTCFullYear(), kstNow.getUTCMonth(), kstNow.getUTCDate()) - KST_OFFSET
+      ).toISOString();
+
+      const { data } = await supabase
+        .from('logs')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('log_type', 'success')
+        .gte('created_at', todayStart)
+        .maybeSingle();
+
+      setAlreadyDone(!!data);
+      setChecking(false);
+    };
+    checkTodayLimit();
+  }, [router]);
 
   const handleSituationNext = () => {
     if (situation.trim().length < 5) {
@@ -60,6 +90,35 @@ export default function SuccessLogPage() {
       router.push('/dashboard');
     }
   };
+
+  if (checking) {
+    return (
+      <main className="min-h-screen bg-background flex flex-col items-center justify-center">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
+      </main>
+    );
+  }
+
+  if (alreadyDone) {
+    return (
+      <main className="min-h-screen bg-background flex flex-col">
+        <PageHeader title="성공 순간 기록" onBack={() => router.push('/dashboard')} />
+        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+          <div className="text-5xl mb-4">✅</div>
+          <h1 className="text-xl font-bold text-text-primary mb-2">오늘은 이미 기록했어요</h1>
+          <p className="text-sm text-text-secondary mb-8">
+            성공 순간 기록은 하루 1회입니다.<br />내일 또 이성이 이기는 순간을 기록해보세요.
+          </p>
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="bg-primary text-white font-semibold py-3 px-8 rounded-2xl touch-manipulation active:scale-95 transition-transform"
+          >
+            대시보드로 돌아가기
+          </button>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-background flex flex-col">

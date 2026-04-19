@@ -43,25 +43,24 @@ export default function ProspectValueChart({
     return () => mediaQuery.removeEventListener('change', update);
   }, []);
 
-  const yValues = [...curveData.map((point) => point.y), userPoint.y].filter((value) =>
-    Number.isFinite(value)
-  );
+  const yValues = [...curveData.map((p) => p.y), userPoint.y].filter(Number.isFinite);
   const yMin = Math.min(...yValues);
   const yMax = Math.max(...yValues);
   const yPadding = Math.max(0.3, (yMax - yMin) * 0.12);
+
   const chartMargin = isMobile
-    ? { top: 10, right: 8, left: 10, bottom: 6 }
-    : { top: 20, right: 20, left: 24, bottom: 12 };
-  const xTicks = isMobile ? [-1, -0.5, 0, 0.5, 1] : [-1, -0.5, 0, 0.5, 1];
+    ? { top: 10, right: 8, left: 4, bottom: 28 }
+    : { top: 20, right: 20, left: 8, bottom: 36 };
 
   return (
     <div className="w-full">
-      <div className="flex items-start gap-1">
-        <div className="flex flex-col items-center justify-center" style={{ minWidth: isMobile ? 20 : 24, height: isMobile ? 250 : 320 }}>
+      {/* Y축 레이블 */}
+      <div className="flex items-stretch">
+        <div className="flex items-center justify-center pr-1" style={{ width: 18 }}>
           <span
             className="text-text-secondary select-none"
             style={{
-              fontSize: isMobile ? 10 : 11,
+              fontSize: 10,
               writingMode: 'vertical-rl',
               transform: 'rotate(180deg)',
               whiteSpace: 'nowrap',
@@ -70,59 +69,62 @@ export default function ProspectValueChart({
             주관적 가치
           </span>
         </div>
-        <div className="flex-1 h-[250px] sm:h-[320px] md:h-[360px]">
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={curveData} margin={chartMargin}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-          <XAxis
-            type="number"
-            dataKey="x"
-            domain={[-1, 1]}
-            ticks={xTicks}
-            tick={{ fontSize: isMobile ? 10 : 12 }}
-            tickFormatter={(value) => `${Math.round(value * 100)}%`}
-            label={{
-              value: isMobile ? '사건 평가(손실-이득)' : '객관적 사건 평가 (손실 ← 0 → 이득)',
-              position: 'insideBottom',
-              offset: isMobile ? -4 : -6,
-              style: { fontSize: isMobile ? 10 : 12 },
-            }}
-          />
-          <YAxis
-            type="number"
-            width={isMobile ? 36 : 52}
-            domain={[yMin - yPadding, yMax + yPadding]}
-            tick={{ fontSize: isMobile ? 10 : 12 }}
-          />
-          <Tooltip
-            contentStyle={{ fontSize: isMobile ? '10px' : '12px' }}
-            formatter={(value: unknown) =>
-              typeof value === 'number' ? value.toFixed(2) : String(value ?? '')
-            }
-            labelFormatter={(value) => `x=${(Number(value) * 100).toFixed(0)}%`}
-          />
-          <ReferenceLine x={0} stroke="#9CA3AF" />
-          <ReferenceLine y={0} stroke="#9CA3AF" />
-          <Line
-            data={curveData}
-            dataKey="y"
-            type="monotone"
-            stroke="#2563EB"
-            strokeWidth={3}
-            dot={false}
-            isAnimationActive={false}
-          />
-          <ReferenceDot
-            x={userPoint.x}
-            y={userPoint.y}
-            r={6}
-            fill="#E11D48"
-            stroke="#FFFFFF"
-            strokeWidth={2}
-            ifOverflow="visible"
-          />
-        </LineChart>
-      </ResponsiveContainer>
+
+        <div className="flex-1 h-[260px] sm:h-[320px] md:h-[360px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={curveData} margin={chartMargin}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+              <XAxis
+                type="number"
+                dataKey="x"
+                domain={[-1, 1]}
+                ticks={[-1, -0.5, 0, 0.5, 1]}
+                tick={{ fontSize: isMobile ? 10 : 12 }}
+                tickFormatter={(v) => `${Math.round(v * 100)}%`}
+                label={{
+                  value: isMobile ? '사건 평가 (손실←0→이득)' : '객관적 사건 평가 (손실 ← 0 → 이득)',
+                  position: 'insideBottom',
+                  offset: isMobile ? -16 : -20,
+                  style: { fontSize: isMobile ? 10 : 12, fill: '#6B7280' },
+                }}
+              />
+              <YAxis
+                type="number"
+                width={isMobile ? 40 : 48}
+                domain={[yMin - yPadding, yMax + yPadding]}
+                tickCount={5}
+                tick={{ fontSize: isMobile ? 10 : 12 }}
+                tickFormatter={(v) => Number(v).toFixed(2)}
+              />
+              <Tooltip
+                contentStyle={{ fontSize: isMobile ? '10px' : '12px' }}
+                formatter={(value: unknown) =>
+                  typeof value === 'number' ? value.toFixed(2) : String(value ?? '')
+                }
+                labelFormatter={(value) => `x=${(Number(value) * 100).toFixed(0)}%`}
+              />
+              <ReferenceLine x={0} stroke="#9CA3AF" />
+              <ReferenceLine y={0} stroke="#9CA3AF" />
+              <Line
+                data={curveData}
+                dataKey="y"
+                type="monotone"
+                stroke="#2563EB"
+                strokeWidth={3}
+                dot={false}
+                isAnimationActive={false}
+              />
+              <ReferenceDot
+                x={userPoint.x}
+                y={userPoint.y}
+                r={6}
+                fill="#E11D48"
+                stroke="#FFFFFF"
+                strokeWidth={2}
+                ifOverflow="visible"
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

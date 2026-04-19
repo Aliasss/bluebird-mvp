@@ -7,7 +7,7 @@ export default function HomePage() {
   const router = useRouter();
 
   return (
-    <main className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+    <main className="min-h-screen bg-background flex flex-col items-center justify-center px-6 pt-20 pb-10 sm:p-6">
       <div className="max-w-md w-full space-y-8 text-center">
 
         {/* 브랜드 */}

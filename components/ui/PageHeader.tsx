@@ -21,7 +21,7 @@ export default function PageHeader({ title, backHref, onBack, step, rightElement
 
   return (
     <>
-      <header className="bg-white border-b border-background-tertiary px-4 sm:px-6 py-3 sm:py-4 flex items-center">
+      <header className="sticky top-0 z-40 bg-white border-b border-background-tertiary px-4 sm:px-6 py-3 sm:py-4 flex items-center">
         <button onClick={handleBack} className="text-primary font-semibold min-w-[44px]">
           ← 뒤로
         </button>

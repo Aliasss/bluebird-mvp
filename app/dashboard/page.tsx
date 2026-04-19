@@ -45,12 +45,23 @@ function DashboardContent() {
   const [successLogs, setSuccessLogs] = useState<LogWithType[]>([]);
   const [showAllLogs, setShowAllLogs] = useState(false);
   const [showAllActions, setShowAllActions] = useState(false);
+  const [todayCheckin, setTodayCheckin] = useState<{ morning: boolean; evening: boolean }>({ morning: false, evening: false });
+  const [checkinToast, setCheckinToast] = useState(false);
 
   useEffect(() => {
     if (searchParams.get('success') === '1') {
       setSuccessToast(true);
       router.replace('/dashboard');
       const timer = setTimeout(() => setSuccessToast(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, router]);
+
+  useEffect(() => {
+    if (searchParams.get('checkin') === '1') {
+      setCheckinToast(true);
+      router.replace('/dashboard');
+      const timer = setTimeout(() => setCheckinToast(false), 3000);
       return () => clearTimeout(timer);
     }
   }, [searchParams, router]);
@@ -144,22 +155,46 @@ function DashboardContent() {
       const totalScore = interventionsData?.reduce((sum, item) => sum + (item.autonomy_score || 0), 0) || 0;
 
       // 스트릭 계산
-      const { data: analysisData } = await supabase
-        .from('analysis')
-        .select('distortion_type, created_at, logs!inner(user_id)')
-        .eq('logs.user_id', userId);
+      const [{ data: analysisData }, { data: checkinData }] = await Promise.all([
+        supabase
+          .from('analysis')
+          .select('distortion_type, created_at, logs!inner(user_id)')
+          .eq('logs.user_id', userId),
+        supabase
+          .from('checkins')
+          .select('created_at')
+          .eq('user_id', userId),
+      ]);
 
       const KST_OFFSET = 9 * 60 * 60 * 1000;
-      const analysisDateStrings = [
-        ...new Set(
-          (analysisData ?? []).map((r) =>
-            new Date(new Date((r as { created_at: string }).created_at).getTime() + KST_OFFSET)
-              .toISOString()
-              .slice(0, 10)
-          )
-        ),
-      ];
-      setStreak(calculateStreak(analysisDateStrings));
+      const toKstDate = (iso: string) =>
+        new Date(new Date(iso).getTime() + KST_OFFSET).toISOString().slice(0, 10);
+
+      const analysisDates = (analysisData ?? []).map((r) =>
+        toKstDate((r as { created_at: string }).created_at)
+      );
+      const checkinDates = (checkinData ?? []).map((r) =>
+        toKstDate((r as { created_at: string }).created_at)
+      );
+      const allDates = [...new Set([...analysisDates, ...checkinDates])];
+      setStreak(calculateStreak(allDates));
+
+      // 오늘 체크인 상태 조회
+      const kstNow = new Date(Date.now() + KST_OFFSET);
+      const todayStartIso = new Date(
+        Date.UTC(kstNow.getUTCFullYear(), kstNow.getUTCMonth(), kstNow.getUTCDate()) - KST_OFFSET
+      ).toISOString();
+
+      const { data: todayCheckins } = await supabase
+        .from('checkins')
+        .select('type')
+        .eq('user_id', userId)
+        .gte('created_at', todayStartIso);
+
+      setTodayCheckin({
+        morning: (todayCheckins ?? []).some((c: { type: string }) => c.type === 'morning'),
+        evening: (todayCheckins ?? []).some((c: { type: string }) => c.type === 'evening'),
+      });
 
       // 아키타입 계산 (placeholder row 제외)
       const distortionCounts: Partial<Record<DistortionType, number>> = {};
@@ -203,6 +238,11 @@ function DashboardContent() {
           성공 순간이 기록됐습니다 +15점 🎉
         </div>
       )}
+      {checkinToast && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-primary text-white text-sm font-semibold px-6 py-3 rounded-2xl shadow-lg">
+          체크인 완료! 연속 기록이 유지됩니다 ✓
+        </div>
+      )}
       {/* 헤더 */}
       <header className="bg-white border-b border-background-tertiary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
@@ -238,6 +278,41 @@ function DashboardContent() {
         </div>
 
         <StreakBanner streak={streak} />
+        <div className="mb-4 sm:mb-6 bg-white rounded-xl sm:rounded-2xl p-4 border border-background-tertiary">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-text-primary">오늘의 체크인</h3>
+            <button
+              onClick={() => router.push('/checkin')}
+              className="text-xs text-primary font-semibold"
+            >
+              체크인하기
+            </button>
+          </div>
+          <div className="flex gap-3">
+            <div className={`flex-1 flex items-center gap-2 p-3 rounded-xl border ${
+              todayCheckin.morning ? 'border-success bg-success bg-opacity-5' : 'border-background-tertiary'
+            }`}>
+              <span className="text-lg">🌅</span>
+              <div>
+                <p className="text-xs font-semibold text-text-primary">모닝</p>
+                <p className={`text-[10px] ${todayCheckin.morning ? 'text-success' : 'text-text-tertiary'}`}>
+                  {todayCheckin.morning ? '완료' : '미완료'}
+                </p>
+              </div>
+            </div>
+            <div className={`flex-1 flex items-center gap-2 p-3 rounded-xl border ${
+              todayCheckin.evening ? 'border-success bg-success bg-opacity-5' : 'border-background-tertiary'
+            }`}>
+              <span className="text-lg">🌙</span>
+              <div>
+                <p className="text-xs font-semibold text-text-primary">이브닝</p>
+                <p className={`text-[10px] ${todayCheckin.evening ? 'text-success' : 'text-text-tertiary'}`}>
+                  {todayCheckin.evening ? '완료' : '미완료'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
         <ArchetypeCard result={archetype} onClick={() => router.push('/insights')} />
 
         {/* 통계 카드 */}

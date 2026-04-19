@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { BookOpen, CheckCircle, Star } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { formatDate } from '@/lib/utils';
@@ -11,6 +11,8 @@ import { calculateStreak, type StreakResult } from '@/lib/utils/streak';
 import { getArchetypeResult, type ArchetypeResult } from '@/lib/utils/archetype';
 import type { User } from '@supabase/supabase-js';
 import type { Log, DistortionType } from '@/types';
+
+type LogWithType = Log & { log_type?: string | null };
 
 type RecentActionItem = {
   id: string;
@@ -26,6 +28,7 @@ type RecentActionItem = {
 
 export default function DashboardPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [logs, setLogs] = useState<Log[]>([]);
@@ -37,6 +40,14 @@ export default function DashboardPage() {
   });
   const [streak, setStreak] = useState<StreakResult>({ current: 0, best: 0, doneToday: false });
   const [archetype, setArchetype] = useState<ArchetypeResult | null>(null);
+  const [successToast, setSuccessToast] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('success') === '1') {
+      setSuccessToast(true);
+      setTimeout(() => setSuccessToast(false), 3000);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -73,7 +84,7 @@ export default function DashboardPage() {
       // 최근 로그 가져오기
       const { data: logsData, error: logsError } = await supabase
         .from('logs')
-        .select('*')
+        .select('*, log_type')
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(5);
@@ -166,6 +177,11 @@ export default function DashboardPage() {
 
   return (
     <main className="min-h-screen bg-background">
+      {successToast && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-success text-white text-sm font-semibold px-6 py-3 rounded-2xl shadow-lg">
+          성공 순간이 기록됐습니다 +15점 🎉
+        </div>
+      )}
       {/* 헤더 */}
       <header className="bg-white border-b border-background-tertiary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
@@ -261,6 +277,21 @@ export default function DashboardPage() {
           </button>
         </div>
 
+        <div className="mt-4 bg-white border border-success rounded-xl sm:rounded-2xl p-4 sm:p-6">
+          <h3 className="text-base md:text-lg font-bold text-text-primary mb-1">
+            이성이 이긴 순간이 있었나요?
+          </h3>
+          <p className="text-xs text-text-secondary mb-3">
+            왜곡에 빠질 뻔했지만 잘 대처한 순간을 기록하면 자율성 지수 +15점
+          </p>
+          <button
+            onClick={() => router.push('/log/success')}
+            className="bg-success text-white font-semibold py-2 px-6 rounded-xl text-sm touch-manipulation active:scale-95 transition-transform"
+          >
+            성공 순간 기록하기
+          </button>
+        </div>
+
         {/* 최근 활동 */}
         <div className="mt-6 sm:mt-8 bg-white rounded-xl sm:rounded-2xl p-4 sm:p-8 border border-background-tertiary shadow-none sm:shadow-sm">
           <h3 className="text-lg md:text-xl font-bold text-text-primary mb-4">
@@ -284,25 +315,37 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {logs.map((log) => (
-                <div
-                  key={log.id}
-                  onClick={() => router.push(`/analyze/${log.id}`)}
-                  className="border border-background-tertiary rounded-xl p-4 hover:border-primary transition-colors cursor-pointer"
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <p className="text-sm font-medium text-text-primary line-clamp-1">
-                      {log.trigger}
-                    </p>
-                    <span className="text-xs text-text-secondary whitespace-nowrap ml-2">
-                      {formatDate(log.created_at)}
-                    </span>
+              {(logs as LogWithType[]).map((log) => {
+                const isSuccess = log.log_type === 'success';
+                return (
+                  <div
+                    key={log.id}
+                    onClick={() => !isSuccess && router.push(`/analyze/${log.id}`)}
+                    className={`border rounded-xl p-4 transition-colors ${
+                      isSuccess
+                        ? 'border-success bg-success bg-opacity-5 cursor-default'
+                        : 'border-background-tertiary hover:border-primary cursor-pointer'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        {isSuccess && (
+                          <span className="text-[10px] font-semibold text-success bg-success bg-opacity-10 px-2 py-0.5 rounded-full">
+                            성공 로그
+                          </span>
+                        )}
+                        <p className="text-sm font-medium text-text-primary line-clamp-1">
+                          {log.trigger}
+                        </p>
+                      </div>
+                      <span className="text-xs text-text-secondary whitespace-nowrap ml-2">
+                        {formatDate(log.created_at)}
+                      </span>
+                    </div>
+                    <p className="text-sm text-text-secondary line-clamp-2">{log.thought}</p>
                   </div>
-                  <p className="text-sm text-text-secondary line-clamp-2">
-                    {log.thought}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

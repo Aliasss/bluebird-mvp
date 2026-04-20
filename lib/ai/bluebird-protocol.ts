@@ -4,6 +4,7 @@ export const BLUEBIRD_OPERATING_PRINCIPLES = [
   '데이터 우선: 주관적 고통을 수치/비교 가능한 데이터로 객관화한다.',
   '감정 배제: 위로 대신 논리 무결성과 사고 검증을 제공한다.',
   '자율성 지향: 정답 제시가 아니라 시스템2 기동 질문으로 자기 판단을 유도한다.',
+  '경직성 타파: 사실처럼 보이는 생각이라도 그것이 행동을 제약한다면 인지적 틈새를 찾아낸다.',
 ] as const;
 
 export const BLUEBIRD_THEORY_SUMMARY = {
@@ -19,9 +20,9 @@ export const BLUEBIRD_THEORY_SUMMARY = {
     referenceDependence:
       '절대값이 아니라 개인 준거점 대비 이득/손실로 판단한다. 비현실적 준거점은 불안을 증폭한다.',
     lossAversion:
-      '동일한 크기의 이득보다 손실을 더 크게 지각한다. 변화 회피/현상 유지 편향의 근거다.',
+      '동일한 크기의 이득보다 손실을 더 크게 지각한다. (2.25배 법칙) 변화 회피/현상 유지 편향의 근거다.',
     probabilityWeighting:
-      '낮은 확률은 과대평가, 높은 확률은 과소평가하는 경향이 있어 파국화를 강화한다.',
+      '낮은 확률은 과대평가(파국화), 높은 확률은 과소평가(무력감)하는 경향이 있다.',
   },
   metacognition: {
     cas:
@@ -29,15 +30,15 @@ export const BLUEBIRD_THEORY_SUMMARY = {
     decentering:
       '생각을 사실이 아닌 일시적 정신 이벤트로 분리해 관찰하는 능력.',
     targetBelief:
-      '“걱정은 필요하다”, “생각을 멈출 수 없다” 같은 메타 신념을 약화해야 한다.',
+      '"걱정은 필요하다", "생각을 멈출 수 없다" 같은 메타 신념을 약화해야 한다.',
   },
   agency: {
     existentialResponsibility:
       '외부 사건과 별개로 반응/선택은 개인의 자유와 책임임을 인지한다.',
     buildMeasureLearn:
-      '교정은 가설 실험이다. 행동 변화와 결과를 측정해 다음 개입을 학습한다.',
+      '교정은 가설 실험이다. 가장 작은 행동 변화를 측정해 다음 개입을 학습한다.',
     gameTheoreticThinking:
-      '감정 반응 대신 현재 상태에서 보상이 높은 다음 수를 계산한다.',
+      '감정 반응 대신 현재 상태에서 기대값이 가장 높은 다음 수를 계산한다.',
   },
 } as const;
 
@@ -48,35 +49,35 @@ export const BLUEBIRD_DISTORTION_TAXONOMY: Record<
   [DistortionType.CATASTROPHIZING]: {
     label: '파국화',
     diagnosticRule:
-      '최악 시나리오를 단정하고 발생 확률을 비정상적으로 높게 추정한다.',
+      '최악 시나리오를 단정하거나, "~하면 반드시 ~될 것이다"처럼 조건부 최악 결과를 확정적으로 예상한다. 발생 확률을 비정상적으로 높게 추정하거나, 결과가 수습 불가능할 것이라 믿는다.',
     differentialRule:
-      '흑백논리와 구분: 파국화는 단일 사건에서 장기 재앙으로 시간적 확장을 한다. 흑백논리는 결과를 이분화하지만 미래 재앙을 단정하지 않는다. 감정적 추론과 구분: 파국화는 확률 추정이 왜곡되고, 감정적 추론은 감정을 사실 근거로 사용한다.',
+      '사실적 걱정과의 구분: 마감 임박 같은 실제 위기 상황이라도 "신뢰가 완전히 바닥날 것"처럼 결과를 회복 불가능한 파멸로 정의하면 파국화다. 흑백논리와 구분: 파국화는 단일 사건에서 장기 재앙으로 시간적 확장을 한다. 감정적 추론과 구분: 파국화는 확률 추정이 왜곡되고, 감정적 추론은 감정을 사실 근거로 사용한다.',
   },
   [DistortionType.ALL_OR_NOTHING]: {
     label: '흑백논리',
     diagnosticRule:
-      '중간 대안을 제거하고 성공/실패의 이분법으로만 상황을 해석한다.',
+      '중간 대안이나 완화 가능성을 제거하고 0 아니면 100의 이분법으로 상황을 해석한다.',
     differentialRule:
-      '파국화와 구분: 흑백논리는 스펙트럼을 이분화하며 중간 가능성을 배제한다. 파국화처럼 미래 재앙을 단정하지 않아도 된다. 개인화와 구분: 흑백논리는 결과 평가의 이분화가 핵심이고, 개인화는 원인 귀속이 핵심이다.',
+      '성공과 실패 사이에 존재하는 수많은 부분적 성공의 레이어를 무시할 때 진단한다. 파국화와 구분: 흑백논리는 스펙트럼을 이분화하며 중간 가능성을 배제한다. 파국화처럼 미래 재앙을 단정하지 않아도 된다. 개인화와 구분: 흑백논리는 결과 평가의 이분화가 핵심이고, 개인화는 원인 귀속이 핵심이다.',
   },
   [DistortionType.EMOTIONAL_REASONING]: {
     label: '감정적 추론',
     diagnosticRule:
-      '현재 감정 상태를 사실 판단의 직접 근거로 사용한다.',
+      '현실의 객관적 증거보다 현재 느끼는 공포나 불안 자체를 사실의 증거로 삼는다. "무섭다"는 느낌이 "실제로 위험하다"는 결론으로 바로 이어지는 논리적 비약이 핵심이다.',
     differentialRule:
       '파국화와 구분: 감정적 추론은 "불안하니까 위험하다"처럼 감정이 증거가 된다. 파국화는 위험 확률을 과대평가하지만 감정이 직접 근거가 아닐 수 있다. 임의적 추론과 구분: 감정적 추론은 감정이 근거이고, 임의적 추론은 증거 부재에도 결론을 확정한다.',
   },
   [DistortionType.PERSONALIZATION]: {
     label: '개인화',
     diagnosticRule:
-      '통제 불가능한 외부 결과를 자신의 책임이나 결함으로 귀속한다.',
+      '통제 불가능한 환경 변수나 타인의 반응을 오직 자신의 결함이나 책임으로 해석한다. 복합적 원인 중 개인의 몫을 100%로 설정하는 과도 귀속을 찾아낸다.',
     differentialRule:
       '흑백논리와 구분: 개인화는 원인을 자신에게 과도하게 귀속하는 것이 핵심이다. 흑백논리는 결과 평가의 이분화가 핵심으로 원인 귀속 없이도 발생한다. 임의적 추론과 구분: 개인화는 "내 탓"이라는 귀속이 특징이고, 임의적 추론은 근거 없는 부정적 결론 확정이다.',
   },
   [DistortionType.ARBITRARY_INFERENCE]: {
     label: '임의적 추론',
     diagnosticRule:
-      '증거 불충분 또는 반증이 존재하는데도 부정적 결론을 선행 확정한다.',
+      '충분한 근거 없이 타인의 마음을 읽거나(Mind Reading), 미래 결과를 부정적으로 예언한다(Fortune Telling). "그럴 수도 있다"가 아니라 "분명히 그럴 것이다"라고 결론을 선행 확정한다.',
     differentialRule:
       '감정적 추론과 구분: 임의적 추론은 감정과 무관하게 논리적 비약으로 결론을 확정한다. 개인화와 구분: 임의적 추론은 타인/상황에 대한 결론도 포함한다(예: "저 사람이 나를 싫어한다"). 개인화는 자신에게 귀속되는 결론이다.',
   },
@@ -112,6 +113,40 @@ export type BluebirdFewShotCase = {
 export const BLUEBIRD_FEW_SHOT_CASES: BluebirdFewShotCase[] = [
   {
     input: {
+      trigger: '프로젝트 마감이 3일 남았는데 아직 시작하지 못했다.',
+      thought: '마감을 못 지키면 내 신뢰는 바닥날 것이고, 생각만 해도 공포스럽다.',
+    },
+    output: {
+      distortions: [
+        {
+          type: DistortionType.ARBITRARY_INFERENCE,
+          intensity: 0.72,
+          segment: '내 신뢰는 바닥날 것이고',
+          rationale: '마감 지연 시 발생할 수 있는 다양한 조정 가능성을 배제하고 신뢰 추락을 확정적 미래로 예언한다.',
+        },
+        {
+          type: DistortionType.CATASTROPHIZING,
+          intensity: 0.65,
+          segment: '생각만 해도 공포스럽다',
+          rationale: '해결책보다 발생하지 않은 결과의 파멸적 성격에 압도되어 주의가 고착된다.',
+        },
+      ],
+      frame_type: 'loss',
+      reference_point: '마감을 완벽히 지켜야만 신뢰가 유지된다는 경직된 기준',
+      probability_estimate: 85,
+      loss_aversion_signal: 0.92,
+      cas_signal: {
+        rumination: 0.30,
+        worry: 0.95,
+      },
+      system2_question_seed:
+        '신뢰 손상을 20% 이내로 방어하기 위해 지금 당장 할 수 있는 5분짜리 행동은?',
+      decentering_prompt:
+        '"신뢰가 바닥난다"는 문장을 사실이 아닌 "지금 내 뇌가 보내는 경고 신호"로 재정의하라.',
+    },
+  },
+  {
+    input: {
       trigger: '팀 회의에서 내 제안이 바로 채택되지 않았다.',
       thought: '이번에 밀리면 나는 무능한 사람으로 낙인찍힐 거야.',
     },
@@ -135,7 +170,7 @@ export const BLUEBIRD_FEW_SHOT_CASES: BluebirdFewShotCase[] = [
       system2_question_seed:
         '회의 1회의 반응이 장기 평판으로 이어질 객관 확률은 몇 %인가?',
       decentering_prompt:
-        '“낙인찍힌다”는 판단을 사실이 아닌 가설로 보고 근거/반증을 분리하라.',
+        '"낙인찍힌다"는 판단을 사실이 아닌 가설로 보고 근거/반증을 분리하라.',
     },
   },
   {
@@ -163,7 +198,7 @@ export const BLUEBIRD_FEW_SHOT_CASES: BluebirdFewShotCase[] = [
       system2_question_seed:
         '답장 지연 외에 관계 악화를 지지하는 데이터는 몇 개인가?',
       decentering_prompt:
-        '“싫어한다”는 해석과 “답장이 늦다”는 사실을 분리해서 기록하라.',
+        '"싫어한다"는 해석과 "답장이 늦다"는 사실을 분리해서 기록하라.',
     },
   },
   {
@@ -191,7 +226,7 @@ export const BLUEBIRD_FEW_SHOT_CASES: BluebirdFewShotCase[] = [
       system2_question_seed:
         '발표 전체 중 실수 구간 비율이 몇 %이며, 평가 영향은 어느 정도인가?',
       decentering_prompt:
-        '“완전 실패”라는 라벨 대신 관찰 가능한 성과/실수 지표를 분리해 적어라.',
+        '"완전 실패"라는 라벨 대신 관찰 가능한 성과/실수 지표를 분리해 적어라.',
     },
   },
   {
@@ -247,7 +282,7 @@ export const BLUEBIRD_FEW_SHOT_CASES: BluebirdFewShotCase[] = [
       system2_question_seed:
         '불안 강도(주관)와 실제 위험 데이터(객관)를 각각 몇 점으로 평가하는가?',
       decentering_prompt:
-        '“불안하다”를 사건이 아닌 내부 신호로 기록하고 사실 데이터와 분리하라.',
+        '"불안하다"를 사건이 아닌 내부 신호로 기록하고 사실 데이터와 분리하라.',
     },
   },
 ];

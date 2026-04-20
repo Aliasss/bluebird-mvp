@@ -281,12 +281,20 @@ function DashboardContent() {
         <div className="mb-4 sm:mb-6 bg-white rounded-xl sm:rounded-2xl p-4 border border-background-tertiary">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-semibold text-text-primary">오늘의 체크인</h3>
-            <button
-              onClick={() => router.push('/checkin')}
-              className="text-xs text-primary font-semibold"
-            >
-              체크인하기
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => router.push('/checkin/history')}
+                className="text-xs text-text-secondary"
+              >
+                기록 보기
+              </button>
+              <button
+                onClick={() => router.push('/checkin')}
+                className="text-xs text-primary font-semibold"
+              >
+                체크인하기
+              </button>
+            </div>
           </div>
           <div className="flex gap-3">
             <div className={`flex-1 flex items-center gap-2 p-3 rounded-xl border ${
@@ -449,7 +457,7 @@ function DashboardContent() {
                   onClick={() => setShowAllLogs(true)}
                   className="w-full py-2 text-sm text-primary font-semibold border border-primary border-opacity-30 rounded-xl hover:bg-primary hover:bg-opacity-5 transition-colors"
                 >
-                  더보기 ({logs.length - 5}개 더)
+                  더보기 ({logs.length - 3}개 더)
                 </button>
               )}
             </div>
@@ -501,7 +509,7 @@ function DashboardContent() {
                   onClick={() => setShowAllActions(true)}
                   className="w-full py-2 text-sm text-primary font-semibold border border-primary border-opacity-30 rounded-xl hover:bg-primary hover:bg-opacity-5 transition-colors"
                 >
-                  더보기 ({recentActions.length - 5}개 더)
+                  더보기 ({recentActions.length - 3}개 더)
                 </button>
               )}
             </div>

@@ -151,14 +151,15 @@ export default function AnalyzePage() {
             .maybeSingle(),
         ]);
 
-        if ((analysisRows?.length ?? 0) > 0) {
-          const existingDistortions = (analysisRows ?? [])
-            .filter((row) => row.distortion_type !== null)
-            .map((row) => ({
-              type: row.distortion_type,
-              intensity: row.intensity,
-              segment: row.logic_error_segment,
-            })) as DistortionAnalysis[];
+        const existingDistortions = (analysisRows ?? [])
+          .filter((row) => row.distortion_type !== null)
+          .map((row) => ({
+            type: row.distortion_type,
+            intensity: row.intensity,
+            segment: row.logic_error_segment,
+          })) as DistortionAnalysis[];
+
+        if (existingDistortions.length > 0) {
           setDistortions(existingDistortions);
         }
 
@@ -175,7 +176,7 @@ export default function AnalyzePage() {
           setAnswers(existingAnswers);
         }
 
-        if ((analysisRows?.length ?? 0) > 0 && existingQuestions.length === 3) {
+        if (existingDistortions.length > 0 && existingQuestions.length === 3) {
           // 캐시에서 theoryMeta 복원
           const metaRow = (analysisRows ?? []).find((row) => row.distortion_type !== null) ?? (analysisRows ?? [])[0];
           if (metaRow) {

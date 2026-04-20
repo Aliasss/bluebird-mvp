@@ -93,7 +93,6 @@ export default function AnalyzePage() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [savingAnswers, setSavingAnswers] = useState(false);
-  const [warning, setWarning] = useState<string | null>(null);
   const isRequestInFlightRef = useRef(false);
   const [theoryMeta, setTheoryMeta] = useState<TheoryMeta>({
     frameType: 'mixed',
@@ -212,7 +211,6 @@ export default function AnalyzePage() {
 
         const analyzedDistortions = (analyzePayload.distortions ?? []) as DistortionAnalysis[];
         setDistortions(analyzedDistortions);
-        setWarning(analyzePayload.warning ?? null);
         setTheoryMeta({
           frameType: (analyzePayload.frame_type as FrameType) || 'mixed',
           referencePoint: analyzePayload.reference_point || '준거점 정보 없음',
@@ -394,11 +392,6 @@ export default function AnalyzePage() {
       <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
         <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
           <h1 className="text-xl md:text-2xl font-bold text-text-primary mb-3 sm:mb-4">AI 분석 결과</h1>
-          {warning && (
-            <div className="mb-4 bg-warning bg-opacity-10 border border-warning rounded-xl p-3">
-              <p className="text-xs md:text-sm text-warning">{warning}</p>
-            </div>
-          )}
           <p className="text-xs md:text-sm text-text-secondary mb-1.5 sm:mb-2">어떤 일이 있었나요</p>
           <p className="text-text-primary mb-4">{logData?.trigger}</p>
           <p className="text-xs md:text-sm text-text-secondary mb-1.5 sm:mb-2">그 순간 든 생각</p>

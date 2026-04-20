@@ -174,15 +174,17 @@ export async function POST(request: Request) {
       system2_question_seed: '이 판단을 지지/반박하는 근거 비율은 각각 몇 %인가요?',
       decentering_prompt: '이 생각을 사실이 아닌 가설로 놓고 증거를 분리하세요.',
     };
-    let warning: string | null = null;
     try {
       analysisResult = await analyzeDistortionsWithGemini({
         trigger: logData.trigger,
         thought: logData.thought,
       });
     } catch (aiError) {
-      console.error('Gemini 분석 실패(폴백 적용):', aiError);
-      warning = 'AI 응답 지연으로 기본 분석 결과를 사용했습니다.';
+      console.error('Gemini 분석 실패:', aiError);
+      return NextResponse.json(
+        { error: 'AI 분석에 실패했어요. 잠시 후 다시 시도해주세요.', retryable: true },
+        { status: 503 }
+      );
     }
 
     const normalized = analysisPayloadSchema.parse(analysisResult);
@@ -244,13 +246,7 @@ export async function POST(request: Request) {
       }
     }
 
-    return NextResponse.json(
-      {
-        ...normalized,
-        warning,
-      },
-      { status: 200 }
-    );
+    return NextResponse.json({ ...normalized }, { status: 200 });
   } catch (error) {
     console.error('POST /api/analyze 실패:', error);
     return NextResponse.json({ error: '분석 처리 중 오류가 발생했습니다.' }, { status: 500 });

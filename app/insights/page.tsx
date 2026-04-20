@@ -9,6 +9,7 @@ import {
 import { supabase } from '@/lib/supabase/client';
 import { DistortionType, DistortionTypeKorean } from '@/types';
 import ArchetypePanel from '@/components/ui/ArchetypePanel';
+import BottomTabBar from '@/components/ui/BottomTabBar';
 import { getArchetypeResult, type ArchetypeResult } from '@/lib/utils/archetype';
 
 type Period = '7d' | '30d' | 'all';
@@ -335,6 +336,7 @@ export default function InsightsPage() {
         </div>
 
       </div>
+      <BottomTabBar />
     </main>
   );
 }

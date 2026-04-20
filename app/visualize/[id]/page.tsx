@@ -57,7 +57,7 @@ export default function VisualizePage() {
   useEffect(() => {
     const logId = params.id;
     if (!logId) {
-      setError('잘못된 접근입니다.');
+      setError('올바른 경로로 접근할 수 없어요.');
       setLoading(false);
       return;
     }

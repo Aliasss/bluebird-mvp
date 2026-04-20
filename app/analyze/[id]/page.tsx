@@ -12,6 +12,7 @@ import {
 } from '@/types';
 import PageHeader from '@/components/ui/PageHeader';
 import SkeletonCard from '@/components/ui/SkeletonCard';
+import InfoSheet from '@/components/ui/InfoSheet';
 
 type Stage = 'fetch' | 'analyze' | 'question' | 'done';
 type InterventionRow = {
@@ -108,7 +109,7 @@ export default function AnalyzePage() {
     const logId = params.id;
 
     if (!logId) {
-      setError('잘못된 접근입니다.');
+      setError('올바른 경로로 접근할 수 없어요.');
       setLoading(false);
       return;
     }
@@ -394,7 +395,13 @@ export default function AnalyzePage() {
           <h2 className="text-lg md:text-xl font-bold text-text-primary mb-3 sm:mb-4">이론 기반 해석</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 text-xs md:text-sm">
             <div className="border border-background-tertiary rounded-xl p-4">
-              <p className="text-text-secondary mb-1">현재 프레임</p>
+              <p className="text-text-secondary mb-1 flex items-center">
+                현재 프레임
+                <InfoSheet
+                  title="현재 프레임이란?"
+                  body="지금 이 상황을 '잃는 것'으로 보고 있는지, '얻는 것'으로 보고 있는지를 나타내요. 손실 프레임일 때 우리는 실제보다 훨씬 더 고통스럽게 느끼는 경향이 있어요."
+                />
+              </p>
               <p className="font-semibold text-text-primary">
                 {theoryMeta.frameType === 'loss'
                   ? '손실 프레임'
@@ -404,7 +411,13 @@ export default function AnalyzePage() {
               </p>
             </div>
             <div className="border border-background-tertiary rounded-xl p-4">
-              <p className="text-text-secondary mb-1">추정 확률</p>
+              <p className="text-text-secondary mb-1 flex items-center">
+                추정 확률
+                <InfoSheet
+                  title="추정 확률이란?"
+                  body="내가 두려워하는 일이 실제로 일어날 가능성을 AI가 추정한 값이에요. 우리는 보통 나쁜 일이 일어날 확률을 실제보다 훨씬 높게 느끼는 경향이 있어요."
+                />
+              </p>
               <p className="font-semibold text-text-primary">
                 {theoryMeta.probabilityEstimate !== null
                   ? `${theoryMeta.probabilityEstimate}%`
@@ -412,23 +425,47 @@ export default function AnalyzePage() {
               </p>
             </div>
             <div className="border border-background-tertiary rounded-xl p-4">
-              <p className="text-text-secondary mb-1">준거점</p>
+              <p className="text-text-secondary mb-1 flex items-center">
+                준거점
+                <InfoSheet
+                  title="준거점이란?"
+                  body="내가 '기준'으로 삼고 있는 상태예요. 예를 들어 '원래대로라면 칭찬받았어야 해'라는 생각이 있을 때, 그 '원래 상태'가 준거점이에요. 준거점에서 멀어질수록 더 고통스럽게 느껴져요."
+                />
+              </p>
               <p className="text-text-primary">{theoryMeta.referencePoint}</p>
             </div>
             <div className="border border-background-tertiary rounded-xl p-4">
-              <p className="text-text-secondary mb-1">손실 민감도 지표</p>
+              <p className="text-text-secondary mb-1 flex items-center">
+                손실 민감도
+                <InfoSheet
+                  title="손실 민감도란?"
+                  body="같은 크기의 이득과 손실 중 손실을 얼마나 더 크게 느끼는지를 나타내요. 수치가 높을수록 잃는 것에 더 민감하게 반응하고 있다는 신호예요."
+                />
+              </p>
               <p className="font-semibold text-text-primary">
                 {(theoryMeta.lossAversionSignal * 100).toFixed(0)}%
               </p>
             </div>
             <div className="border border-background-tertiary rounded-xl p-4">
-              <p className="text-text-secondary mb-1">CAS-반추</p>
+              <p className="text-text-secondary mb-1 flex items-center">
+                반추 경향
+                <InfoSheet
+                  title="반추 경향이란?"
+                  body="특정 생각에 마음이 고착되어 같은 생각이 계속 맴도는 상태예요. 수치가 높을수록 이 기록에서 한 가지 생각을 반복해서 되새기는 패턴이 보여요."
+                />
+              </p>
               <p className="font-semibold text-text-primary">
                 {(theoryMeta.casSignal.rumination * 100).toFixed(0)}%
               </p>
             </div>
             <div className="border border-background-tertiary rounded-xl p-4">
-              <p className="text-text-secondary mb-1">CAS-걱정</p>
+              <p className="text-text-secondary mb-1 flex items-center">
+                걱정 경향
+                <InfoSheet
+                  title="걱정 경향이란?"
+                  body="아직 일어나지 않은 미래의 부정적인 결과를 미리 떠올리며 불안해하는 상태예요. 수치가 높을수록 '앞으로 어떻게 될까'에 대한 불안이 크게 작용하고 있어요."
+                />
+              </p>
               <p className="font-semibold text-text-primary">
                 {(theoryMeta.casSignal.worry * 100).toFixed(0)}%
               </p>

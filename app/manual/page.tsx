@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import PageHeader from '@/components/ui/PageHeader';
 import TheoryValueCurveChart from '@/components/charts/theory-value-curve-chart';
 import {
   MANUAL_HEADER,
@@ -36,8 +38,10 @@ function SubSectionBlock({ sub }: { sub: ManualSubSection }) {
 }
 
 export default function ManualPage() {
+  const router = useRouter();
   return (
     <main className="min-h-screen bg-background">
+      <PageHeader title="항해사 매뉴얼" onBack={() => router.push('/me')} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)] gap-6 sm:gap-8">
 
         {/* 사이드바 */}
@@ -59,8 +63,8 @@ export default function ManualPage() {
               </a>
             ))}
             <div className="pt-3 border-t border-background-tertiary">
-              <Link href="/dashboard" className="text-sm text-primary hover:underline">
-                대시보드로 돌아가기
+              <Link href="/me" className="text-sm text-primary hover:underline">
+                돌아가기
               </Link>
             </div>
           </div>

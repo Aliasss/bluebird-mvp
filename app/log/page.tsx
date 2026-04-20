@@ -17,7 +17,7 @@ export default function LogPage() {
 
   const handleTriggerNext = () => {
     if (trigger.trim().length < 5) {
-      setError('트리거는 최소 5자 이상 입력해주세요.');
+      setError('5자 이상 적어주세요.');
       return;
     }
     setError(null);
@@ -26,7 +26,7 @@ export default function LogPage() {
 
   const handleSubmit = async () => {
     if (thought.trim().length < 10) {
-      setError('자동 사고는 최소 10자 이상 입력해주세요.');
+      setError('10자 이상 적어주세요.');
       return;
     }
 
@@ -61,7 +61,7 @@ export default function LogPage() {
       }
     } catch (err: any) {
       console.error('로그 저장 실패:', err);
-      setError(err.message || '저장에 실패했습니다. 다시 시도해주세요.');
+      setError(err.message || '저장하지 못했어요. 다시 시도해주세요.');
     } finally {
       setLoading(false);
     }
@@ -95,7 +95,7 @@ export default function LogPage() {
                   무슨 일이 있었나요?
                 </h1>
                 <p className="text-text-secondary">
-                  트리거(사건)를 입력해주세요. 구체적일수록 좋습니다.
+                  어떤 일이 있었는지 적어주세요. 구체적일수록 더 잘 분석돼요.
                 </p>
               </div>
 
@@ -104,6 +104,7 @@ export default function LogPage() {
                   value={trigger}
                   onChange={(e) => setTrigger(e.target.value)}
                   placeholder="예: 팀장이 내 보고서에 피드백을 주지 않았다"
+                  aria-label="오늘 있었던 사건을 입력하세요"
                   className="w-full h-40 p-4 border border-background-tertiary rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   disabled={loading}
                   autoFocus
@@ -168,6 +169,7 @@ export default function LogPage() {
                   value={thought}
                   onChange={(e) => setThought(e.target.value)}
                   placeholder="예: 내가 일을 못하니까 무시하는 거겠지. 앞으로도 이럴 거야"
+                  aria-label="그 순간 떠오른 생각을 입력하세요"
                   className="w-full h-40 p-4 border border-background-tertiary rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   disabled={loading}
                   autoFocus
@@ -202,7 +204,7 @@ export default function LogPage() {
                 disabled={loading || thought.length < 10}
                 className="w-full bg-primary text-white font-semibold py-4 px-6 rounded-2xl touch-manipulation active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? '저장 중...' : '저장하기'}
+                {loading ? '저장하고 있어요...' : '분석 시작하기'}
               </button>
             </>
           )}

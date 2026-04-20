@@ -92,7 +92,7 @@ export default function ActionPage() {
   useEffect(() => {
     const logId = params.id;
     if (!logId) {
-      setError('잘못된 접근입니다.');
+      setError('올바른 경로로 접근할 수 없어요.');
       setLoading(false);
       return;
     }
@@ -121,7 +121,7 @@ export default function ActionPage() {
         ]);
 
         if (logResult.error || !logResult.data) {
-          throw new Error('로그 데이터를 찾을 수 없습니다.');
+          throw new Error('기록을 찾을 수 없어요.');
         }
 
         const distortions = (analysisResult.data ?? []).map((row) => ({
@@ -149,7 +149,7 @@ export default function ActionPage() {
         setActionInput(existingAction);
       } catch (err: any) {
         console.error('행동 페이지 로드 실패:', err);
-        setError(err.message || '행동 설계 데이터를 불러오지 못했습니다.');
+        setError(err.message || '데이터를 불러오지 못했어요.');
       } finally {
         setLoading(false);
       }
@@ -165,10 +165,10 @@ export default function ActionPage() {
 
   const validateAction = (value: string) => {
     if (value.trim().length < 8) {
-      return '행동 문장을 최소 8자 이상으로 작성해주세요.';
+      return '8자 이상으로 적어주세요.';
     }
     if (!/\d/.test(value)) {
-      return '5분 내 실행 가능성을 위해 시간/횟수 등 숫자를 포함해주세요.';
+      return '5분 안에 실행 가능하도록 시간이나 횟수 같은 숫자를 넣어주세요.';
     }
     return null;
   };
@@ -197,7 +197,7 @@ export default function ActionPage() {
       const payload = await response.json();
 
       if (!response.ok) {
-        throw new Error(payload.error || '행동 저장에 실패했습니다.');
+        throw new Error(payload.error || '행동을 저장하지 못했어요.');
       }
 
       if (markCompleted) {
@@ -208,17 +208,17 @@ export default function ActionPage() {
           existingAction: actionInput.trim(),
         }));
         setNotice(
-          `행동 완료! 자율성 지수 +${payload.autonomyScore ?? 10}점이 반영되었습니다.`
+          `잘 해냈어요! 자율성 지수에 +${payload.autonomyScore ?? 10}점이 더해졌어요.`
         );
       } else {
         setState((prev) => ({
           ...prev,
           existingAction: actionInput.trim(),
         }));
-        setNotice('행동 계획이 저장되었습니다.');
+        setNotice('행동 계획을 저장했어요.');
       }
     } catch (err: any) {
-      setError(err.message || '행동 처리 중 오류가 발생했습니다.');
+      setError(err.message || '처리 중에 문제가 생겼어요.');
     } finally {
       setSaving(false);
     }
@@ -299,7 +299,8 @@ export default function ActionPage() {
               setNotice(null);
             }}
             placeholder="예: 오늘 21:00에 5분 동안 보고서 첫 문단만 작성하고 체크리스트에 완료 표시한다."
-            className="w-full h-32 p-4 border border-background-tertiary rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+            aria-label="실행할 행동 계획을 입력하세요"
+            className="w-full h-32 p-4 border border-background-tertiary rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             disabled={saving || state.isCompleted}
           />
 

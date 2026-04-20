@@ -190,7 +190,7 @@ export default function AnalyzePage() {
         const analyzePayload = await analyzeRes.json();
 
         if (!analyzeRes.ok) {
-          throw new Error(analyzePayload.error || '분석에 실패했습니다.');
+          throw new Error(analyzePayload.error || '분석을 완료하지 못했어요.');
         }
 
         const analyzedDistortions = (analyzePayload.distortions ?? []) as DistortionAnalysis[];
@@ -233,14 +233,14 @@ export default function AnalyzePage() {
         const questionPayload = await questionRes.json();
 
         if (!questionRes.ok) {
-          throw new Error(questionPayload.error || '질문 생성에 실패했습니다.');
+          throw new Error(questionPayload.error || '질문을 만들지 못했어요.');
         }
 
         setQuestions((questionPayload.questions ?? []) as string[]);
         setStage('done');
       } catch (err: any) {
         console.error('로그 조회 실패:', err);
-        setError(err.message || '분석 중 오류가 발생했습니다.');
+        setError(err.message || '분석 중에 문제가 생겼어요.');
       } finally {
         isRequestInFlightRef.current = false;
         setLoading(false);
@@ -265,7 +265,7 @@ export default function AnalyzePage() {
 
   const goNextQuestion = () => {
     if (!answers[currentQuestion]?.trim()) {
-      setSaveError('답변을 입력해주세요.');
+      setSaveError('답변을 적어주세요.');
       return;
     }
     setSaveError(null);
@@ -279,7 +279,7 @@ export default function AnalyzePage() {
 
   const handleSaveAnswers = async () => {
     if (answers.some((answer) => !answer.trim())) {
-      setSaveError('세 질문에 모두 답변해주세요.');
+      setSaveError('세 질문 모두 답변해주세요.');
       return;
     }
 
@@ -311,9 +311,9 @@ export default function AnalyzePage() {
 
   if (loading) {
     const stageMessages: Record<Stage, { title: string; sub: string }> = {
-      fetch: { title: '데이터를 불러오는 중...', sub: '' },
-      analyze: { title: 'AI가 인지 왜곡을 분석하고 있습니다', sub: '잠시만 기다려주세요. 보통 10~20초 정도 소요됩니다.' },
-      question: { title: '소크라테스식 질문을 생성하고 있습니다', sub: '분석 결과를 바탕으로 맞춤 질문을 만들고 있습니다.' },
+      fetch: { title: '기록을 불러오고 있어요', sub: '' },
+      analyze: { title: '인지 나침반을 정교하게 맞추고 있어요', sub: '보통 10~20초 정도 걸려요. 잠깐만 기다려주세요.' },
+      question: { title: '맞춤 질문을 준비하고 있어요', sub: '분석 결과를 바탕으로 질문을 만들고 있어요.' },
       done: { title: '완료', sub: '' },
     };
     const msg = stageMessages[stage];
@@ -348,23 +348,23 @@ export default function AnalyzePage() {
         <div className="max-w-md w-full space-y-6 text-center">
           <div className="text-6xl">⚠️</div>
           <h2 className="text-lg md:text-xl font-bold text-text-primary">
-            오류가 발생했습니다
+            잠깐, 항해에 문제가 생겼어요
           </h2>
           <p className="text-text-secondary">
-            {error || '데이터를 불러올 수 없습니다.'}
+            {error || '다시 시도하거나 홈으로 돌아가볼까요?'}
           </p>
           <div className="flex gap-3 justify-center">
             <button
               onClick={retryAnalysis}
               className="bg-white border border-primary text-primary font-semibold py-3 px-6 rounded-xl"
             >
-              다시 시도
+              다시 시도할게요
             </button>
             <button
               onClick={() => router.push('/dashboard')}
               className="bg-primary text-white font-semibold py-3 px-6 rounded-xl"
             >
-              대시보드로 돌아가기
+              홈으로 돌아가기
             </button>
           </div>
         </div>
@@ -382,9 +382,9 @@ export default function AnalyzePage() {
               <p className="text-xs md:text-sm text-warning">{warning}</p>
             </div>
           )}
-          <p className="text-xs md:text-sm text-text-secondary mb-1.5 sm:mb-2">트리거</p>
+          <p className="text-xs md:text-sm text-text-secondary mb-1.5 sm:mb-2">어떤 일이 있었나요</p>
           <p className="text-text-primary mb-4">{logData?.trigger}</p>
-          <p className="text-xs md:text-sm text-text-secondary mb-1.5 sm:mb-2">자동 사고</p>
+          <p className="text-xs md:text-sm text-text-secondary mb-1.5 sm:mb-2">그 순간 든 생각</p>
           <p className="text-text-primary leading-relaxed">
             {renderThoughtWithHighlights(logData?.thought ?? '', distortions)}
           </p>
@@ -443,9 +443,9 @@ export default function AnalyzePage() {
         </div>
 
         <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
-          <h2 className="text-lg md:text-xl font-bold text-text-primary mb-3 sm:mb-4">탐지된 인지 왜곡</h2>
+          <h2 className="text-lg md:text-xl font-bold text-text-primary mb-3 sm:mb-4">발견된 생각의 패턴</h2>
           {distortions.length === 0 ? (
-            <p className="text-text-secondary">명확한 왜곡 패턴이 탐지되지 않았습니다.</p>
+            <p className="text-text-secondary">이번 기록에서는 뚜렷한 왜곡 패턴이 보이지 않아요.</p>
           ) : (
             <div className="space-y-3">
               {distortions.map((item, index) => (
@@ -477,9 +477,9 @@ export default function AnalyzePage() {
         </div>
 
         <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
-          <h2 className="text-lg md:text-xl font-bold text-text-primary mb-3 sm:mb-4">소크라테스식 질문</h2>
+          <h2 className="text-lg md:text-xl font-bold text-text-primary mb-3 sm:mb-4">생각을 점검하는 질문</h2>
           {questions.length === 0 ? (
-            <p className="text-text-secondary">질문을 생성하지 못했습니다. 다시 시도해주세요.</p>
+            <p className="text-text-secondary">질문을 만들지 못했어요. 다시 시도해주세요.</p>
           ) : (
             <div className="space-y-4">
               <div className="flex items-center justify-between text-xs md:text-sm">
@@ -487,7 +487,7 @@ export default function AnalyzePage() {
                   질문 {currentQuestion + 1} / {questions.length}
                 </span>
                 <span className="text-primary font-medium">
-                  구체적인 근거를 담아 답변해주세요
+                  구체적인 근거를 담아 적어주세요
                 </span>
               </div>
 
@@ -498,8 +498,9 @@ export default function AnalyzePage() {
                 <textarea
                   value={answers[currentQuestion] ?? ''}
                   onChange={(event) => handleAnswerChange(event.target.value)}
-                  placeholder="예: 최악의 경우는 30% 정도라고 생각합니다. 근거는 ..."
-                  className="w-full h-28 p-3 border border-background-tertiary rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="예: 최악의 경우는 30% 정도라고 생각해요. 근거는 ..."
+                  aria-label={`질문 ${currentQuestion + 1}에 대한 답변`}
+                  className="w-full h-28 p-3 border border-background-tertiary rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   disabled={savingAnswers}
                 />
               </div>

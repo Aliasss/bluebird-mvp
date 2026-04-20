@@ -9,6 +9,7 @@ import ArchetypeCard from '@/components/ui/ArchetypeCard';
 import BottomTabBar from '@/components/ui/BottomTabBar';
 import { calculateStreak, type StreakResult } from '@/lib/utils/streak';
 import { getArchetypeResult, type ArchetypeResult } from '@/lib/utils/archetype';
+import { getRankResult } from '@/lib/utils/rank';
 import type { User } from '@supabase/supabase-js';
 import type { Log, DistortionType } from '@/types';
 
@@ -252,22 +253,34 @@ function DashboardContent() {
         </div>
 
         {/* 스트릭 + 자율성 지수 2열 */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-white rounded-2xl p-4 border border-background-tertiary">
-            <p className="text-xs text-text-secondary mb-1">연속 항해</p>
-            <p className="text-2xl font-bold text-primary">{streak.current}일 🔥</p>
-            <p className="text-[10px] text-text-tertiary mt-1">
-              {streak.doneToday ? '오늘도 달성!' : streak.best > 0 ? `최고 ${streak.best}일` : '오늘 시작해보세요'}
-            </p>
-          </div>
-          <div className="bg-white rounded-2xl p-4 border border-background-tertiary">
-            <p className="text-xs text-text-secondary mb-1">자율성 지수</p>
-            <p className="text-2xl font-bold text-warning">{autonomyScore}점 ⚡</p>
-            <p className="text-[10px] text-text-tertiary mt-1">
-              {autonomyScore === 0 ? '행동 완료로 올려보세요' : '누적 자율성 점수'}
-            </p>
-          </div>
-        </div>
+        {(() => {
+          const { rank, progressPct, pointsToNext } = getRankResult(autonomyScore);
+          return (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-white rounded-2xl p-4 border border-background-tertiary">
+                <p className="text-xs text-text-secondary mb-1">연속 항해</p>
+                <p className="text-2xl font-bold text-primary">{streak.current}일 🔥</p>
+                <p className="text-[10px] text-text-tertiary mt-1">
+                  {streak.doneToday ? '오늘도 달성!' : streak.best > 0 ? `최고 ${streak.best}일` : '오늘 시작해보세요'}
+                </p>
+              </div>
+              <div className="bg-white rounded-2xl p-4 border border-background-tertiary">
+                <p className="text-xs text-text-secondary mb-1">자율성 지수</p>
+                <p className="text-xl font-bold text-warning">{autonomyScore}점</p>
+                <p className="text-[10px] font-semibold text-primary mt-0.5">{rank.title}</p>
+                <div className="mt-2 h-1 bg-background-secondary rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-warning rounded-full transition-all duration-500"
+                    style={{ width: `${progressPct}%` }}
+                  />
+                </div>
+                <p className="text-[10px] text-text-tertiary mt-1">
+                  {pointsToNext !== null ? `다음 등급까지 ${pointsToNext}점` : '최고 등급 달성 ⚓'}
+                </p>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* 아키타입 카드 */}
         <ArchetypeCard result={archetype} onClick={() => router.push('/insights')} />

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { BookOpen, CheckCircle, Star, ChevronRight } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import BottomTabBar from '@/components/ui/BottomTabBar';
+import { getRankResult, RANKS } from '@/lib/utils/rank';
 import type { User } from '@supabase/supabase-js';
 
 export default function MePage() {
@@ -87,9 +88,9 @@ export default function MePage() {
           </div>
         </div>
 
-        {/* 통계 */}
-        <div>
-          <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wide mb-2 px-1">항해 기록</p>
+        {/* 통계 + 등급 */}
+        <div className="space-y-3">
+          <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wide px-1">항해 기록</p>
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-white rounded-2xl p-4 border border-background-tertiary text-center">
               <div className="w-8 h-8 bg-primary bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-2">
@@ -113,6 +114,50 @@ export default function MePage() {
               <p className="text-[10px] text-text-secondary mt-0.5">자율성 지수</p>
             </div>
           </div>
+
+          {/* 등급 카드 */}
+          {(() => {
+            const { rank, progressPct, pointsToNext } = getRankResult(stats.autonomyScore);
+            return (
+              <div className="bg-white rounded-2xl p-4 border border-warning border-opacity-40">
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <p className="text-xs text-text-secondary">현재 등급</p>
+                    <p className="text-base font-bold text-warning">{rank.title} ⚓</p>
+                    <p className="text-xs text-text-secondary mt-0.5">{rank.description}</p>
+                  </div>
+                  <p className="text-2xl font-bold text-text-primary">{stats.autonomyScore}점</p>
+                </div>
+                <div className="mt-3 h-1.5 bg-background-secondary rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-warning rounded-full transition-all duration-500"
+                    style={{ width: `${progressPct}%` }}
+                  />
+                </div>
+                <p className="text-[10px] text-text-tertiary mt-1.5">
+                  {pointsToNext !== null
+                    ? `다음 등급까지 ${pointsToNext}점 남았습니다`
+                    : '마음의 바다를 완전히 통찰한 항해사입니다 ⚡'}
+                </p>
+
+                {/* 전체 등급 로드맵 */}
+                <div className="mt-4 space-y-1.5">
+                  <p className="text-[10px] font-semibold text-text-tertiary uppercase tracking-wide">등급 로드맵</p>
+                  {RANKS.map((r) => (
+                    <div key={r.title} className="flex items-center gap-2">
+                      <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${stats.autonomyScore >= r.min ? 'bg-warning' : 'bg-background-tertiary'}`} />
+                      <span className={`text-[11px] ${stats.autonomyScore >= r.min ? 'text-text-primary font-medium' : 'text-text-tertiary'}`}>
+                        {r.title}
+                      </span>
+                      <span className="text-[10px] text-text-tertiary ml-auto">
+                        {r.max !== null ? `${r.min}~${r.max}점` : `${r.min}점+`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
         </div>
 
         {/* 메뉴 */}

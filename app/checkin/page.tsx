@@ -17,7 +17,7 @@ const MOOD_OPTIONS = [
 function getCheckinType(): 'morning' | 'evening' {
   // KST 시각: UTC + 9
   const kstHour = (new Date().getUTCHours() + 9) % 24;
-  return kstHour >= 6 && kstHour < 12 ? 'morning' : 'evening';
+  return kstHour >= 5 && kstHour < 13 ? 'morning' : 'evening';
 }
 
 export default function CheckinPage() {

@@ -12,6 +12,7 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [needsEmailVerification, setNeedsEmailVerification] = useState(false);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,12 +50,15 @@ export default function SignupPage() {
           setError('이미 등록된 이메일입니다.');
         } else {
           setSuccess(true);
-          // 자동 로그인된 경우 대시보드로 이동
           if (data.session) {
+            // 이메일 인증 불필요 — 바로 대시보드로 이동
             setTimeout(() => {
               router.push('/dashboard');
               router.refresh();
             }, 2000);
+          } else {
+            // 이메일 인증 필요
+            setNeedsEmailVerification(true);
           }
         }
       }
@@ -69,19 +73,32 @@ export default function SignupPage() {
     return (
       <main className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
         <div className="max-w-md w-full space-y-8 text-center">
-          <div className="bg-success bg-opacity-10 border border-success rounded-2xl p-8 space-y-4">
-            <div className="w-16 h-16 bg-success rounded-full mx-auto flex items-center justify-center">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
+          {needsEmailVerification ? (
+            <div className="bg-white border border-background-tertiary rounded-2xl p-8 space-y-4">
+              <div className="w-16 h-16 bg-primary bg-opacity-10 rounded-full mx-auto flex items-center justify-center">
+                <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-text-primary">이메일을 확인해주세요</h2>
+              <p className="text-sm text-text-secondary leading-relaxed">
+                <span className="font-semibold text-text-primary">{email}</span>로<br />
+                인증 링크를 보냈어요.<br />
+                링크를 클릭하면 항해를 시작할 수 있어요.
+              </p>
+              <p className="text-xs text-text-tertiary">스팸 폴더도 확인해보세요</p>
             </div>
-            <h2 className="text-2xl font-bold text-text-primary">
-              회원가입 완료!
-            </h2>
-            <p className="text-text-secondary">
-              대시보드로 이동합니다...
-            </p>
-          </div>
+          ) : (
+            <div className="bg-success bg-opacity-10 border border-success rounded-2xl p-8 space-y-4">
+              <div className="w-16 h-16 bg-success rounded-full mx-auto flex items-center justify-center">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-text-primary">회원가입 완료!</h2>
+              <p className="text-text-secondary">대시보드로 이동합니다...</p>
+            </div>
+          )}
         </div>
       </main>
     );

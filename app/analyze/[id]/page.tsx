@@ -143,7 +143,7 @@ export default function AnalyzePage() {
         const [{ data: analysisRows }, { data: interventionRow }] = await Promise.all([
           supabase
             .from('analysis')
-            .select('distortion_type, intensity, logic_error_segment')
+            .select('distortion_type, intensity, logic_error_segment, frame_type, reference_point, probability_estimate, loss_aversion_signal, cas_rumination, cas_worry, system2_question_seed, decentering_prompt')
             .eq('log_id', logId),
           supabase
             .from('intervention')
@@ -177,6 +177,22 @@ export default function AnalyzePage() {
         }
 
         if ((analysisRows?.length ?? 0) > 0 && existingQuestions.length === 3) {
+          // 캐시에서 theoryMeta 복원
+          const metaRow = (analysisRows ?? []).find((row) => row.distortion_type !== null) ?? (analysisRows ?? [])[0];
+          if (metaRow) {
+            setTheoryMeta({
+              frameType: (metaRow.frame_type as FrameType) || 'mixed',
+              referencePoint: String(metaRow.reference_point || '준거점 정보 없음'),
+              probabilityEstimate: typeof metaRow.probability_estimate === 'number' ? metaRow.probability_estimate : null,
+              lossAversionSignal: typeof metaRow.loss_aversion_signal === 'number' ? metaRow.loss_aversion_signal : 0.3,
+              casSignal: {
+                rumination: typeof metaRow.cas_rumination === 'number' ? metaRow.cas_rumination : 0.3,
+                worry: typeof metaRow.cas_worry === 'number' ? metaRow.cas_worry : 0.3,
+              },
+              system2QuestionSeed: String(metaRow.system2_question_seed || '판단 근거의 비율을 숫자로 분리해보세요.'),
+              decenteringPrompt: String(metaRow.decentering_prompt || '생각을 사실이 아닌 가설로 두고 관찰 가능한 데이터만 분리하세요.'),
+            });
+          }
           setQuestions(existingQuestions);
           setStage('done');
           return;

@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, SchemaType, type Schema } from '@google/generative-ai';
 import {
   BLUEBIRD_ANALYSIS_JSON_SCHEMA,
   BLUEBIRD_DISTORTION_TAXONOMY,
@@ -29,7 +29,64 @@ function getGeminiClient() {
   return new GoogleGenerativeAI(apiKey);
 }
 
-function getGeminiModel() {
+const ANALYSIS_RESPONSE_SCHEMA: Schema = {
+  type: SchemaType.OBJECT,
+  properties: {
+    distortions: {
+      type: SchemaType.ARRAY,
+      items: {
+        type: SchemaType.OBJECT,
+        properties: {
+          type: {
+            type: SchemaType.STRING,
+            format: 'enum',
+            enum: ['catastrophizing', 'all_or_nothing', 'emotional_reasoning', 'personalization', 'arbitrary_inference'],
+          },
+          intensity: { type: SchemaType.NUMBER },
+          segment: { type: SchemaType.STRING },
+          rationale: { type: SchemaType.STRING },
+        },
+        required: ['type', 'intensity', 'segment', 'rationale'],
+      },
+    },
+    frame_type: { type: SchemaType.STRING, format: 'enum', enum: ['loss', 'gain', 'mixed'] },
+    reference_point: { type: SchemaType.STRING },
+    probability_estimate: { type: SchemaType.NUMBER, nullable: true },
+    loss_aversion_signal: { type: SchemaType.NUMBER },
+    cas_signal: {
+      type: SchemaType.OBJECT,
+      properties: {
+        rumination: { type: SchemaType.NUMBER },
+        worry: { type: SchemaType.NUMBER },
+      },
+      required: ['rumination', 'worry'],
+    },
+    system2_question_seed: { type: SchemaType.STRING },
+    decentering_prompt: { type: SchemaType.STRING },
+  },
+  required: [
+    'distortions',
+    'frame_type',
+    'reference_point',
+    'loss_aversion_signal',
+    'cas_signal',
+    'system2_question_seed',
+    'decentering_prompt',
+  ],
+};
+
+const QUESTIONS_RESPONSE_SCHEMA: Schema = {
+  type: SchemaType.OBJECT,
+  properties: {
+    questions: {
+      type: SchemaType.ARRAY,
+      items: { type: SchemaType.STRING },
+    },
+  },
+  required: ['questions'],
+};
+
+function getAnalysisModel() {
   const genAI = getGeminiClient();
   return genAI.getGenerativeModel({
     model: 'gemini-2.5-flash',
@@ -39,6 +96,22 @@ function getGeminiModel() {
       topK: 20,
       maxOutputTokens: 2048,
       responseMimeType: 'application/json',
+      responseSchema: ANALYSIS_RESPONSE_SCHEMA,
+    },
+  });
+}
+
+function getQuestionsModel() {
+  const genAI = getGeminiClient();
+  return genAI.getGenerativeModel({
+    model: 'gemini-2.5-flash',
+    generationConfig: {
+      temperature: 0.3,
+      topP: 0.9,
+      topK: 20,
+      maxOutputTokens: 1024,
+      responseMimeType: 'application/json',
+      responseSchema: QUESTIONS_RESPONSE_SCHEMA,
     },
   });
 }
@@ -52,8 +125,10 @@ function isRetryableGeminiError(error: unknown): boolean {
   return status === 429 || status === 500 || status === 502 || status === 503 || status === 504;
 }
 
-async function generateContentWithRetry(prompt: string): Promise<string> {
-  const model = getGeminiModel();
+async function generateContentWithRetry(
+  prompt: string,
+  model: ReturnType<typeof getAnalysisModel>
+): Promise<string> {
   const maxAttempts = 2;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -239,7 +314,7 @@ export async function analyzeDistortionsWithGemini(input: {
   thought: string;
 }): Promise<AIAnalysisResult> {
   const prompt = buildAnalysisPrompt(input);
-  const text = await generateContentWithRetry(prompt);
+  const text = await generateContentWithRetry(prompt, getAnalysisModel());
   const parsed = safeJsonParse<Record<string, unknown>>(text);
   if (!parsed) {
     return {
@@ -332,7 +407,7 @@ export async function generateSocraticQuestionsWithGemini(input: {
     'JSON 이외 텍스트는 출력하지 마라.',
   ].join('\n');
 
-  const text = await generateContentWithRetry(prompt);
+  const text = await generateContentWithRetry(prompt, getQuestionsModel());
   const parsed = safeJsonParse<{ questions?: unknown }>(text);
   if (!parsed) {
     return DEFAULT_SOCRATIC_QUESTIONS;

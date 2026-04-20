@@ -130,12 +130,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const distortions: DistortionAnalysis[] = (analysisRows ?? []).map((row) => ({
-      type: (row as any).distortion_type,
-      intensity: Number((row as any).intensity ?? 0),
-      segment: String((row as any).logic_error_segment ?? ''),
-      rationale: ((row as any).rationale as string | undefined) || undefined,
-    })) as DistortionAnalysis[];
+    const distortions: DistortionAnalysis[] = (analysisRows ?? [])
+      .filter((row) => (row as any).distortion_type !== null)
+      .map((row) => ({
+        type: (row as any).distortion_type,
+        intensity: Number((row as any).intensity ?? 0),
+        segment: String((row as any).logic_error_segment ?? ''),
+        rationale: ((row as any).rationale as string | undefined) || undefined,
+      })) as DistortionAnalysis[];
 
     const analysisMeta = (analysisRows?.[0] ?? {}) as Record<string, any>;
 

@@ -236,7 +236,7 @@ ${JSON.stringify(example.output, null, 2)}`;
   }).join('\n\n');
 }
 
-function buildAnalysisPrompt(input: { trigger: string; thought: string }) {
+function buildAnalysisPrompt(input: { trigger: string; thought: string; pain_score?: number | null }) {
   const safeTrigger = sanitizeForPrompt(input.trigger);
   const safeThought = sanitizeForPrompt(input.thought);
 
@@ -275,7 +275,15 @@ function buildAnalysisPrompt(input: { trigger: string; thought: string }) {
     buildFewShotPromptBlock(),
     '',
     '[Actual Input]',
-    JSON.stringify({ trigger: safeTrigger, thought: safeThought }, null, 2),
+    JSON.stringify(
+      {
+        trigger: safeTrigger,
+        thought: safeThought,
+        ...(input.pain_score != null ? { initial_pain_score: input.pain_score } : {}),
+      },
+      null,
+      2
+    ),
   ].join('\n');
 }
 
@@ -316,6 +324,7 @@ function normalizeAnalysisPayload(payload: unknown): AIAnalysisResult {
 export async function analyzeDistortionsWithGemini(input: {
   trigger: string;
   thought: string;
+  pain_score?: number | null;
 }): Promise<AIAnalysisResult> {
   const prompt = buildAnalysisPrompt(input);
   const text = await generateContentWithRetry(prompt, getAnalysisModel());

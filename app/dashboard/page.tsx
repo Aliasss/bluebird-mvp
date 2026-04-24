@@ -12,6 +12,9 @@ import { getArchetypeResult, type ArchetypeResult } from '@/lib/utils/archetype'
 import { getRankResult } from '@/lib/utils/rank';
 import type { User } from '@supabase/supabase-js';
 import type { Log, DistortionType } from '@/types';
+import { findPendingReview, type PendingReviewClient, type PendingReview } from '@/lib/review/pending-review';
+import { sumPositiveDeltaPain, type PainPair } from '@/lib/review/delta-pain';
+import { ReviewCard } from '@/components/review/ReviewCard';
 
 type LogWithType = Log & { log_type?: string | null };
 
@@ -38,6 +41,8 @@ function DashboardContent() {
   const [streak, setStreak] = useState<StreakResult>({ current: 0, best: 0, doneToday: false });
   const [archetype, setArchetype] = useState<ArchetypeResult | null>(null);
   const [autonomyScore, setAutonomyScore] = useState(0);
+  const [pendingReview, setPendingReview] = useState<PendingReview | null>(null);
+  const [weeklyPositiveDeltaPain, setWeeklyPositiveDeltaPain] = useState(0);
   const [successToast, setSuccessToast] = useState(false);
   const [checkinToast, setCheckinToast] = useState(false);
   const [todayCheckin, setTodayCheckin] = useState<{ morning: boolean; evening: boolean }>({ morning: false, evening: false });
@@ -128,6 +133,53 @@ function DashboardContent() {
       const totalScore = interventionsData?.reduce((sum, item) => sum + (item.autonomy_score || 0), 0) || 0;
       setAutonomyScore(totalScore);
 
+      // 재평가 대기 (Δpain)
+      const pendingReviewClient: PendingReviewClient = {
+        async queryPendingInterventions({ userId: uid, completedAtGte, completedAtLte }) {
+          const { data, error } = await supabase
+            .from('intervention')
+            .select('id, log_id, completed_at, logs!inner(id, trigger, pain_score, user_id)')
+            .eq('is_completed', true)
+            .is('reevaluated_pain_score', null)
+            .is('review_dismissed_at', null)
+            .gte('completed_at', completedAtGte)
+            .lte('completed_at', completedAtLte)
+            .eq('logs.user_id', uid);
+          const normalized = (data ?? []).map((row) => ({
+            ...row,
+            logs: Array.isArray(row.logs) ? row.logs[0] : row.logs,
+          })) as import('@/lib/review/pending-review').PendingReviewRow[];
+          return { data: normalized, error };
+        },
+      };
+      const pending = await findPendingReview({
+        userId,
+        now: new Date(),
+        client: pendingReviewClient,
+      });
+      setPendingReview(pending);
+
+      // 이번 주 (7일) Δpain 양수 합계
+      const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      const { data: deltaPainRows } = await supabase
+        .from('intervention')
+        .select('reevaluated_pain_score, logs!inner(pain_score, user_id)')
+        .eq('logs.user_id', userId)
+        .not('reevaluated_pain_score', 'is', null)
+        .gte('reevaluated_at', oneWeekAgo);
+
+      const pairs: PainPair[] = (deltaPainRows ?? []).map((row) => {
+        const logsField = row.logs as unknown as
+          | { pain_score: number | null }
+          | Array<{ pain_score: number | null }>;
+        const log = Array.isArray(logsField) ? logsField[0] : logsField;
+        return {
+          initial: log?.pain_score ?? null,
+          reevaluated: (row as { reevaluated_pain_score: number | null }).reevaluated_pain_score,
+        };
+      });
+      setWeeklyPositiveDeltaPain(sumPositiveDeltaPain(pairs));
+
       // 아키타입
       const distortionCounts: Partial<Record<DistortionType, number>> = {};
       const distortionRows = (analysisData ?? []).filter(
@@ -207,6 +259,15 @@ function DashboardContent() {
           <p className="text-sm text-text-secondary mt-0.5">{greeting?.message}</p>
         </div>
 
+        {/* 재평가 대기 카드 */}
+        {pendingReview && (
+          <ReviewCard
+            logId={pendingReview.logId}
+            triggerSnippet={pendingReview.triggerSnippet}
+            daysAgo={pendingReview.daysAgo}
+          />
+        )}
+
         {/* 체크인 카드 */}
         <div className="bg-white rounded-2xl p-4 border border-background-tertiary shadow-sm">
           <div className="flex items-center justify-between mb-3">
@@ -252,33 +313,43 @@ function DashboardContent() {
           </div>
         </div>
 
-        {/* 스트릭 + 자율성 지수 2열 */}
+        {/* 스트릭 + 자율성 지수 + 이번 주 줄어든 고통 */}
         {(() => {
           const { rank, progressPct, pointsToNext } = getRankResult(autonomyScore);
           return (
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
-                <p className="text-xs text-text-secondary mb-1">연속 항해</p>
-                <p className="text-2xl font-extrabold text-primary tracking-tight">{streak.current}일 🔥</p>
-                <p className="text-[10px] text-text-tertiary mt-1">
-                  {streak.doneToday ? '오늘도 달성!' : streak.best > 0 ? `최고 ${streak.best}일` : '오늘 시작해보세요'}
-                </p>
-              </div>
-              <div className="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
-                <p className="text-xs text-text-secondary mb-1">자율성 지수</p>
-                <p className="text-xl font-extrabold text-warning tracking-tight">{autonomyScore}점</p>
-                <p className="text-[10px] font-semibold text-primary mt-0.5">{rank.title}</p>
-                <div className="mt-2 h-1 bg-background-secondary rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-warning rounded-full transition-all duration-500"
-                    style={{ width: `${progressPct}%` }}
-                  />
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
+                  <p className="text-xs text-text-secondary mb-1">연속 항해</p>
+                  <p className="text-2xl font-extrabold text-primary tracking-tight">{streak.current}일 🔥</p>
+                  <p className="text-[10px] text-text-tertiary mt-1">
+                    {streak.doneToday ? '오늘도 달성!' : streak.best > 0 ? `최고 ${streak.best}일` : '오늘 시작해보세요'}
+                  </p>
                 </div>
-                <p className="text-[10px] text-text-tertiary mt-1">
-                  {pointsToNext !== null ? `다음 등급까지 ${pointsToNext}점` : '최고 등급 달성 ⚓'}
-                </p>
+                <div className="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
+                  <p className="text-xs text-text-secondary mb-1">자율성 지수</p>
+                  <p className="text-xl font-extrabold text-warning tracking-tight">{autonomyScore}점</p>
+                  <p className="text-[10px] font-semibold text-primary mt-0.5">{rank.title}</p>
+                  <div className="mt-2 h-1 bg-background-secondary rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-warning rounded-full transition-all duration-500"
+                      style={{ width: `${progressPct}%` }}
+                    />
+                  </div>
+                  <p className="text-[10px] text-text-tertiary mt-1">
+                    {pointsToNext !== null ? `다음 등급까지 ${pointsToNext}점` : '최고 등급 달성 ⚓'}
+                  </p>
+                </div>
               </div>
-            </div>
+              <div className="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
+                <p className="text-xs text-text-secondary mb-1">이번 주 줄어든 고통</p>
+                <p className="text-2xl font-extrabold text-primary tracking-tight">
+                  {weeklyPositiveDeltaPain}
+                  <span className="text-sm text-text-tertiary ml-1">점</span>
+                </p>
+                <p className="text-[10px] text-text-tertiary mt-1">7일 내 재평가 완료 기준</p>
+              </div>
+            </>
           );
         })()}
 

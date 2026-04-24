@@ -1,6 +1,6 @@
 'use client';
 
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import {
@@ -13,6 +13,8 @@ import {
 import PageHeader from '@/components/ui/PageHeader';
 import SkeletonCard from '@/components/ui/SkeletonCard';
 import InfoSheet from '@/components/ui/InfoSheet';
+import { SafetyNotice } from '@/components/safety/SafetyNotice';
+import type { CrisisLevel } from '@/lib/safety/types';
 
 type Stage = 'fetch' | 'analyze' | 'question' | 'done';
 type InterventionRow = {
@@ -94,6 +96,9 @@ export default function AnalyzePage() {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [savingAnswers, setSavingAnswers] = useState(false);
   const isRequestInFlightRef = useRef(false);
+  const [safetyLevel, setSafetyLevel] = useState<Exclude<CrisisLevel, 'none'> | null>(null);
+  const [safetyOverride, setSafetyOverride] = useState(false);
+  const safetyOverrideRef = useRef(false);
   const [theoryMeta, setTheoryMeta] = useState<TheoryMeta>({
     frameType: 'mixed',
     referencePoint: '준거점 정보 없음',
@@ -104,7 +109,7 @@ export default function AnalyzePage() {
     decenteringPrompt: '생각을 사실이 아닌 가설로 두고 관찰 가능한 데이터만 분리하세요.',
   });
 
-  useEffect(() => {
+  const startAnalysis = useCallback(async () => {
     const logId = params.id;
 
     if (!logId) {
@@ -113,161 +118,194 @@ export default function AnalyzePage() {
       return;
     }
 
-    const runAnalysis = async () => {
-      if (isRequestInFlightRef.current) {
+    if (isRequestInFlightRef.current) {
+      return;
+    }
+    isRequestInFlightRef.current = true;
+    setLoading(true);
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.replace('/auth/login');
         return;
       }
-      isRequestInFlightRef.current = true;
-      try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
 
-        if (!user) {
-          router.replace('/auth/login');
-          return;
-        }
+      const { data, error: logError } = await supabase
+        .from('logs')
+        .select('*')
+        .eq('id', logId)
+        .eq('user_id', user.id)
+        .single();
 
-        const { data, error: logError } = await supabase
-          .from('logs')
-          .select('*')
-          .eq('id', logId)
-          .eq('user_id', user.id)
-          .single();
+      if (logError) throw logError;
 
-        if (logError) throw logError;
+      setLogData(data);
 
-        setLogData(data);
+      const [{ data: analysisRows }, { data: interventionRow }] = await Promise.all([
+        supabase
+          .from('analysis')
+          .select('distortion_type, intensity, logic_error_segment, frame_type, reference_point, probability_estimate, loss_aversion_signal, cas_rumination, cas_worry, system2_question_seed, decentering_prompt')
+          .eq('log_id', logId),
+        supabase
+          .from('intervention')
+          .select('socratic_questions, user_answers')
+          .eq('log_id', logId)
+          .maybeSingle(),
+      ]);
 
-        const [{ data: analysisRows }, { data: interventionRow }] = await Promise.all([
-          supabase
-            .from('analysis')
-            .select('distortion_type, intensity, logic_error_segment, frame_type, reference_point, probability_estimate, loss_aversion_signal, cas_rumination, cas_worry, system2_question_seed, decentering_prompt')
-            .eq('log_id', logId),
-          supabase
-            .from('intervention')
-            .select('socratic_questions, user_answers')
-            .eq('log_id', logId)
-            .maybeSingle(),
-        ]);
+      const existingDistortions = (analysisRows ?? [])
+        .filter((row) => row.distortion_type !== null)
+        .map((row) => ({
+          type: row.distortion_type,
+          intensity: row.intensity,
+          segment: row.logic_error_segment,
+        })) as DistortionAnalysis[];
 
-        const existingDistortions = (analysisRows ?? [])
-          .filter((row) => row.distortion_type !== null)
-          .map((row) => ({
-            type: row.distortion_type,
-            intensity: row.intensity,
-            segment: row.logic_error_segment,
-          })) as DistortionAnalysis[];
-
-        if (existingDistortions.length > 0) {
-          setDistortions(existingDistortions);
-        }
-
-        const castIntervention = interventionRow as InterventionRow | null;
-        const existingQuestions = Array.isArray(castIntervention?.socratic_questions)
-          ? castIntervention.socratic_questions.map((q) => String(q))
-          : [];
-        const existingAnswers =
-          castIntervention?.user_answers && typeof castIntervention.user_answers === 'object'
-            ? toAnswerArray(castIntervention.user_answers)
-            : ['', '', ''];
-
-        if (existingAnswers.some((answer) => answer.length > 0)) {
-          setAnswers(existingAnswers);
-        }
-
-        if (existingDistortions.length > 0 && existingQuestions.length === 3) {
-          // 캐시에서 theoryMeta 복원
-          const metaRow = (analysisRows ?? []).find((row) => row.distortion_type !== null) ?? (analysisRows ?? [])[0];
-          if (metaRow) {
-            setTheoryMeta({
-              frameType: (metaRow.frame_type as FrameType) || 'mixed',
-              referencePoint: String(metaRow.reference_point || '준거점 정보 없음'),
-              probabilityEstimate: typeof metaRow.probability_estimate === 'number' ? metaRow.probability_estimate : null,
-              lossAversionSignal: typeof metaRow.loss_aversion_signal === 'number' ? metaRow.loss_aversion_signal : 0.3,
-              casSignal: {
-                rumination: typeof metaRow.cas_rumination === 'number' ? metaRow.cas_rumination : 0.3,
-                worry: typeof metaRow.cas_worry === 'number' ? metaRow.cas_worry : 0.3,
-              },
-              system2QuestionSeed: String(metaRow.system2_question_seed || '판단 근거의 비율을 숫자로 분리해보세요.'),
-              decenteringPrompt: String(metaRow.decentering_prompt || '생각을 사실이 아닌 가설로 두고 관찰 가능한 데이터만 분리하세요.'),
-            });
-          }
-          setQuestions(existingQuestions);
-          setStage('done');
-          return;
-        }
-
-        setStage('analyze');
-        const analyzeRes = await fetch('/api/analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ logId }),
-        });
-        const analyzePayload = await analyzeRes.json();
-
-        if (!analyzeRes.ok) {
-          throw new Error(analyzePayload.error || '분석을 완료하지 못했어요.');
-        }
-
-        const analyzedDistortions = (analyzePayload.distortions ?? []) as DistortionAnalysis[];
-        setDistortions(analyzedDistortions);
-        setTheoryMeta({
-          frameType: (analyzePayload.frame_type as FrameType) || 'mixed',
-          referencePoint: analyzePayload.reference_point || '준거점 정보 없음',
-          probabilityEstimate:
-            typeof analyzePayload.probability_estimate === 'number'
-              ? analyzePayload.probability_estimate
-              : null,
-          lossAversionSignal:
-            typeof analyzePayload.loss_aversion_signal === 'number'
-              ? analyzePayload.loss_aversion_signal
-              : 0.3,
-          casSignal: {
-            rumination:
-              typeof analyzePayload.cas_signal?.rumination === 'number'
-                ? analyzePayload.cas_signal.rumination
-                : 0.3,
-            worry:
-              typeof analyzePayload.cas_signal?.worry === 'number'
-                ? analyzePayload.cas_signal.worry
-                : 0.3,
-          },
-          system2QuestionSeed:
-            analyzePayload.system2_question_seed || '판단 근거의 비율을 숫자로 분리해보세요.',
-          decenteringPrompt:
-            analyzePayload.decentering_prompt ||
-            '생각을 사실이 아닌 가설로 두고 관찰 가능한 데이터만 분리하세요.',
-        });
-
-        setStage('question');
-        const questionRes = await fetch('/api/generate-questions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ logId }),
-        });
-        const questionPayload = await questionRes.json();
-
-        if (!questionRes.ok) {
-          throw new Error(questionPayload.error || '질문을 만들지 못했어요.');
-        }
-
-        setQuestions((questionPayload.questions ?? []) as string[]);
-        setStage('done');
-      } catch (err: any) {
-        console.error('로그 조회 실패:', err);
-        setError(err.message || '분석 중에 문제가 생겼어요.');
-      } finally {
-        isRequestInFlightRef.current = false;
-        setLoading(false);
+      if (existingDistortions.length > 0) {
+        setDistortions(existingDistortions);
       }
-    };
 
-    runAnalysis();
+      const castIntervention = interventionRow as InterventionRow | null;
+      const existingQuestions = Array.isArray(castIntervention?.socratic_questions)
+        ? castIntervention.socratic_questions.map((q) => String(q))
+        : [];
+      const existingAnswers =
+        castIntervention?.user_answers && typeof castIntervention.user_answers === 'object'
+          ? toAnswerArray(castIntervention.user_answers)
+          : ['', '', ''];
+
+      if (existingAnswers.some((answer) => answer.length > 0)) {
+        setAnswers(existingAnswers);
+      }
+
+      if (existingDistortions.length > 0 && existingQuestions.length === 3) {
+        // 캐시에서 theoryMeta 복원
+        const metaRow = (analysisRows ?? []).find((row) => row.distortion_type !== null) ?? (analysisRows ?? [])[0];
+        if (metaRow) {
+          setTheoryMeta({
+            frameType: (metaRow.frame_type as FrameType) || 'mixed',
+            referencePoint: String(metaRow.reference_point || '준거점 정보 없음'),
+            probabilityEstimate: typeof metaRow.probability_estimate === 'number' ? metaRow.probability_estimate : null,
+            lossAversionSignal: typeof metaRow.loss_aversion_signal === 'number' ? metaRow.loss_aversion_signal : 0.3,
+            casSignal: {
+              rumination: typeof metaRow.cas_rumination === 'number' ? metaRow.cas_rumination : 0.3,
+              worry: typeof metaRow.cas_worry === 'number' ? metaRow.cas_worry : 0.3,
+            },
+            system2QuestionSeed: String(metaRow.system2_question_seed || '판단 근거의 비율을 숫자로 분리해보세요.'),
+            decenteringPrompt: String(metaRow.decentering_prompt || '생각을 사실이 아닌 가설로 두고 관찰 가능한 데이터만 분리하세요.'),
+          });
+        }
+        setQuestions(existingQuestions);
+        setStage('done');
+        return;
+      }
+
+      setStage('analyze');
+      const analyzeRes = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ logId }),
+      });
+      const analyzePayload = await analyzeRes.json();
+
+      if (!analyzeRes.ok) {
+        throw new Error(analyzePayload.error || '분석을 완료하지 못했어요.');
+      }
+
+      // ── 위기 감지 응답 처리 ──
+      // safetyOverrideRef.current을 사용해 stale-closure 방지
+      if (analyzePayload.safety && !safetyOverrideRef.current) {
+        setSafetyLevel(analyzePayload.safety.level);
+        return;
+      }
+      // ── /위기 감지 응답 처리 ──
+
+      const analyzedDistortions = (analyzePayload.distortions ?? []) as DistortionAnalysis[];
+      setDistortions(analyzedDistortions);
+      setTheoryMeta({
+        frameType: (analyzePayload.frame_type as FrameType) || 'mixed',
+        referencePoint: analyzePayload.reference_point || '준거점 정보 없음',
+        probabilityEstimate:
+          typeof analyzePayload.probability_estimate === 'number'
+            ? analyzePayload.probability_estimate
+            : null,
+        lossAversionSignal:
+          typeof analyzePayload.loss_aversion_signal === 'number'
+            ? analyzePayload.loss_aversion_signal
+            : 0.3,
+        casSignal: {
+          rumination:
+            typeof analyzePayload.cas_signal?.rumination === 'number'
+              ? analyzePayload.cas_signal.rumination
+              : 0.3,
+          worry:
+            typeof analyzePayload.cas_signal?.worry === 'number'
+              ? analyzePayload.cas_signal.worry
+              : 0.3,
+        },
+        system2QuestionSeed:
+          analyzePayload.system2_question_seed || '판단 근거의 비율을 숫자로 분리해보세요.',
+        decenteringPrompt:
+          analyzePayload.decentering_prompt ||
+          '생각을 사실이 아닌 가설로 두고 관찰 가능한 데이터만 분리하세요.',
+      });
+
+      setStage('question');
+      const questionRes = await fetch('/api/generate-questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ logId }),
+      });
+      const questionPayload = await questionRes.json();
+
+      if (!questionRes.ok) {
+        throw new Error(questionPayload.error || '질문을 만들지 못했어요.');
+      }
+
+      setQuestions((questionPayload.questions ?? []) as string[]);
+      setStage('done');
+    } catch (err: any) {
+      console.error('로그 조회 실패:', err);
+      setError(err.message || '분석 중에 문제가 생겼어요.');
+    } finally {
+      isRequestInFlightRef.current = false;
+      setLoading(false);
+    }
   }, [params.id, router]);
+
+  useEffect(() => {
+    if (!params.id) {
+      setError('올바른 경로로 접근할 수 없어요.');
+      setLoading(false);
+      return;
+    }
+    startAnalysis();
+  }, [params.id, startAnalysis]);
 
   const retryAnalysis = () => {
     window.location.reload();
+  };
+
+  const handleSafetyOverride = async () => {
+    safetyOverrideRef.current = true;
+    setSafetyOverride(true);
+    setSafetyLevel(null);
+
+    try {
+      await fetch('/api/safety/override', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ logId: params.id }),
+      });
+    } catch {
+      // override 기록 실패해도 분석 진행 허용
+    }
+
+    isRequestInFlightRef.current = false;
+    await startAnalysis();
   };
 
   const handleAnswerChange = (value: string) => {
@@ -384,6 +422,14 @@ export default function AnalyzePage() {
             </button>
           </div>
         </div>
+      </main>
+    );
+  }
+
+  if (safetyLevel) {
+    return (
+      <main className="mx-auto max-w-2xl px-4 py-8">
+        <SafetyNotice level={safetyLevel} onOverride={handleSafetyOverride} />
       </main>
     );
   }

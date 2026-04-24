@@ -98,37 +98,45 @@ export async function POST(request: Request) {
     }
 
     // ── 위기 감지 훅 ──
-    // 캐시 조회보다 먼저 실행. 캐시된 분석이 있어도 현재 입력이 위험하면 재분석 차단.
-    const safetyResult = await detect({
-      trigger: logData.trigger,
-      thought: logData.thought,
-      client: createSafetyLlmClient(),
-    });
+    const { data: priorOverride } = await supabase
+      .from('safety_events')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('log_id', logId)
+      .eq('user_override', true)
+      .maybeSingle();
 
-    if (safetyResult.level !== 'none') {
-      // safety_events 기록 (실패해도 safety 응답은 반환)
-      const { error: safetyLogError } = await supabase.from('safety_events').insert({
-        user_id: user.id,
-        log_id: logId,
-        level: safetyResult.level,
-        detected_by: safetyResult.detectedBy ?? 'keyword',
-        matched_pattern: safetyResult.matchedPattern ?? null,
-        llm_reason: safetyResult.llmReason ?? null,
-        user_override: false,
+    if (!priorOverride) {
+      const safetyResult = await detect({
+        trigger: logData.trigger,
+        thought: logData.thought,
+        client: createSafetyLlmClient(),
       });
-      if (safetyLogError) {
-        console.error('safety_events insert 실패:', safetyLogError);
-      }
 
-      return NextResponse.json(
-        {
-          safety: {
-            level: safetyResult.level,
-            detectedBy: safetyResult.detectedBy,
+      if (safetyResult.level !== 'none') {
+        const { error: safetyLogError } = await supabase.from('safety_events').insert({
+          user_id: user.id,
+          log_id: logId,
+          level: safetyResult.level,
+          detected_by: safetyResult.detectedBy ?? 'keyword',
+          matched_pattern: safetyResult.matchedPattern ?? null,
+          llm_reason: safetyResult.llmReason ?? null,
+          user_override: false,
+        });
+        if (safetyLogError) {
+          console.error('safety_events insert 실패:', safetyLogError);
+        }
+
+        return NextResponse.json(
+          {
+            safety: {
+              level: safetyResult.level,
+              detectedBy: safetyResult.detectedBy,
+            },
           },
-        },
-        { status: 200 }
-      );
+          { status: 200 }
+        );
+      }
     }
     // ── /위기 감지 훅 ──
 

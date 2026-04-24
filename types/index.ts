@@ -29,6 +29,8 @@ export interface Log {
   user_id: string;
   trigger: string;
   thought: string;
+  pain_score?: number | null;
+  log_type?: 'normal' | 'success';
   created_at: string;
 }
 
@@ -61,6 +63,9 @@ export interface Intervention {
   autonomy_score: number | null;
   created_at: string;
   completed_at?: string | null;
+  reevaluated_pain_score?: number | null;
+  reevaluated_at?: string | null;
+  review_dismissed_at?: string | null;
 }
 
 // AI 분석 결과 타입

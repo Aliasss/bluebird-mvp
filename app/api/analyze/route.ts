@@ -81,7 +81,7 @@ export async function POST(request: Request) {
 
     const { data: logData, error: logError } = await supabase
       .from('logs')
-      .select('id, trigger, thought, user_id')
+      .select('id, trigger, thought, pain_score, user_id')
       .eq('id', logId)
       .eq('user_id', user.id)
       .single();
@@ -223,6 +223,7 @@ export async function POST(request: Request) {
       analysisResult = await analyzeDistortionsWithGemini({
         trigger: logData.trigger,
         thought: logData.thought,
+        pain_score: logData.pain_score ?? null,
       });
     } catch (aiError) {
       console.error('Gemini 분석 실패:', aiError);

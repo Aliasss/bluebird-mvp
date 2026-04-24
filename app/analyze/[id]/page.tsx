@@ -391,8 +391,8 @@ export default function AnalyzePage() {
   return (
     <main className="min-h-screen bg-background p-4 sm:p-6">
       <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
-          <h1 className="text-xl md:text-2xl font-bold text-text-primary mb-3 sm:mb-4">AI 분석 결과</h1>
+        <div className="bg-white rounded-2xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
+          <h1 className="text-xl font-bold text-text-primary mb-4 tracking-tight">AI 분석 결과</h1>
           <p className="text-xs md:text-sm text-text-secondary mb-1.5 sm:mb-2">어떤 일이 있었나요</p>
           <p className="text-text-primary mb-4">{logData?.trigger}</p>
           <p className="text-xs md:text-sm text-text-secondary mb-1.5 sm:mb-2">그 순간 든 생각</p>
@@ -401,10 +401,10 @@ export default function AnalyzePage() {
           </p>
         </div>
 
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
-          <h2 className="text-lg md:text-xl font-bold text-text-primary mb-3 sm:mb-4">이론 기반 해석</h2>
+        <div className="bg-white rounded-2xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
+          <h2 className="text-lg font-bold text-text-primary mb-4 tracking-tight">이론 기반 해석</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 text-xs md:text-sm">
-            <div className="border border-background-tertiary rounded-xl p-4">
+            <div className="bg-background-secondary rounded-xl p-4">
               <p className="text-text-secondary mb-1 flex items-center">
                 현재 프레임
                 <InfoSheet
@@ -420,7 +420,7 @@ export default function AnalyzePage() {
                     : '혼합 프레임'}
               </p>
             </div>
-            <div className="border border-background-tertiary rounded-xl p-4">
+            <div className="bg-background-secondary rounded-xl p-4">
               <p className="text-text-secondary mb-1 flex items-center">
                 추정 확률
                 <InfoSheet
@@ -434,7 +434,7 @@ export default function AnalyzePage() {
                   : '추정치 없음'}
               </p>
             </div>
-            <div className="border border-background-tertiary rounded-xl p-4">
+            <div className="bg-background-secondary rounded-xl p-4">
               <p className="text-text-secondary mb-1 flex items-center">
                 준거점
                 <InfoSheet
@@ -444,7 +444,7 @@ export default function AnalyzePage() {
               </p>
               <p className="text-text-primary">{theoryMeta.referencePoint}</p>
             </div>
-            <div className="border border-background-tertiary rounded-xl p-4">
+            <div className="bg-background-secondary rounded-xl p-4">
               <p className="text-text-secondary mb-1 flex items-center">
                 손실 민감도
                 <InfoSheet
@@ -456,7 +456,7 @@ export default function AnalyzePage() {
                 {(theoryMeta.lossAversionSignal * 100).toFixed(0)}%
               </p>
             </div>
-            <div className="border border-background-tertiary rounded-xl p-4">
+            <div className="bg-background-secondary rounded-xl p-4">
               <p className="text-text-secondary mb-1 flex items-center">
                 반추 경향
                 <InfoSheet
@@ -468,7 +468,7 @@ export default function AnalyzePage() {
                 {(theoryMeta.casSignal.rumination * 100).toFixed(0)}%
               </p>
             </div>
-            <div className="border border-background-tertiary rounded-xl p-4">
+            <div className="bg-background-secondary rounded-xl p-4">
               <p className="text-text-secondary mb-1 flex items-center">
                 걱정 경향
                 <InfoSheet
@@ -489,14 +489,14 @@ export default function AnalyzePage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
-          <h2 className="text-lg md:text-xl font-bold text-text-primary mb-3 sm:mb-4">발견된 생각의 패턴</h2>
+        <div className="bg-white rounded-2xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
+          <h2 className="text-lg font-bold text-text-primary mb-4 tracking-tight">발견된 생각의 패턴</h2>
           {distortions.length === 0 ? (
             <p className="text-text-secondary">이번 기록에서는 뚜렷한 왜곡 패턴이 보이지 않아요.</p>
           ) : (
             <div className="space-y-3">
               {distortions.map((item, index) => (
-                <div key={`${item.type}-${index}`} className="border border-background-tertiary rounded-xl p-4">
+                <div key={`${item.type}-${index}`} className="bg-white border border-background-tertiary/80 rounded-xl p-4 shadow-sm">
                   <div className="flex items-center justify-between mb-2">
                     <p className="font-semibold text-text-primary">
                       {DistortionTypeKorean[item.type]}
@@ -523,8 +523,8 @@ export default function AnalyzePage() {
           )}
         </div>
 
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
-          <h2 className="text-lg md:text-xl font-bold text-text-primary mb-3 sm:mb-4">생각을 점검하는 질문</h2>
+        <div className="bg-white rounded-2xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
+          <h2 className="text-lg font-bold text-text-primary mb-4 tracking-tight">생각을 점검하는 질문</h2>
           {questions.length === 0 ? (
             <p className="text-text-secondary">질문을 만들지 못했어요. 다시 시도해주세요.</p>
           ) : (
@@ -538,7 +538,7 @@ export default function AnalyzePage() {
                 </span>
               </div>
 
-              <div className="border border-background-tertiary rounded-xl p-4">
+              <div className="bg-white border border-background-tertiary rounded-xl p-4">
                 <p className="text-text-primary font-medium mb-3">
                   {currentQuestion + 1}. {questions[currentQuestion]}
                 </p>
@@ -562,7 +562,7 @@ export default function AnalyzePage() {
                 <button
                   onClick={goPrevQuestion}
                   disabled={savingAnswers || currentQuestion === 0}
-                  className="flex-1 bg-white border border-background-tertiary text-text-primary font-semibold py-3 rounded-xl disabled:opacity-50"
+                  className="flex-1 bg-white border border-background-tertiary text-text-primary font-semibold min-h-[44px] h-auto py-3 px-3 rounded-xl text-sm leading-snug disabled:opacity-50"
                 >
                   이전 질문
                 </button>
@@ -571,7 +571,7 @@ export default function AnalyzePage() {
                   <button
                     onClick={goNextQuestion}
                     disabled={savingAnswers}
-                    className="flex-1 bg-primary text-white font-semibold py-3 rounded-xl disabled:opacity-50"
+                    className="flex-1 bg-primary text-white font-semibold min-h-[44px] h-auto py-3 px-3 rounded-xl text-sm leading-snug disabled:opacity-50"
                   >
                     다음 질문
                   </button>
@@ -579,7 +579,7 @@ export default function AnalyzePage() {
                   <button
                     onClick={handleSaveAnswers}
                     disabled={savingAnswers}
-                    className="flex-1 bg-primary text-white font-semibold py-3 rounded-xl disabled:opacity-50"
+                    className="flex-1 bg-primary text-white font-semibold min-h-[44px] h-auto py-3 px-3 rounded-xl text-sm leading-snug text-center whitespace-normal disabled:opacity-50"
                   >
                     {savingAnswers ? '저장 중...' : '답변 저장 후 시각화 보기'}
                   </button>
@@ -590,18 +590,18 @@ export default function AnalyzePage() {
         </div>
 
         <div className="flex flex-col items-center gap-2">
-          <div className="flex justify-center gap-2 sm:gap-3">
-            <button
-              onClick={() => router.push(`/visualize/${params.id}`)}
-              className="bg-white border border-background-tertiary text-text-secondary font-medium py-3 px-6 rounded-xl text-sm"
-            >
-              답변 없이 시각화 보기
-            </button>
+          <div className="flex flex-col gap-3 w-full max-w-sm mx-auto">
             <button
               onClick={() => router.push('/dashboard')}
-              className="bg-primary text-white font-semibold py-3 px-8 rounded-xl"
+              className="w-full bg-primary text-white font-semibold min-h-[44px] py-3 px-6 rounded-2xl text-sm"
             >
               대시보드로 돌아가기
+            </button>
+            <button
+              onClick={() => router.push(`/visualize/${params.id}`)}
+              className="w-full bg-white border border-background-tertiary text-text-secondary font-medium min-h-[44px] py-3 px-6 rounded-2xl text-sm"
+            >
+              답변 없이 시각화 보기
             </button>
           </div>
           <p className="text-xs text-text-tertiary">답변은 나중에 이 페이지로 돌아와 작성할 수 있습니다</p>

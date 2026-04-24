@@ -16,40 +16,45 @@ const config: Config = {
           light: '#3B82F6',
         },
         system2: {
-          DEFAULT: '#06B6D4', // Lucid Cyan
-          dark: '#0891B2',
-          light: '#67E8F9',
+          DEFAULT: '#0891B2', // Lucid Cyan
+          dark: '#0E7490',
+          light: '#22D3EE',
         },
         distortion: {
-          DEFAULT: '#E11D48', // Muted Terracotta 계열
-          dark: '#9F1239',
-          light: '#F43F5E',
-        },
-        success: {
-          DEFAULT: '#06B6D4', // 자율성 지표/성공
-          dark: '#0891B2',
-          light: '#67E8F9',
-        },
-        warning: {
-          DEFAULT: '#F43F5E',
-          dark: '#E11D48',
-          light: '#FDA4AF',
-        },
-        danger: {
           DEFAULT: '#E11D48',
           dark: '#9F1239',
           light: '#F43F5E',
         },
+        success: {
+          DEFAULT: '#16A34A', // Green-600
+          dark: '#15803D',
+          light: '#4ADE80',
+        },
+        warning: {
+          DEFAULT: '#D97706', // Amber-600
+          dark: '#B45309',
+          light: '#FCD34D',
+        },
+        danger: {
+          DEFAULT: '#DC2626', // Red-600
+          dark: '#B91C1C',
+          light: '#F87171',
+        },
         background: {
-          DEFAULT: '#F8FAFC', // Zinc 100
-          secondary: '#F1F5F9', // Slate 100
-          tertiary: '#CBD5E1', // Slate 300
+          DEFAULT: '#F8FAFC',
+          secondary: '#F1F5F9',
+          tertiary: '#E2E8F0', // Slate-200
         },
         text: {
-          primary: '#0F172A', // Slate 900
-          secondary: '#334155', // Slate 700
-          tertiary: '#64748B', // Slate 500
+          primary: '#0F172A',
+          secondary: '#475569', // Slate-600
+          tertiary: '#94A3B8', // Slate-400
         },
+      },
+      letterSpacing: {
+        tighter: '-0.03em',
+        tight: '-0.02em',
+        snug: '-0.01em',
       },
       fontFamily: {
         sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],

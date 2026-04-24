@@ -201,14 +201,14 @@ function DashboardContent() {
 
         {/* 인사말 */}
         <div>
-          <p className="text-xl font-bold text-text-primary">
+          <p className="text-xl font-bold text-text-primary tracking-tight">
             안녕하세요, {greeting?.name} 항해사님 🧭
           </p>
           <p className="text-sm text-text-secondary mt-0.5">{greeting?.message}</p>
         </div>
 
         {/* 체크인 카드 */}
-        <div className="bg-white rounded-2xl p-4 border border-background-tertiary">
+        <div className="bg-white rounded-2xl p-4 border border-background-tertiary shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-semibold text-text-primary">오늘의 체크인</h3>
             <div className="flex items-center gap-3">
@@ -257,16 +257,16 @@ function DashboardContent() {
           const { rank, progressPct, pointsToNext } = getRankResult(autonomyScore);
           return (
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white rounded-2xl p-4 border border-background-tertiary">
+              <div className="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
                 <p className="text-xs text-text-secondary mb-1">연속 항해</p>
-                <p className="text-2xl font-bold text-primary">{streak.current}일 🔥</p>
+                <p className="text-2xl font-extrabold text-primary tracking-tight">{streak.current}일 🔥</p>
                 <p className="text-[10px] text-text-tertiary mt-1">
                   {streak.doneToday ? '오늘도 달성!' : streak.best > 0 ? `최고 ${streak.best}일` : '오늘 시작해보세요'}
                 </p>
               </div>
-              <div className="bg-white rounded-2xl p-4 border border-background-tertiary">
+              <div className="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
                 <p className="text-xs text-text-secondary mb-1">자율성 지수</p>
-                <p className="text-xl font-bold text-warning">{autonomyScore}점</p>
+                <p className="text-xl font-extrabold text-warning tracking-tight">{autonomyScore}점</p>
                 <p className="text-[10px] font-semibold text-primary mt-0.5">{rank.title}</p>
                 <div className="mt-2 h-1 bg-background-secondary rounded-full overflow-hidden">
                   <div
@@ -287,11 +287,11 @@ function DashboardContent() {
 
         {/* 성공 순간 기록 */}
         {successLogs.length > 0 && (
-          <div className="bg-white rounded-2xl p-4 border border-success border-opacity-40">
+          <div className="bg-white rounded-2xl p-4 border border-success/30 shadow-sm">
             <h3 className="text-sm font-semibold text-text-primary mb-3">최근 성공 순간</h3>
             <div className="space-y-2">
               {successLogs.map((log) => (
-                <div key={log.id} className="border border-success border-opacity-20 bg-success bg-opacity-5 rounded-xl p-3">
+                <div key={log.id} className="bg-success/5 border border-success/20 rounded-xl p-3">
                   <div className="flex items-start justify-between mb-1">
                     <p className="text-sm font-medium text-text-primary line-clamp-1">{log.trigger}</p>
                     <span className="text-xs text-text-secondary whitespace-nowrap ml-2">{formatDate(log.created_at)}</span>

@@ -12,8 +12,8 @@ export default function HomePage() {
 
         {/* 브랜드 */}
         <div className="space-y-3">
-          <h1 className="text-4xl font-bold text-primary">Project Bluebird</h1>
-          <p className="text-xl font-semibold text-text-primary leading-snug">
+          <h1 className="text-4xl font-extrabold text-primary tracking-tighter">Project Bluebird</h1>
+          <p className="text-xl font-semibold text-text-primary leading-snug tracking-tight">
             흔들리는 마음의 영점을 맞추고,<br />당신의 삶을 다시 항해하세요.
           </p>
           <p className="text-sm text-text-secondary leading-relaxed">
@@ -22,7 +22,7 @@ export default function HomePage() {
         </div>
 
         {/* 시나리오 예시 */}
-        <div className="bg-white border border-background-tertiary rounded-2xl p-6 text-left space-y-4">
+        <div className="bg-white border border-background-tertiary rounded-2xl p-6 text-left space-y-4 shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-wide text-text-tertiary">이런 순간에 쓰세요</p>
           <div className="space-y-3">
             <div className="flex gap-3 items-start">

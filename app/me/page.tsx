@@ -76,13 +76,13 @@ export default function MePage() {
       <div className="max-w-lg mx-auto px-4 py-5 pb-28 space-y-5">
 
         {/* 프로필 */}
-        <div className="bg-white rounded-2xl p-5 border border-background-tertiary">
+        <div className="bg-white rounded-2xl p-5 border border-background-tertiary shadow-sm">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-primary bg-opacity-10 flex items-center justify-center">
               <span className="text-xl font-bold text-primary">{name[0]?.toUpperCase()}</span>
             </div>
             <div>
-              <p className="font-semibold text-text-primary">{name} 항해사님</p>
+              <p className="font-semibold text-text-primary tracking-tight">{name} 항해사님</p>
               <p className="text-xs text-text-secondary">{user?.email}</p>
             </div>
           </div>
@@ -92,21 +92,21 @@ export default function MePage() {
         <div className="space-y-3">
           <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wide px-1">항해 기록</p>
           <div className="grid grid-cols-3 gap-3">
-            <div className="bg-white rounded-2xl p-4 border border-background-tertiary text-center">
+            <div className="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)] text-center">
               <div className="w-8 h-8 bg-primary bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-2">
                 <BookOpen size={16} className="text-primary" />
               </div>
               <p className="text-xl font-bold text-text-primary">{stats.totalLogs}</p>
               <p className="text-[10px] text-text-secondary mt-0.5">전체 로그</p>
             </div>
-            <div className="bg-white rounded-2xl p-4 border border-background-tertiary text-center">
+            <div className="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)] text-center">
               <div className="w-8 h-8 bg-success bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-2">
                 <CheckCircle size={16} className="text-success" />
               </div>
               <p className="text-xl font-bold text-text-primary">{stats.completedActions}</p>
               <p className="text-[10px] text-text-secondary mt-0.5">완료한 행동</p>
             </div>
-            <div className="bg-white rounded-2xl p-4 border border-background-tertiary text-center">
+            <div className="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)] text-center">
               <div className="w-8 h-8 bg-warning bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-2">
                 <Star size={16} className="text-warning" />
               </div>
@@ -119,7 +119,7 @@ export default function MePage() {
           {(() => {
             const { rank, progressPct, pointsToNext } = getRankResult(stats.autonomyScore);
             return (
-              <div className="bg-white rounded-2xl p-4 border border-warning border-opacity-40">
+              <div className="bg-white rounded-2xl p-4 border border-warning/30 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
                   <div>
                     <p className="text-xs text-text-secondary">현재 등급</p>

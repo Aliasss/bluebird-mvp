@@ -78,7 +78,7 @@ export default function JournalPage() {
       {/* 헤더 */}
       <header className="sticky top-0 z-40 bg-white border-b border-background-tertiary">
         <div className="max-w-lg mx-auto px-4 py-3">
-          <h1 className="text-lg font-bold text-text-primary">항해 일지</h1>
+          <h1 className="text-lg font-bold text-text-primary tracking-tight">항해 일지</h1>
         </div>
         {/* 탭 */}
         <div className="max-w-lg mx-auto px-4 flex gap-4 border-t border-background-tertiary">
@@ -120,7 +120,7 @@ export default function JournalPage() {
                   <div
                     key={log.id}
                     onClick={() => router.push(`/analyze/${log.id}`)}
-                    className="bg-white border border-background-tertiary rounded-xl p-4 hover:border-primary transition-colors cursor-pointer"
+                    className="bg-white border border-background-tertiary/80 rounded-xl p-4 shadow-sm hover:border-primary hover:shadow-md transition-all cursor-pointer"
                   >
                     <div className="flex items-start justify-between mb-2">
                       <p className="text-sm font-medium text-text-primary line-clamp-1">{log.trigger}</p>
@@ -134,7 +134,7 @@ export default function JournalPage() {
                 {logs.length > 3 && !showAllLogs && (
                   <button
                     onClick={() => setShowAllLogs(true)}
-                    className="w-full py-2 text-sm text-primary font-semibold border border-primary border-opacity-30 rounded-xl"
+                    className="w-full py-2.5 text-sm text-primary font-semibold border border-primary/30 rounded-xl hover:bg-primary/5 transition-colors"
                   >
                     더보기 ({logs.length - 3}개 더)
                   </button>
@@ -158,7 +158,7 @@ export default function JournalPage() {
                   <div
                     key={item.id}
                     onClick={() => router.push(`/action/${item.log_id}`)}
-                    className="bg-white border border-background-tertiary rounded-xl p-4 hover:border-primary transition-colors cursor-pointer"
+                    className="bg-white border border-background-tertiary/80 rounded-xl p-4 shadow-sm hover:border-primary hover:shadow-md transition-all cursor-pointer"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <p className="text-sm font-medium text-text-primary line-clamp-1">
@@ -182,7 +182,7 @@ export default function JournalPage() {
                 {recentActions.length > 3 && !showAllActions && (
                   <button
                     onClick={() => setShowAllActions(true)}
-                    className="w-full py-2 text-sm text-primary font-semibold border border-primary border-opacity-30 rounded-xl"
+                    className="w-full py-2.5 text-sm text-primary font-semibold border border-primary/30 rounded-xl hover:bg-primary/5 transition-colors"
                   >
                     더보기 ({recentActions.length - 3}개 더)
                   </button>

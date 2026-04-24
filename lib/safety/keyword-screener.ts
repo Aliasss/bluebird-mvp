@@ -14,6 +14,7 @@ const CRITICAL_PATTERNS: Pattern[] = [
   { label: 'suicide_direct', regex: /죽\s*(고|어\s*버리고|고\s*만)\s*싶/ },
   { label: 'suicide_word', regex: /자살/ },
   { label: 'self_harm_word', regex: /자해/ },
+  { label: 'self_harm_cutting', regex: /(손목|팔목|팔|다리|허벅지)\s*(을|를|에)?\s*(긋|그었|그어|베었|베|벴)/ },
 ];
 
 const SUSPECTED_PATTERNS: Pattern[] = [

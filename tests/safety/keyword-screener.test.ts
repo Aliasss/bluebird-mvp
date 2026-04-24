@@ -19,6 +19,20 @@ describe('screenKeywords - critical 판정', () => {
   });
 });
 
+describe('screenKeywords - self-harm 서술형 표현', () => {
+  it('"손목을 긋고 싶어" 표현은 critical', () => {
+    expect(screenKeywords('손목을 긋고 싶어').verdict).toBe('critical');
+  });
+
+  it('"팔을 그었어" 과거형 표현은 critical', () => {
+    expect(screenKeywords('어제 팔을 그었어').verdict).toBe('critical');
+  });
+
+  it('"허벅지에 베었어" 표현은 critical', () => {
+    expect(screenKeywords('허벅지에 베었어').verdict).toBe('critical');
+  });
+});
+
 describe('screenKeywords - suspected 판정', () => {
   it('"사라지고 싶어" 표현은 suspected', () => {
     const result = screenKeywords('그냥 사라지고 싶어');
@@ -62,5 +76,18 @@ describe('screenKeywords - 정상 표현', () => {
   it('"웃겨 죽는 줄" 관용 표현은 none', () => {
     const result = screenKeywords('친구가 너무 웃겨서 죽는 줄 알았다');
     expect(result.verdict).toBe('none');
+  });
+});
+
+describe('screenKeywords - 재현율 우선 설계 (의도된 false positive)', () => {
+  // v0는 recall 우선. negation은 키워드 단계에서 구분하지 않고 LLM 2차 분류로 보정한다.
+  // 이 테스트들은 "현재 의도된 동작"을 문서화한다. 정규식 변경으로 아래 동작이 바뀌면
+  // 그것은 의식적 결정이어야 하므로 테스트가 먼저 깨져야 한다.
+  it('"죽고 싶지 않아" negation도 현재 critical로 분류 (LLM이 보정)', () => {
+    expect(screenKeywords('나는 죽고 싶지 않아').verdict).toBe('critical');
+  });
+
+  it('"자해하지 마" negation도 현재 critical로 분류 (LLM이 보정)', () => {
+    expect(screenKeywords('자해하지 마').verdict).toBe('critical');
   });
 });

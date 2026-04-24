@@ -4,6 +4,8 @@ import { analyzeDistortionsWithGemini } from '@/lib/openai/gemini';
 import { isAiInputTooLong, MAX_AI_TEXT_LENGTH } from '@/lib/security/ai-guard';
 import type { AIAnalysisResult, DistortionAnalysis } from '@/types';
 import { z } from 'zod';
+import { detect } from '@/lib/safety/detect';
+import { createSafetyLlmClient } from '@/lib/safety/gemini-adapter';
 
 const analyzeRequestSchema = z.object({
   logId: z.string().uuid(),
@@ -94,6 +96,49 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+
+    // ── 위기 감지 훅 ──
+    const { data: priorOverride } = await supabase
+      .from('safety_events')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('log_id', logId)
+      .eq('user_override', true)
+      .maybeSingle();
+
+    if (!priorOverride) {
+      const safetyResult = await detect({
+        trigger: logData.trigger,
+        thought: logData.thought,
+        client: createSafetyLlmClient(),
+      });
+
+      if (safetyResult.level !== 'none') {
+        const { error: safetyLogError } = await supabase.from('safety_events').insert({
+          user_id: user.id,
+          log_id: logId,
+          level: safetyResult.level,
+          detected_by: safetyResult.detectedBy ?? 'keyword',
+          matched_pattern: safetyResult.matchedPattern ?? null,
+          llm_reason: safetyResult.llmReason ?? null,
+          user_override: false,
+        });
+        if (safetyLogError) {
+          console.error('safety_events insert 실패:', safetyLogError);
+        }
+
+        return NextResponse.json(
+          {
+            safety: {
+              level: safetyResult.level,
+              detectedBy: safetyResult.detectedBy,
+            },
+          },
+          { status: 200 }
+        );
+      }
+    }
+    // ── /위기 감지 훅 ──
 
     const { data: existingRows, error: existingError } = await supabase
       .from('analysis')

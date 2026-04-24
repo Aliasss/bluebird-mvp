@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "keywords": [
     "pwa",
@@ -37,10 +39,13 @@
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vitest/ui": "^2.1.9",
     "autoprefixer": "^10.5.0",
     "postcss": "^8.5.9",
     "tailwindcss": "^3.4.19",
-    "typescript": "^6.0.2"
+    "tsx": "^4.20.3",
+    "typescript": "^6.0.2",
+    "vitest": "^2.1.9"
   },
   "overrides": {
     "serialize-javascript": "7.0.5",

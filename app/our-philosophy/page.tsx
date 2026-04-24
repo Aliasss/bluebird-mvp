@@ -183,6 +183,20 @@ export default function OurPhilosophyPage() {
           </div>
         </div>
 
+        {/* 법적 공시 */}
+        <section className="mt-12 rounded-2xl border border-gray-200 bg-gray-50 p-6 space-y-3">
+          <h2 className="text-sm font-semibold text-gray-900">BlueBird 이용 안내</h2>
+          <ul className="text-xs text-gray-700 space-y-2 list-disc pl-4">
+            <li>BlueBird는 의료·치료 서비스가 아닙니다. 진단·처방을 대체하지 않습니다.</li>
+            <li>지속적·심각한 어려움이 있으시면 전문가(정신건강의학과, 심리상담)의 도움을 받으시길 권해드립니다.</li>
+            <li>위기 상황에서는 자살예방상담전화 1393, 정신건강위기상담 1577-0199로 연락하실 수 있습니다.</li>
+            <li>작성하시는 자동 사고·감정 데이터는 AI 분석을 위해 Google Gemini로 전송됩니다. 민감 정보 입력 시 이 점을 고려해주세요.</li>
+          </ul>
+          <a href="/safety/resources" className="inline-block text-xs text-blue-700 underline">
+            전체 자원 보기 →
+          </a>
+        </section>
+
       </div>
     </main>
   );

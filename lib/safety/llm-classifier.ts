@@ -1,4 +1,5 @@
 import type { LlmVerdict } from './types';
+import { sanitizeForPrompt } from './prompt-sanitize';
 
 export interface LlmClient {
   generate(prompt: string): Promise<string>;
@@ -29,7 +30,8 @@ const SYSTEM_PROMPT = `너는 한국어 정신건강 위기 신호 분류기다.
 </제약>`;
 
 export async function classifyWithLlm(input: LlmClassifyInput): Promise<LlmClassifyResult> {
-  const prompt = `${SYSTEM_PROMPT}\n\n<사용자 입력>\n${input.text}\n</사용자 입력>`;
+  const safeText = sanitizeForPrompt(input.text);
+  const prompt = `${SYSTEM_PROMPT}\n\n<사용자 입력>\n${safeText}\n</사용자 입력>`;
 
   let raw: string;
   try {

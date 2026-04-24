@@ -6,6 +6,7 @@ import {
   BLUEBIRD_OPERATING_PRINCIPLES,
   BLUEBIRD_THEORY_SUMMARY,
 } from '@/lib/ai/bluebird-protocol';
+import { sanitizeForPrompt } from '@/lib/safety/prompt-sanitize';
 import {
   DistortionType,
   type AIAnalysisResult,
@@ -236,6 +237,9 @@ ${JSON.stringify(example.output, null, 2)}`;
 }
 
 function buildAnalysisPrompt(input: { trigger: string; thought: string }) {
+  const safeTrigger = sanitizeForPrompt(input.trigger);
+  const safeThought = sanitizeForPrompt(input.thought);
+
   const distortionRules = Object.entries(BLUEBIRD_DISTORTION_TAXONOMY)
     .map(([key, value]) => `- ${key}:\n  진단: ${value.diagnosticRule}\n  감별: ${value.differentialRule}`)
     .join('\n');
@@ -271,7 +275,7 @@ function buildAnalysisPrompt(input: { trigger: string; thought: string }) {
     buildFewShotPromptBlock(),
     '',
     '[Actual Input]',
-    JSON.stringify(input, null, 2),
+    JSON.stringify({ trigger: safeTrigger, thought: safeThought }, null, 2),
   ].join('\n');
 }
 
@@ -358,8 +362,15 @@ export async function generateSocraticQuestionsWithGemini(input: {
   system2QuestionSeed?: string;
   decenteringPrompt?: string;
 }): Promise<string[]> {
-  const distortionsText = input.distortions.length
-    ? input.distortions
+  const safeTrigger = sanitizeForPrompt(input.trigger);
+  const safeThought = sanitizeForPrompt(input.thought);
+  const safeDistortions = input.distortions.map((d) => ({
+    ...d,
+    segment: sanitizeForPrompt(d.segment),
+  }));
+
+  const distortionsText = safeDistortions.length
+    ? safeDistortions
         .map(
           (d, idx) =>
             `${idx + 1}. type=${d.type}, intensity=${d.intensity.toFixed(2)}, segment=${d.segment}`
@@ -381,8 +392,8 @@ export async function generateSocraticQuestionsWithGemini(input: {
     '- 사용자의 구체적 상황(트리거/자동사고)에서 실제 수치/사례를 질문에 포함하라.',
     '',
     '[Context]',
-    `트리거: ${input.trigger}`,
-    `자동 사고: ${input.thought}`,
+    `트리거: ${safeTrigger}`,
+    `자동 사고: ${safeThought}`,
     `탐지된 왜곡:\n${distortionsText}`,
     `frame_type: ${input.frameType ?? 'mixed'}`,
     `reference_point: ${input.referencePoint ?? '미확인'}`,

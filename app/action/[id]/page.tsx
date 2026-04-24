@@ -88,6 +88,8 @@ export default function ActionPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [insightInput, setInsightInput] = useState('');
 
   useEffect(() => {
     const logId = params.id;
@@ -173,7 +175,17 @@ export default function ActionPage() {
     return null;
   };
 
-  const saveAction = async (markCompleted: boolean) => {
+  const handleCompleteClick = () => {
+    const validationError = validateAction(actionInput);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+    setInsightInput('');
+    setShowCompletionModal(true);
+  };
+
+  const saveAction = async (markCompleted: boolean, completionNote?: string) => {
     const validationError = validateAction(actionInput);
     if (validationError) {
       setError(validationError);
@@ -192,6 +204,7 @@ export default function ActionPage() {
           logId: params.id,
           finalAction: actionInput.trim(),
           markCompleted,
+          completionNote: completionNote?.trim() || undefined,
         }),
       });
       const payload = await response.json();
@@ -201,21 +214,25 @@ export default function ActionPage() {
       }
 
       if (markCompleted) {
+        const score = payload.autonomyScore ?? 10;
+        const hasNote = Boolean(completionNote?.trim());
         setState((prev) => ({
           ...prev,
           isCompleted: true,
-          autonomyScore: payload.autonomyScore ?? prev.autonomyScore,
+          autonomyScore: score,
           existingAction: actionInput.trim(),
         }));
         setNotice(
-          `잘 해냈어요! 자율성 지수에 +${payload.autonomyScore ?? 10}점이 더해졌어요.`
+          hasNote
+            ? `안개를 뚫고 나아갔어요! +${score}점 획득 (메모 보너스 포함) ⚓`
+            : `한 걸음 더 나아갔어요! +${score}점 획득 ⚓`
         );
       } else {
         setState((prev) => ({
           ...prev,
           existingAction: actionInput.trim(),
         }));
-        setNotice('행동 계획을 저장했어요.');
+        setNotice('항해 계획을 저장했어요.');
       }
     } catch (err: any) {
       setError(err.message || '처리 중에 문제가 생겼어요.');
@@ -257,7 +274,7 @@ export default function ActionPage() {
     <main className="min-h-screen bg-background">
       <PageHeader title="행동 설계" />
       <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
+        <div className="bg-white rounded-2xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
           <h1 className="text-xl md:text-2xl font-bold text-text-primary mb-2">행동 확약</h1>
           <p className="text-sm text-text-secondary">
             분석 결과를 행동으로 전환하면 자율성 지수가 올라갑니다.
@@ -319,21 +336,21 @@ export default function ActionPage() {
             <button
               onClick={() => saveAction(false)}
               disabled={saving || state.isCompleted}
-              className="flex-1 bg-white border border-primary text-primary font-semibold py-3 rounded-xl disabled:opacity-50"
+              className="flex-1 bg-white border border-background-tertiary text-text-secondary font-semibold min-h-[44px] py-3 rounded-2xl text-sm disabled:opacity-50"
             >
-              행동 계획 저장
+              계획 저장
             </button>
             <button
-              onClick={() => saveAction(true)}
+              onClick={handleCompleteClick}
               disabled={saving || state.isCompleted}
-              className="flex-1 bg-primary text-white font-semibold py-3 rounded-xl disabled:opacity-50"
+              className="flex-1 bg-primary text-white font-semibold min-h-[44px] py-3 rounded-2xl text-sm disabled:opacity-50"
             >
-              {saving ? '처리 중...' : state.isCompleted ? '완료 처리됨' : '행동 완료 체크 (+점수)'}
+              {saving ? '처리 중...' : state.isCompleted ? '완료됨 ✓' : '항해 완료! 체크하기'}
             </button>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
+        <div className="bg-white rounded-2xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
           <h2 className="text-base md:text-lg font-bold text-text-primary mb-3">자율성 지수</h2>
           <p className="text-3xl font-bold text-primary">
             {state.autonomyScore ?? 0}
@@ -344,21 +361,65 @@ export default function ActionPage() {
           </p>
         </div>
 
-        <div className="flex justify-center gap-2 sm:gap-3">
+        <div className="flex gap-3 w-full max-w-sm mx-auto">
           <button
             onClick={() => router.push(`/visualize/${params.id}`)}
-            className="bg-white border border-primary text-primary font-semibold py-3 px-8 rounded-xl"
+            className="flex-1 bg-white border border-background-tertiary text-text-secondary font-medium min-h-[44px] py-3 rounded-2xl text-sm"
           >
-            시각화로 돌아가기
+            시각화 보기
           </button>
           <button
             onClick={() => router.push('/dashboard')}
-            className="bg-primary text-white font-semibold py-3 px-8 rounded-xl"
+            className="flex-1 bg-white border border-background-tertiary text-text-secondary font-medium min-h-[44px] py-3 rounded-2xl text-sm"
           >
             대시보드
           </button>
         </div>
       </div>
+
+      {/* 완료 모달 */}
+      {showCompletionModal && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 px-4 pb-6 sm:pb-0">
+          <div className="w-full max-w-sm bg-white rounded-3xl p-6 space-y-5 shadow-2xl">
+            <div className="text-center space-y-1">
+              <p className="text-2xl">⚓</p>
+              <h3 className="text-base font-bold text-text-primary tracking-tight">항해를 완료했어요!</h3>
+              <p className="text-sm text-text-secondary">짧은 메모를 남기면 +15점 보너스를 드려요.</p>
+            </div>
+
+            <div>
+              <textarea
+                value={insightInput}
+                onChange={(e) => setInsightInput(e.target.value)}
+                placeholder="항해 일지에 짧은 메모를 남겨볼까요? (선택)"
+                className="w-full h-24 p-3 border border-background-tertiary rounded-xl resize-none text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                maxLength={200}
+                autoFocus
+              />
+              <p className="text-right text-xs text-text-tertiary mt-1">{insightInput.length}/200</p>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => {
+                  setShowCompletionModal(false);
+                  saveAction(true, insightInput);
+                }}
+                disabled={saving}
+                className="w-full bg-primary text-white font-semibold min-h-[44px] py-3 rounded-2xl text-sm disabled:opacity-50"
+              >
+                {insightInput.trim() ? `메모 기록하고 완료 (+15점 보너스)` : '완료하기'}
+              </button>
+              <button
+                onClick={() => setShowCompletionModal(false)}
+                className="w-full text-text-tertiary text-sm py-2"
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

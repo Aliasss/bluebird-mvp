@@ -76,6 +76,7 @@ export default function InsightsPage() {
       const freqMap: Record<string, number> = {};
       const intensityMap: Record<string, number[]> = {};
       rows.forEach((r) => {
+        if (!r.distortion_type) return;
         freqMap[r.distortion_type] = (freqMap[r.distortion_type] ?? 0) + 1;
         if (!intensityMap[r.distortion_type]) intensityMap[r.distortion_type] = [];
         intensityMap[r.distortion_type].push(r.intensity);

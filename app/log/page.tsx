@@ -5,13 +5,22 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import PageHeader from '@/components/ui/PageHeader';
 
-type Step = 'trigger' | 'thought';
+type Step = 'trigger' | 'thought' | 'pain';
+
+const PAIN_OPTIONS = [
+  { score: 1, emoji: '😐', label: '별로 안 힘들어요' },
+  { score: 2, emoji: '😟', label: '조금 힘들어요' },
+  { score: 3, emoji: '😰', label: '꽤 힘들어요' },
+  { score: 4, emoji: '😱', label: '많이 힘들어요' },
+  { score: 5, emoji: '🤯', label: '매우 힘들어요' },
+];
 
 export default function LogPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>('trigger');
   const [trigger, setTrigger] = useState('');
   const [thought, setThought] = useState('');
+  const [painScore, setPainScore] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,38 +33,39 @@ export default function LogPage() {
     setStep('thought');
   };
 
-  const handleSubmit = async () => {
+  const handleThoughtNext = () => {
     if (thought.trim().length < 10) {
       setError('10자 이상 적어주세요.');
       return;
     }
+    setError(null);
+    setStep('pain');
+  };
 
+  const handleSubmit = async (selectedScore: number | null) => {
     setLoading(true);
     setError(null);
 
     try {
-      // 현재 사용자 확인
       const { data: { user } } = await supabase.auth.getUser();
-      
       if (!user) {
         router.push('/auth/login');
         return;
       }
 
-      // logs 테이블에 저장
       const { data, error: insertError } = await supabase
         .from('logs')
         .insert({
           user_id: user.id,
           trigger: trigger.trim(),
           thought: thought.trim(),
+          ...(selectedScore !== null ? { pain_score: selectedScore } : {}),
         })
         .select()
         .single();
 
       if (insertError) throw insertError;
 
-      // 저장 성공 시 분석 페이지로 이동
       if (data) {
         router.push(`/analyze/${data.id}`);
       }
@@ -68,7 +78,10 @@ export default function LogPage() {
   };
 
   const handleBack = () => {
-    if (step === 'thought') {
+    if (step === 'pain') {
+      setStep('thought');
+      setError(null);
+    } else if (step === 'thought') {
       setStep('trigger');
       setError(null);
     } else {
@@ -81,7 +94,7 @@ export default function LogPage() {
       <PageHeader
         title="생각 기록"
         onBack={handleBack}
-        step={{ current: step === 'trigger' ? 1 : 2, total: 2 }}
+        step={{ current: step === 'trigger' ? 1 : step === 'thought' ? 2 : 3, total: 3 }}
       />
 
       {/* 메인 콘텐츠 */}
@@ -142,7 +155,7 @@ export default function LogPage() {
                 다음
               </button>
             </>
-          ) : (
+          ) : step === 'thought' ? (
             // 2단계: 자동 사고 입력
             <>
               <div className="space-y-2">
@@ -200,11 +213,66 @@ export default function LogPage() {
               )}
 
               <button
-                onClick={handleSubmit}
+                onClick={handleThoughtNext}
                 disabled={loading || thought.length < 10}
                 className="w-full bg-primary text-white font-semibold py-4 px-6 rounded-2xl touch-manipulation active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
               >
+                다음
+              </button>
+            </>
+          ) : (
+            // 3단계: 고통 점수
+            <>
+              <div className="space-y-2">
+                <h1 className="text-xl font-bold text-text-primary tracking-tight">
+                  지금 얼마나 힘드세요?
+                </h1>
+                <p className="text-sm text-text-secondary">
+                  솔직하게 체크해주세요. 분석에 활용돼요.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                {PAIN_OPTIONS.map((option) => (
+                  <button
+                    key={option.score}
+                    onClick={() => setPainScore(option.score)}
+                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all text-left ${
+                      painScore === option.score
+                        ? 'border-primary bg-primary/5'
+                        : 'border-background-tertiary bg-white'
+                    }`}
+                  >
+                    <span className="text-2xl">{option.emoji}</span>
+                    <div>
+                      <p className={`text-sm font-semibold ${painScore === option.score ? 'text-primary' : 'text-text-primary'}`}>
+                        {option.label}
+                      </p>
+                      <p className="text-xs text-text-tertiary">{option.score}점</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {error && (
+                <div className="bg-danger bg-opacity-10 border border-danger rounded-xl p-4">
+                  <p className="text-xs md:text-sm text-danger">{error}</p>
+                </div>
+              )}
+
+              <button
+                onClick={() => handleSubmit(painScore)}
+                disabled={loading || painScore === null}
+                className="w-full bg-primary text-white font-semibold py-4 px-6 rounded-2xl touch-manipulation active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 {loading ? '저장하고 있어요...' : '분석 시작하기'}
+              </button>
+              <button
+                onClick={() => handleSubmit(null)}
+                disabled={loading}
+                className="w-full text-text-tertiary text-sm py-2"
+              >
+                건너뛰기
               </button>
             </>
           )}

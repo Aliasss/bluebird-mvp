@@ -15,6 +15,7 @@ const actionRequestSchema = z.object({
   finalAction: z.string().trim().max(500).optional(),
   markCompleted: z.boolean().optional(),
   completionNote: z.string().trim().max(200).optional(),
+  completionReaction: z.enum(['improved', 'same', 'worse']).optional(),
 });
 
 function calcAutonomyScore(params: { averageIntensity: number; answerCount: number }): number {
@@ -39,6 +40,7 @@ export async function POST(request: Request) {
     const finalAction = parsedBody.data.finalAction?.trim() ?? '';
     const markCompleted = Boolean(parsedBody.data.markCompleted);
     const completionNote = parsedBody.data.completionNote?.trim() ?? '';
+    const completionReaction = parsedBody.data.completionReaction;
 
     const supabase = await createServerSupabaseClient();
     const {
@@ -104,6 +106,7 @@ export async function POST(request: Request) {
       is_completed?: boolean;
       autonomy_score?: number;
       completion_note?: string;
+      completion_reaction?: string;
     } = { final_action: effectiveAction };
 
     if (markCompleted) {
@@ -129,6 +132,9 @@ export async function POST(request: Request) {
       actionPayload.autonomy_score = calcAutonomyScore({ averageIntensity, answerCount }) + noteBonus;
       if (completionNote.length > 0) {
         actionPayload.completion_note = completionNote;
+      }
+      if (completionReaction) {
+        actionPayload.completion_reaction = completionReaction;
       }
     }
 

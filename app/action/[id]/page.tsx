@@ -90,6 +90,7 @@ export default function ActionPage() {
   const [notice, setNotice] = useState<string | null>(null);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [insightInput, setInsightInput] = useState('');
+  const [reaction, setReaction] = useState<'improved' | 'same' | 'worse' | null>(null);
 
   useEffect(() => {
     const logId = params.id;
@@ -182,10 +183,11 @@ export default function ActionPage() {
       return;
     }
     setInsightInput('');
+    setReaction(null);
     setShowCompletionModal(true);
   };
 
-  const saveAction = async (markCompleted: boolean, completionNote?: string) => {
+  const saveAction = async (markCompleted: boolean, completionNote?: string, completionReaction?: string) => {
     const validationError = validateAction(actionInput);
     if (validationError) {
       setError(validationError);
@@ -205,6 +207,7 @@ export default function ActionPage() {
           finalAction: actionInput.trim(),
           markCompleted,
           completionNote: completionNote?.trim() || undefined,
+          completionReaction: completionReaction || undefined,
         }),
       });
       const payload = await response.json();
@@ -384,17 +387,42 @@ export default function ActionPage() {
             <div className="text-center space-y-1">
               <p className="text-2xl">⚓</p>
               <h3 className="text-base font-bold text-text-primary tracking-tight">항해를 완료했어요!</h3>
-              <p className="text-sm text-text-secondary">짧은 메모를 남기면 +15점 보너스를 드려요.</p>
             </div>
 
+            {/* 원탭 반응 */}
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wide">행동 전후 변화</p>
+              <div className="flex gap-2">
+                {([
+                  { value: 'improved', emoji: '😌', label: '나아졌어요' },
+                  { value: 'same', emoji: '😐', label: '비슷해요' },
+                  { value: 'worse', emoji: '😟', label: '더 힘들어요' },
+                ] as const).map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setReaction(opt.value)}
+                    className={`flex-1 flex flex-col items-center gap-1 py-3 rounded-2xl border-2 transition-all text-xs font-semibold ${
+                      reaction === opt.value
+                        ? 'border-primary bg-primary/5 text-primary'
+                        : 'border-background-tertiary text-text-secondary'
+                    }`}
+                  >
+                    <span className="text-xl">{opt.emoji}</span>
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 소감 메모 */}
             <div>
+              <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wide mb-2">항해 메모 <span className="text-primary normal-case font-normal">(+15점)</span></p>
               <textarea
                 value={insightInput}
                 onChange={(e) => setInsightInput(e.target.value)}
-                placeholder="항해 일지에 짧은 메모를 남겨볼까요? (선택)"
-                className="w-full h-24 p-3 border border-background-tertiary rounded-xl resize-none text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="짧은 생각 한 줄을 남겨볼까요? (선택)"
+                className="w-full h-20 p-3 border border-background-tertiary rounded-xl resize-none text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 maxLength={200}
-                autoFocus
               />
               <p className="text-right text-xs text-text-tertiary mt-1">{insightInput.length}/200</p>
             </div>
@@ -403,12 +431,12 @@ export default function ActionPage() {
               <button
                 onClick={() => {
                   setShowCompletionModal(false);
-                  saveAction(true, insightInput);
+                  saveAction(true, insightInput, reaction ?? undefined);
                 }}
                 disabled={saving}
                 className="w-full bg-primary text-white font-semibold min-h-[44px] py-3 rounded-2xl text-sm disabled:opacity-50"
               >
-                {insightInput.trim() ? `메모 기록하고 완료 (+15점 보너스)` : '완료하기'}
+                {insightInput.trim() ? '메모 기록하고 완료 (+15점 보너스)' : '완료하기'}
               </button>
               <button
                 onClick={() => setShowCompletionModal(false)}

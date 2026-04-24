@@ -217,9 +217,9 @@ export default function VisualizePage() {
           <p className="text-text-secondary text-xs md:text-sm">{error}</p>
           <button
             onClick={() => router.push(`/analyze/${params.id}`)}
-            className="bg-primary text-white font-semibold py-3 px-6 rounded-xl"
+            className="bg-primary text-white font-semibold min-h-[44px] py-3 px-6 rounded-2xl text-sm"
           >
-            분석 페이지로 돌아가기
+            분석으로 돌아가기
           </button>
         </div>
       </main>
@@ -345,25 +345,27 @@ export default function VisualizePage() {
           )}
         </div>
 
-        <div className="flex justify-center gap-2 sm:gap-3">
-          <button
-            onClick={() => router.push(`/analyze/${params.id}`)}
-            className="bg-white border border-primary text-primary font-semibold py-3 px-8 rounded-xl"
-          >
-            분석 페이지로 돌아가기
-          </button>
+        <div className="flex flex-col gap-3 w-full max-w-sm mx-auto">
           <button
             onClick={() => router.push(`/action/${params.id}`)}
-            className="bg-success text-white font-semibold py-3 px-8 rounded-xl"
+            className="w-full bg-success text-white font-semibold min-h-[44px] py-3 px-6 rounded-2xl text-sm"
           >
             다음: 행동 설계
           </button>
-          <button
-            onClick={() => router.push('/dashboard')}
-            className="bg-primary text-white font-semibold py-3 px-8 rounded-xl"
-          >
-            대시보드
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => router.push(`/analyze/${params.id}`)}
+              className="flex-1 bg-white border border-background-tertiary text-text-secondary font-medium min-h-[44px] py-3 px-4 rounded-2xl text-sm"
+            >
+              분석으로 돌아가기
+            </button>
+            <button
+              onClick={() => router.push('/dashboard')}
+              className="flex-1 bg-white border border-background-tertiary text-text-secondary font-medium min-h-[44px] py-3 px-4 rounded-2xl text-sm"
+            >
+              대시보드
+            </button>
+          </div>
         </div>
       </div>
     </main>

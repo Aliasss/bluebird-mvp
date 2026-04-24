@@ -581,7 +581,7 @@ export default function AnalyzePage() {
                     disabled={savingAnswers}
                     className="flex-1 bg-primary text-white font-semibold min-h-[44px] h-auto py-3 px-3 rounded-xl text-sm leading-snug text-center whitespace-normal disabled:opacity-50"
                   >
-                    {savingAnswers ? '저장 중...' : '답변 저장 후 시각화 보기'}
+                    {savingAnswers ? '저장 중...' : '저장 후 시각화 보기'}
                   </button>
                 )}
               </div>

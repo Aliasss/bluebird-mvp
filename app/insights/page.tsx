@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line, RadarChart, PolarGrid, PolarAngleAxis, Radar,
+  LineChart, Line, RadarChart, PolarGrid, PolarAngleAxis, Radar, ReferenceLine,
 } from 'recharts';
 import { supabase } from '@/lib/supabase/client';
 import { DistortionType, DistortionTypeKorean } from '@/types';
@@ -16,6 +16,7 @@ type Period = '7d' | '30d' | 'all';
 type DistortionFreq = { name: string; count: number };
 type AutonomyPoint = { date: string; score: number };
 type IntensityPoint = { type: string; avgIntensity: number };
+type DeltaDayPoint = { date: string; avgDelta: number };
 type GrowthMetrics = {
   intensityDelta: number | null;   // % 변화 (음수 = 개선)
   completionDelta: number | null;  // % 포인트 변화 (양수 = 개선)
@@ -52,6 +53,7 @@ export default function InsightsPage() {
   const [intensityData, setIntensityData] = useState<IntensityPoint[]>([]);
   const [growth, setGrowth] = useState<GrowthMetrics>({ intensityDelta: null, completionDelta: null, mostImprovedType: null });
   const [archetypeResult, setArchetypeResult] = useState<ArchetypeResult | null>(null);
+  const [deltaPainSeries, setDeltaPainSeries] = useState<DeltaDayPoint[]>([]);
 
   useEffect(() => {
     const load = async () => {
@@ -168,6 +170,39 @@ export default function InsightsPage() {
         distortionCounts[t] = (distortionCounts[t] ?? 0) + 1;
       });
       setArchetypeResult(getArchetypeResult(distortionCounts, allRows.length));
+
+      // Δpain 시계열: reevaluated_at 일자별 평균 Δpain (재평가 없는 건 제외)
+      let deltaQuery = supabase
+        .from('intervention')
+        .select('reevaluated_at, reevaluated_pain_score, logs!inner(pain_score, user_id)')
+        .eq('logs.user_id', user.id)
+        .not('reevaluated_pain_score', 'is', null)
+        .order('reevaluated_at', { ascending: true });
+      if (since) deltaQuery = deltaQuery.gte('reevaluated_at', since);
+
+      const { data: deltaRows } = await deltaQuery;
+      const deltaByDay: Record<string, { sum: number; count: number }> = {};
+      for (const row of deltaRows ?? []) {
+        const logsField = row.logs as unknown as
+          | { pain_score: number | null }
+          | Array<{ pain_score: number | null }>;
+        const log = Array.isArray(logsField) ? logsField[0] : logsField;
+        const initial = log?.pain_score;
+        const re = (row as { reevaluated_pain_score: number | null }).reevaluated_pain_score;
+        if (initial == null || re == null) continue;
+        const day = (row.reevaluated_at as string).slice(0, 10);
+        if (!deltaByDay[day]) deltaByDay[day] = { sum: 0, count: 0 };
+        deltaByDay[day].sum += initial - re;
+        deltaByDay[day].count += 1;
+      }
+      setDeltaPainSeries(
+        Object.keys(deltaByDay)
+          .sort()
+          .map((date) => ({
+            date,
+            avgDelta: Math.round((deltaByDay[date].sum / deltaByDay[date].count) * 10) / 10,
+          }))
+      );
 
       setLoading(false);
     };
@@ -322,6 +357,32 @@ export default function InsightsPage() {
                 <Tooltip />
               </RadarChart>
             </ResponsiveContainer>
+          )}
+        </div>
+
+        {/* Δpain 시계열 */}
+        <div className="bg-white border border-background-tertiary rounded-xl p-4 sm:p-6">
+          <div className="space-y-1 mb-4">
+            <h2 className="text-base font-bold text-text-primary">인지 유연성 변화 (Δpain)</h2>
+            <p className="text-xs text-text-secondary">양수면 고통 감소, 음수면 증가. 0 기준선은 변화 없음.</p>
+          </div>
+          {deltaPainSeries.length === 0 ? (
+            <p className="text-sm text-text-secondary text-center py-8">
+              아직 재평가 기록이 부족해요. 몇 번 더 돌아봐주세요.
+            </p>
+          ) : (
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={deltaPainSeries} margin={{ top: 8, right: 8, bottom: 0, left: -20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                  <XAxis dataKey="date" tick={{ fontSize: 11 }} />
+                  <YAxis domain={[-4, 4]} tick={{ fontSize: 11 }} />
+                  <Tooltip />
+                  <ReferenceLine y={0} stroke="#9ca3af" strokeDasharray="3 3" />
+                  <Line type="monotone" dataKey="avgDelta" name="평균 Δpain" stroke="#2563eb" strokeWidth={2} dot={{ r: 3 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           )}
         </div>
 

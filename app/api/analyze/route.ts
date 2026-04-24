@@ -4,6 +4,8 @@ import { analyzeDistortionsWithGemini } from '@/lib/openai/gemini';
 import { isAiInputTooLong, MAX_AI_TEXT_LENGTH } from '@/lib/security/ai-guard';
 import type { AIAnalysisResult, DistortionAnalysis } from '@/types';
 import { z } from 'zod';
+import { detect } from '@/lib/safety/detect';
+import { createSafetyLlmClient } from '@/lib/safety/gemini-adapter';
 
 const analyzeRequestSchema = z.object({
   logId: z.string().uuid(),
@@ -94,6 +96,41 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+
+    // ── 위기 감지 훅 ──
+    // 캐시 조회보다 먼저 실행. 캐시된 분석이 있어도 현재 입력이 위험하면 재분석 차단.
+    const safetyResult = await detect({
+      trigger: logData.trigger,
+      thought: logData.thought,
+      client: createSafetyLlmClient(),
+    });
+
+    if (safetyResult.level !== 'none') {
+      // safety_events 기록 (실패해도 safety 응답은 반환)
+      const { error: safetyLogError } = await supabase.from('safety_events').insert({
+        user_id: user.id,
+        log_id: logId,
+        level: safetyResult.level,
+        detected_by: safetyResult.detectedBy ?? 'keyword',
+        matched_pattern: safetyResult.matchedPattern ?? null,
+        llm_reason: safetyResult.llmReason ?? null,
+        user_override: false,
+      });
+      if (safetyLogError) {
+        console.error('safety_events insert 실패:', safetyLogError);
+      }
+
+      return NextResponse.json(
+        {
+          safety: {
+            level: safetyResult.level,
+            detectedBy: safetyResult.detectedBy,
+          },
+        },
+        { status: 200 }
+      );
+    }
+    // ── /위기 감지 훅 ──
 
     const { data: existingRows, error: existingError } = await supabase
       .from('analysis')

@@ -21,7 +21,7 @@ const DEFAULT_SOCRATIC_QUESTIONS = [
   '같은 상황을 겪는 친구에게 조언한다면, 어떤 대안 해석을 제시하시겠어요?',
 ];
 
-function getGeminiClient() {
+export function getGeminiClient() {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     throw new Error('GEMINI_API_KEY가 설정되지 않았습니다.');

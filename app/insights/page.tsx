@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -313,15 +314,25 @@ export default function InsightsPage() {
           {distortionFreq.every((d) => d.count === 0) ? (
             <p className="text-sm text-text-secondary text-center py-8">아직 분석 데이터가 없습니다.</p>
           ) : (
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={distortionFreq} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-                <Tooltip />
-                <Bar dataKey="count" name="탐지 횟수" fill="#1E40AF" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={distortionFreq} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                  <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                  <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
+                  <Tooltip />
+                  <Bar dataKey="count" name="탐지 횟수" fill="#1E40AF" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+              <div className="mt-3 text-right">
+                <Link
+                  href="/manual#dbug-03"
+                  className="text-xs text-primary hover:underline"
+                >
+                  각 왜곡이 무슨 뜻인가요? 매뉴얼 보기 →
+                </Link>
+              </div>
+            </>
           )}
         </div>
 

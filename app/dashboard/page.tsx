@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { formatDate } from '@/lib/utils';
@@ -45,6 +46,7 @@ function DashboardContent() {
   const [successToast, setSuccessToast] = useState(false);
   const [checkinToast, setCheckinToast] = useState(false);
   const [todayCheckin, setTodayCheckin] = useState<{ morning: boolean; evening: boolean }>({ morning: false, evening: false });
+  const [showManualNudge, setShowManualNudge] = useState(false);
 
   useEffect(() => {
     // sessionStorage 기반 — Router Cache가 stale searchParams를 복원해도 토스트 재발사 안 됨.
@@ -193,6 +195,12 @@ function DashboardContent() {
       });
       setArchetype(getArchetypeResult(distortionCounts, distortionRows.length));
 
+      // 매뉴얼 너지 배너: 3회 이상 분석 + 영구 dismiss 안 한 사용자에게만
+      if (typeof window !== 'undefined') {
+        const dismissed = localStorage.getItem('manual-nudge-dismissed') === '1';
+        setShowManualNudge(!dismissed && distortionRows.length >= 3);
+      }
+
       // 오늘 체크인 상태
       const kstNow = new Date(Date.now() + KST_OFFSET);
       const todayStartIso = new Date(
@@ -223,6 +231,13 @@ function DashboardContent() {
   }
 
   const greeting = user ? getGreeting(user.email!) : null;
+
+  const dismissManualNudge = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('manual-nudge-dismissed', '1');
+    }
+    setShowManualNudge(false);
+  };
 
   return (
     <main className="min-h-screen bg-background">
@@ -268,6 +283,37 @@ function DashboardContent() {
             triggerSnippet={pendingReview.triggerSnippet}
             daysAgo={pendingReview.daysAgo}
           />
+        )}
+
+        {/* 매뉴얼 너지 배너 — 3회 이상 분석한 사용자에게만, 영구 dismiss 가능 */}
+        {showManualNudge && (
+          <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4">
+            <div className="flex items-start gap-3">
+              <span className="text-xl">📖</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-text-primary mb-0.5">
+                  왜곡이 작동하는 이유가 궁금하다면
+                </p>
+                <p className="text-xs text-text-secondary">
+                  매뉴얼에서 인지 왜곡 5가지의 정의와 디버깅 질문을 확인할 수 있어요.
+                </p>
+                <div className="mt-2 flex items-center gap-3">
+                  <Link
+                    href="/manual"
+                    className="text-xs font-semibold text-primary hover:underline"
+                  >
+                    매뉴얼 열기 →
+                  </Link>
+                  <button
+                    onClick={dismissManualNudge}
+                    className="text-xs text-text-tertiary hover:text-text-secondary"
+                  >
+                    다시 보지 않기
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* 체크인 카드 */}
@@ -389,6 +435,21 @@ function DashboardContent() {
             </div>
           </div>
         )}
+
+        {/* 푸터: 보조 콘텐츠 진입점 */}
+        <div className="pt-2 flex items-center justify-center gap-3 text-[11px] text-text-tertiary">
+          <Link href="/our-philosophy" className="hover:text-text-secondary hover:underline">
+            철학
+          </Link>
+          <span aria-hidden>·</span>
+          <Link href="/manual" className="hover:text-text-secondary hover:underline">
+            매뉴얼
+          </Link>
+          <span aria-hidden>·</span>
+          <Link href="/safety/resources" className="hover:text-text-secondary hover:underline">
+            정신건강 자원
+          </Link>
+        </div>
       </div>
 
       <BottomTabBar />

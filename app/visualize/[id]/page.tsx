@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import ProspectValueChart from '@/components/charts/prospect-value-chart';
 import { supabase } from '@/lib/supabase/client';
@@ -231,7 +232,15 @@ export default function VisualizePage() {
       <PageHeader title="시각화" />
       <div className="max-w-5xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
         <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
-          <h1 className="text-xl md:text-2xl font-bold text-text-primary mb-2">전망이론 시각화</h1>
+          <div className="flex items-baseline gap-2 mb-2 flex-wrap">
+            <h1 className="text-xl md:text-2xl font-bold text-text-primary">전망이론 시각화</h1>
+            <Link
+              href="/manual#dyn-02"
+              className="text-xs text-primary hover:underline"
+            >
+              전망이론이 뭐예요? →
+            </Link>
+          </div>
           <p className="text-sm text-text-secondary">
             동일한 사건도 왜곡 강도에 따라 손실 체감이 과장될 수 있습니다.
           </p>

@@ -23,6 +23,16 @@ export const DistortionTypeKorean: Record<DistortionType, string> = {
   [DistortionType.ARBITRARY_INFERENCE]: '임의적 추론',
 };
 
+// 왜곡 유형 → 매뉴얼 앵커 매핑
+// arbitrary_inference는 매뉴얼에 별도 서브섹션이 없어 dbug-03 상위로 fallback.
+export const DistortionManualAnchor: Record<DistortionType, string> = {
+  [DistortionType.CATASTROPHIZING]: 'dbug-03-s2',
+  [DistortionType.ALL_OR_NOTHING]: 'dbug-03-s3',
+  [DistortionType.EMOTIONAL_REASONING]: 'dbug-03-s4',
+  [DistortionType.PERSONALIZATION]: 'dbug-03-s5',
+  [DistortionType.ARBITRARY_INFERENCE]: 'dbug-03',
+};
+
 // 데이터베이스 테이블 타입
 export interface Log {
   id: string;

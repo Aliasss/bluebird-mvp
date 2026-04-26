@@ -1,9 +1,11 @@
 'use client';
 
 import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import {
+  DistortionManualAnchor,
   DistortionTypeKorean,
   type CasSignal,
   type DistortionAnalysis,
@@ -544,9 +546,18 @@ export default function AnalyzePage() {
               {distortions.map((item, index) => (
                 <div key={`${item.type}-${index}`} className="bg-white border border-background-tertiary/80 rounded-xl p-4 shadow-sm">
                   <div className="flex items-center justify-between mb-2">
-                    <p className="font-semibold text-text-primary">
-                      {DistortionTypeKorean[item.type]}
-                    </p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="font-semibold text-text-primary">
+                        {DistortionTypeKorean[item.type]}
+                      </p>
+                      <Link
+                        href={`/manual#${DistortionManualAnchor[item.type]}`}
+                        aria-label={`${DistortionTypeKorean[item.type]} 매뉴얼 보기`}
+                        className="inline-flex items-center justify-center w-5 h-5 rounded-full border border-background-tertiary text-[10px] text-text-secondary hover:bg-primary hover:text-white hover:border-primary transition-colors"
+                      >
+                        ?
+                      </Link>
+                    </div>
                     <span className="text-xs md:text-sm text-primary">
                       강도 {(item.intensity * 100).toFixed(0)}%
                     </span>

@@ -91,6 +91,10 @@ const QUESTIONS_RESPONSE_SCHEMA: Schema = {
     questions: {
       type: SchemaType.ARRAY,
       items: { type: SchemaType.STRING },
+      // Gemini가 정확히 3개를 반환하도록 강제. 이전엔 minItems/maxItems가 없어
+      // 0/1/2/4/5개를 반환하면 즉시 디폴트 폴백으로 떨어졌음.
+      minItems: 3,
+      maxItems: 3,
     },
   },
   required: ['questions'],
@@ -119,7 +123,10 @@ function getQuestionsModel() {
       temperature: 0.3,
       topP: 0.9,
       topK: 20,
-      maxOutputTokens: 1024,
+      // 한국어는 토큰 효율이 낮아 질문 3개 + JSON 구조로 1024는 부족.
+      // 1024일 때 "questions: [\"내일 임원 보고에서..." 수준에서 잘려서
+      // safeJsonParse가 미완성 JSON에 실패 → 디폴트 폴백 100% 발동했음.
+      maxOutputTokens: 4096,
       responseMimeType: 'application/json',
       responseSchema: QUESTIONS_RESPONSE_SCHEMA,
     },
@@ -455,17 +462,20 @@ function normalizeQuestions(payload: unknown): string[] {
     .slice(0, 3);
 }
 
-export async function generateSocraticQuestionsWithGemini(input: {
-  trigger: string;
-  thought: string;
-  distortions: DistortionAnalysis[];
-  frameType?: FrameType;
-  referencePoint?: string;
-  probabilityEstimate?: number | null;
-  casSignal?: CasSignal;
-  system2QuestionSeed?: string;
-  decenteringPrompt?: string;
-}): Promise<string[]> {
+function buildSocraticPrompt(
+  input: {
+    trigger: string;
+    thought: string;
+    distortions: DistortionAnalysis[];
+    frameType?: FrameType;
+    referencePoint?: string;
+    probabilityEstimate?: number | null;
+    casSignal?: CasSignal;
+    system2QuestionSeed?: string;
+    decenteringPrompt?: string;
+  },
+  retryHint = false
+): string {
   const safeTrigger = sanitizeForPrompt(input.trigger);
   const safeThought = sanitizeForPrompt(input.thought);
   const safeDistortions = input.distortions.map((d) => ({
@@ -482,18 +492,31 @@ export async function generateSocraticQuestionsWithGemini(input: {
         .join('\n')
     : '탐지된 왜곡 없음';
 
-  const prompt = [
+  const retryBlock = retryHint
+    ? [
+        '',
+        '[Retry Notice]',
+        '- 이전 응답이 정확히 3개가 아니었다. 이번엔 절대로 3개가 아닌 개수를 반환하지 마라.',
+        '- questions 배열은 반드시 길이 3이며, 각 질문은 5자 이상의 한국어 문장이다.',
+      ].join('\n')
+    : '';
+
+  return [
     '너는 Bluebird의 System-2 Activation Question Engine이다.',
     '목표: 사용자가 스스로 판단하도록 논리적 검증 질문 3개를 생성한다.',
     '',
     '[Question Constraints]',
-    '- 정확히 3개',
-    '- 각 질문은 숫자/확률/비율 등 계량 답변을 요구',
-    '- 위로 금지, 판단 단정 금지',
-    '- Build-Measure-Learn 루프를 촉진하는 질문 포함',
+    '- 반드시 정확히 3개. 2개나 4개는 허용되지 않는다. questions 배열의 length는 정확히 3이다.',
+    '- 세 질문은 서로 다른 각도에서 검증한다. 같은 패턴 반복 금지.',
+    '  · 1번: 확률/근거의 정량 추정',
+    '  · 2번: 대안 해석/반증 데이터 탐색',
+    '  · 3번: 행동 가능성/통제 변수 식별',
+    '- 각 질문은 숫자/확률/비율 등 계량 답변을 요구하거나 구체적 데이터를 요청한다.',
+    '- 위로 금지, 판단 단정 금지.',
     `- 반드시 reference_point("${input.referencePoint ?? '미확인'}")를 최소 1개 질문에 직접 언급하거나 반영하라.`,
     `- decentering_prompt("${input.decenteringPrompt ?? '없음'}")를 활용해 최소 1개 질문을 설계하라.`,
     '- 사용자의 구체적 상황(트리거/자동사고)에서 실제 수치/사례를 질문에 포함하라.',
+    '- 탐지된 왜곡 유형이 있다면 가장 강도 높은 왜곡의 segment를 1개 질문 이상에서 직접 인용하라.',
     '',
     '[Context]',
     `트리거: ${safeTrigger}`,
@@ -509,29 +532,61 @@ export async function generateSocraticQuestionsWithGemini(input: {
     '[Output JSON Schema]',
     JSON.stringify(
       {
-        questions: [
-          '질문 1',
-          '질문 2',
-          '질문 3',
-        ],
+        questions: ['질문 1', '질문 2', '질문 3'],
       },
       null,
       2
     ),
     '',
     'JSON 이외 텍스트는 출력하지 마라.',
+    retryBlock,
   ].join('\n');
+}
 
-  const text = await generateContentWithRetry(prompt, getQuestionsModel());
-  const parsed = safeJsonParse<{ questions?: unknown }>(text);
-  if (!parsed) {
+export async function generateSocraticQuestionsWithGemini(input: {
+  trigger: string;
+  thought: string;
+  distortions: DistortionAnalysis[];
+  frameType?: FrameType;
+  referencePoint?: string;
+  probabilityEstimate?: number | null;
+  casSignal?: CasSignal;
+  system2QuestionSeed?: string;
+  decenteringPrompt?: string;
+}): Promise<string[]> {
+  // 1차 호출
+  const firstText = await generateContentWithRetry(
+    buildSocraticPrompt(input, false),
+    getQuestionsModel()
+  );
+  const firstParsed = safeJsonParse<{ questions?: unknown }>(firstText);
+  const firstQuestions = firstParsed ? normalizeQuestions(firstParsed) : [];
+
+  if (firstQuestions.length === 3) {
+    return firstQuestions;
+  }
+
+  // Q-Fix C: 길이 ≠ 3 시 1회 재시도. responseSchema의 minItems/maxItems가 있어도
+  // 가끔 Gemini가 따르지 않을 수 있어 명시적 재시도 + 강한 힌트.
+  const retryText = await generateContentWithRetry(
+    buildSocraticPrompt(input, true),
+    getQuestionsModel()
+  );
+  const retryParsed = safeJsonParse<{ questions?: unknown }>(retryText);
+  const retryQuestions = retryParsed ? normalizeQuestions(retryParsed) : [];
+
+  if (retryQuestions.length === 3) {
+    return retryQuestions;
+  }
+
+  // 두 번 모두 3개 못 받으면 마지막 안전망. 가능한 부분이라도 살리고 부족분만 디폴트로 채움.
+  const merged = retryQuestions.length > firstQuestions.length ? retryQuestions : firstQuestions;
+  if (merged.length === 0) {
     return DEFAULT_SOCRATIC_QUESTIONS;
   }
-  const questions = normalizeQuestions(parsed);
-
-  if (questions.length === 3) {
-    return questions;
+  const filled = [...merged];
+  for (let i = filled.length; i < 3; i++) {
+    filled.push(DEFAULT_SOCRATIC_QUESTIONS[i]);
   }
-
-  return DEFAULT_SOCRATIC_QUESTIONS;
+  return filled.slice(0, 3);
 }

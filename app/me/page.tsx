@@ -170,6 +170,7 @@ export default function MePage() {
               { label: '매뉴얼', sub: '서비스 이용 가이드', href: '/manual' },
               { label: '블루버드 철학', sub: '인지 왜곡이 왜 중요한가요?', href: '/our-philosophy' },
               { label: '홈 화면에 추가', sub: 'PWA 설치 가이드', href: '/install' },
+              { label: '정신건강 자원', sub: '위기 상담·전문기관 안내', href: '/safety/resources' },
             ].map(({ label, sub, href }) => (
               <button
                 key={href}
@@ -193,6 +194,21 @@ export default function MePage() {
         >
           로그아웃
         </button>
+
+        {/* 법적 문서 */}
+        <div className="pt-2 pb-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-text-tertiary">
+          <a href="/terms" className="hover:text-text-secondary underline-offset-2 hover:underline">
+            이용약관
+          </a>
+          <span>·</span>
+          <a href="/privacy" className="hover:text-text-secondary underline-offset-2 hover:underline">
+            개인정보 처리방침
+          </a>
+          <span>·</span>
+          <a href="/disclaimer" className="hover:text-text-secondary underline-offset-2 hover:underline">
+            면책 안내
+          </a>
+        </div>
       </div>
 
       <BottomTabBar />

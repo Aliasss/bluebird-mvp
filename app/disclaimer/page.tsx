@@ -1,0 +1,216 @@
+import Link from 'next/link';
+import { AlertTriangle, Phone, Sparkles, ShieldCheck } from 'lucide-react';
+
+export const metadata = {
+  title: '면책 안내 | BlueBird',
+  description: 'BlueBird는 의료·치료 서비스가 아닙니다. 자가 인지 코칭 도구의 한계와 안전 자원 안내.',
+};
+
+export default function DisclaimerPage() {
+  return (
+    <main className="min-h-screen bg-background">
+      {/* 헤더 */}
+      <header className="sticky top-0 z-40 bg-white border-b border-background-tertiary">
+        <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
+          <Link href="/" className="text-xl font-bold text-primary tracking-tight">
+            Project Bluebird
+          </Link>
+          <Link
+            href="/auth/signup"
+            className="text-sm font-semibold text-white bg-primary px-4 py-2 rounded-xl"
+          >
+            시작하기
+          </Link>
+        </div>
+      </header>
+
+      <div className="max-w-2xl mx-auto px-6 py-12 space-y-8">
+        {/* 타이틀 */}
+        <section className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+            Disclaimer
+          </p>
+          <h1 className="text-3xl font-bold text-text-primary tracking-tight">
+            면책 안내
+          </h1>
+          <p className="text-sm text-text-secondary leading-relaxed">
+            BlueBird를 안전하게 이용하기 위한 안내입니다. 가입 전에 한 번 읽어주세요.
+          </p>
+          <p className="text-xs text-text-tertiary">최종 수정일: 2026년 4월 26일</p>
+        </section>
+
+        {/* 1. 의료 면책 */}
+        <article className="bg-white rounded-2xl shadow-card p-6 space-y-4">
+          <div className="flex items-start gap-3">
+            <Sparkles className="text-primary mt-0.5 flex-shrink-0" size={22} strokeWidth={1.75} />
+            <div className="space-y-1">
+              <h2 className="text-lg font-bold text-text-primary tracking-tight">
+                BlueBird는 치료가 아닌 자가 인지 코칭 도구입니다
+              </h2>
+              <p className="text-sm text-text-tertiary">의료 서비스로 오인하지 않도록 명확히 합니다</p>
+            </div>
+          </div>
+          <ul className="text-sm text-text-secondary leading-relaxed space-y-2 list-disc pl-5">
+            <li>
+              BlueBird는 <strong className="text-text-primary">의료기기·의료 서비스가 아닙니다.</strong>{' '}
+              정신과적 진단, 심리치료, 약물 처방을 대체하거나 그에 준하는 효과를 약속하지 않습니다.
+            </li>
+            <li>
+              본 서비스에서 제공하는 인지 왜곡 분석·소크라테스 질문은 인지행동치료(CBT) 이론에 근거한{' '}
+              <strong className="text-text-primary">자가 성찰 보조 도구</strong>이며, 임상적 판단이나
+              치료 계획을 대체하지 않습니다.
+            </li>
+            <li>
+              우울, 불안, 강박, PTSD, 양극성, 정신증 등{' '}
+              <strong className="text-text-primary">진단 가능한 정신건강 어려움</strong>을 겪고
+              계시다면 정신건강의학과 또는 임상심리 전문가의 도움을 우선 받으시길 강력히 권합니다.
+            </li>
+            <li>
+              지속적·심각한 어려움이 있을 때 BlueBird만 사용하는 것은{' '}
+              <strong className="text-text-primary">권장되지 않습니다.</strong> 전문가의 진료와 병행할
+              때 도움이 될 수는 있으나, 이는 담당 전문가와 상의하여 결정하실 사항입니다.
+            </li>
+          </ul>
+        </article>
+
+        {/* 2. 위기 자원 */}
+        <article className="bg-rose-50 border border-rose-200 rounded-2xl p-6 space-y-4">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="text-rose-600 mt-0.5 flex-shrink-0" size={22} strokeWidth={1.75} />
+            <div className="space-y-1">
+              <h2 className="text-lg font-bold text-rose-900 tracking-tight">
+                위기 상황이라면 BlueBird를 잠시 닫고 전화해주세요
+              </h2>
+              <p className="text-sm text-rose-700">
+                자살·자해 충동, 극심한 공황, 타인을 해치고 싶은 생각이 드신다면
+              </p>
+            </div>
+          </div>
+          <ul className="space-y-3">
+            <li className="bg-white rounded-xl p-4 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-text-primary">자살예방상담전화</p>
+                <p className="text-xs text-text-tertiary">24시간 / 익명 / 무료</p>
+              </div>
+              <a
+                href="tel:1393"
+                className="inline-flex items-center gap-1.5 bg-rose-600 text-white text-sm font-semibold px-4 py-2 rounded-xl"
+              >
+                <Phone size={14} strokeWidth={2.25} />
+                1393
+              </a>
+            </li>
+            <li className="bg-white rounded-xl p-4 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-text-primary">정신건강위기상담전화</p>
+                <p className="text-xs text-text-tertiary">24시간 / 익명 / 무료</p>
+              </div>
+              <a
+                href="tel:1577-0199"
+                className="inline-flex items-center gap-1.5 bg-rose-600 text-white text-sm font-semibold px-4 py-2 rounded-xl"
+              >
+                <Phone size={14} strokeWidth={2.25} />
+                1577-0199
+              </a>
+            </li>
+          </ul>
+          <Link
+            href="/safety/resources"
+            className="inline-block text-xs text-rose-700 underline font-medium"
+          >
+            전체 정신건강 자원 보기 →
+          </Link>
+        </article>
+
+        {/* 3. AI 분석의 한계 */}
+        <article className="bg-white rounded-2xl shadow-card p-6 space-y-4">
+          <div className="flex items-start gap-3">
+            <ShieldCheck className="text-primary mt-0.5 flex-shrink-0" size={22} strokeWidth={1.75} />
+            <div className="space-y-1">
+              <h2 className="text-lg font-bold text-text-primary tracking-tight">
+                AI 분석은 완벽하지 않습니다
+              </h2>
+              <p className="text-sm text-text-tertiary">한국어 자연어 처리 한계와 결과 해석 기준</p>
+            </div>
+          </div>
+          <ul className="text-sm text-text-secondary leading-relaxed space-y-2 list-disc pl-5">
+            <li>
+              인지 왜곡 탐지는{' '}
+              <strong className="text-text-primary">Google Gemini 모델</strong>을 통해 수행됩니다.
+              완벽한 정확도를 보장하지 않으며, 사용자가 작성한 짧은 문장만으로는 충분한 신호가 없을 수
+              있습니다.
+            </li>
+            <li>
+              AI가 제시하는 왜곡 패턴·소크라테스 질문은{' '}
+              <strong className="text-text-primary">참고 자료</strong>입니다. 결과를{' '}
+              자신의 맥락에 맞게 해석하시고, 동의되지 않는 분석은 무시하셔도 됩니다.
+            </li>
+            <li>
+              "뚜렷한 왜곡 패턴이 보이지 않아요"라는 결과가 나와도{' '}
+              <strong className="text-text-primary">실제로는 왜곡이 있을 수 있습니다.</strong> 반대로
+              패턴이 탐지되어도 그것이 반드시 사실이라는 의미는 아닙니다.
+            </li>
+            <li>
+              감정과 통증(0~10) 지표는{' '}
+              <strong className="text-text-primary">사용자 본인의 자기보고</strong>입니다. AI가
+              계산하거나 객관적으로 측정하지 않습니다. 패턴 리포트 또한 본인이 입력한 데이터를 바탕으로
+              한 통계적 요약입니다.
+            </li>
+          </ul>
+        </article>
+
+        {/* 4. 사용자 책임 */}
+        <article className="bg-white rounded-2xl shadow-card p-6 space-y-4">
+          <h2 className="text-lg font-bold text-text-primary tracking-tight">사용자의 책임</h2>
+          <ul className="text-sm text-text-secondary leading-relaxed space-y-2 list-disc pl-5">
+            <li>BlueBird는 본인의 의지에 따라 자가 성찰 도구로 사용해주세요.</li>
+            <li>
+              본 서비스 사용으로 인해 발생할 수 있는 결정·행동의 책임은 사용자 본인에게 있습니다.
+            </li>
+            <li>
+              위기 상황·진단 가능한 정신건강 어려움은 BlueBird 사용 여부와 별개로{' '}
+              <strong className="text-text-primary">반드시 전문가에게 도움을 요청해주세요.</strong>
+            </li>
+            <li>
+              미성년자(만 14세 미만)는 법정대리인의 동의 없이 가입할 수 없습니다. 해당 연령대는 부모님,
+              학교 상담교사, 청소년상담1388의 도움을 우선 받으시길 권합니다.
+            </li>
+          </ul>
+        </article>
+
+        {/* 관련 문서 */}
+        <nav className="border border-background-tertiary rounded-2xl p-6 space-y-3">
+          <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wide">관련 문서</p>
+          <ul className="space-y-2 text-sm">
+            <li>
+              <Link href="/privacy" className="text-primary font-medium hover:underline">
+                개인정보 처리방침 →
+              </Link>
+            </li>
+            <li>
+              <Link href="/terms" className="text-primary font-medium hover:underline">
+                이용약관 →
+              </Link>
+            </li>
+            <li>
+              <Link href="/our-philosophy" className="text-primary font-medium hover:underline">
+                BlueBird의 철학과 근거 →
+              </Link>
+            </li>
+            <li>
+              <Link href="/safety/resources" className="text-primary font-medium hover:underline">
+                정신건강 자원 →
+              </Link>
+            </li>
+          </ul>
+        </nav>
+
+        <footer className="text-center pt-4 pb-12">
+          <Link href="/" className="text-sm text-text-tertiary underline">
+            홈으로
+          </Link>
+        </footer>
+      </div>
+    </main>
+  );
+}

@@ -92,6 +92,25 @@ export default function HomePage() {
           불안은 바다의 파도와 같지만,<br />주체성을 가진 항해사는 길을 잃지 않습니다.
         </p>
 
+        {/* 법적 문서 */}
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[11px] text-text-tertiary pt-2">
+          <a href="/disclaimer" className="hover:text-text-secondary underline-offset-2 hover:underline">
+            면책 안내
+          </a>
+          <span aria-hidden>·</span>
+          <a href="/terms" className="hover:text-text-secondary underline-offset-2 hover:underline">
+            이용약관
+          </a>
+          <span aria-hidden>·</span>
+          <a href="/privacy" className="hover:text-text-secondary underline-offset-2 hover:underline">
+            개인정보 처리방침
+          </a>
+          <span aria-hidden>·</span>
+          <a href="/safety/resources" className="hover:text-text-secondary underline-offset-2 hover:underline">
+            정신건강 자원
+          </a>
+        </div>
+
       </div>
     </main>
   );

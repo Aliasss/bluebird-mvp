@@ -40,7 +40,7 @@ export default function SampleResultPage() {
       <div className="flex-1 px-5 pb-12">
         <div className="max-w-md mx-auto space-y-6">
           {/* 1. 입력 — 사용자가 무엇을 분석하는지 */}
-          <section className="bg-white border border-background-tertiary rounded-2xl p-5 space-y-4">
+          <section className="bg-white border border-background-tertiary rounded-2xl p-5 space-y-4 shadow-card">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-text-tertiary">
               사례 입력
             </p>
@@ -57,7 +57,7 @@ export default function SampleResultPage() {
           </section>
 
           {/* 2. 분석 결과 — 어떤 인지 왜곡이 탐지됐는지 */}
-          <section className="bg-white border border-background-tertiary rounded-2xl p-5 space-y-4">
+          <section className="bg-white border border-background-tertiary rounded-2xl p-5 space-y-4 shadow-card">
             <div className="space-y-1">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">
                 탐지된 인지 왜곡
@@ -98,7 +98,7 @@ export default function SampleResultPage() {
           </section>
 
           {/* 3. 검증 질문 1개 — 자율성 원칙 (답을 단정하지 않음) */}
-          <section className="bg-white border border-background-tertiary rounded-2xl p-5 space-y-4">
+          <section className="bg-white border border-background-tertiary rounded-2xl p-5 space-y-4 shadow-card">
             <div className="space-y-1">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">
                 생각을 점검하는 질문

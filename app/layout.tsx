@@ -36,6 +36,13 @@ export default function RootLayout({
     <html lang="ko">
       <head>
         <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+        {/* Pretendard variable subset — 한·영 본문/헤딩 통합 폰트.
+            기기별 시스템 폰트 차이로 인한 시각적 무관심 해결 (refined minimalism). */}
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css"
+        />
       </head>
       <body className="antialiased" suppressHydrationWarning>
         <Script id="disable-sw-in-local-dev" strategy="afterInteractive">

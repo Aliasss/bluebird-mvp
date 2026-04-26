@@ -57,13 +57,31 @@ const config: Config = {
         snug: '-0.01em',
       },
       fontFamily: {
-        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        // Pretendard 우선 — 한·영 본문/헤딩 통합. 시스템 폰트는 fallback.
+        sans: [
+          'Pretendard Variable',
+          'Pretendard',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'system-ui',
+          'Segoe UI',
+          'Roboto',
+          'sans-serif',
+        ],
       },
       spacing: {
         'safe-top': 'env(safe-area-inset-top)',
         'safe-bottom': 'env(safe-area-inset-bottom)',
         'safe-left': 'env(safe-area-inset-left)',
         'safe-right': 'env(safe-area-inset-right)',
+      },
+      // 절제된 elevation 토큰 — refined minimalism.
+      // 임의 박힌 shadow-[0_4px_16px_...] 류 대신 이 둘 중 하나를 사용한다.
+      // shadow-card: 일반 카드용. 부드러운 두 겹 그림자.
+      // shadow-elev2: 떠올라야 할 요소(FAB, 모달, sticky bar)용.
+      boxShadow: {
+        card: '0 2px 8px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.06)',
+        elev2: '0 8px 24px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.06)',
       },
     },
   },

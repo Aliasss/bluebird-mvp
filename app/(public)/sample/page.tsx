@@ -29,7 +29,7 @@ export default function SampleIndexPage() {
             <p className="text-xs font-semibold uppercase tracking-wider text-primary">
               60초 체험
             </p>
-            <h1 className="text-2xl font-bold text-text-primary leading-tight tracking-tight">
+            <h1 className="text-2xl md:text-[26px] font-bold text-text-primary leading-tight tracking-tighter text-balance">
               가입 전, 어떻게 작동하는지 먼저 보여드릴게요
             </h1>
             <p className="text-sm text-text-secondary leading-relaxed">

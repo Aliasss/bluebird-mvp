@@ -4,8 +4,7 @@
 
 :root {
   --foreground-rgb: 15, 23, 42;
-  --background-start-rgb: 248, 250, 252;
-  --background-end-rgb: 248, 250, 252;
+  --background-rgb: 248, 250, 252;
 }
 
 @layer base {
@@ -18,15 +17,16 @@
       font-size: 15px;
     }
   }
-  
+
   body {
     color: rgb(var(--foreground-rgb));
-    background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    /* 단색 배경 — 이전 그라디언트(차이 거의 없는데 복잡도만 추가)는 제거 */
+    background-color: rgb(var(--background-rgb));
+    /* 한국어 본문 미세 조정 — Pretendard 권장 letter-spacing.
+       Tailwind의 tracking-* 유틸리티는 그대로 작동하며, 적용 시 override 됨. */
+    letter-spacing: -0.011em;
+    /* 한·영 혼용 문장의 자간 자연스러움 + 숫자 폭 균일 */
+    font-feature-settings: 'ss01', 'tnum';
   }
 }
 

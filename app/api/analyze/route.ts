@@ -38,6 +38,9 @@ const analysisPayloadSchema = z.object({
     .optional(),
   system2_question_seed: z.string().optional(),
   decentering_prompt: z.string().optional(),
+  trigger_category: z
+    .enum(['work', 'relationship', 'family', 'health', 'self', 'finance', 'study', 'other'])
+    .optional(),
 });
 
 type AnalyzeRequestBody = {
@@ -289,6 +292,19 @@ export async function POST(request: Request) {
             { status: 500 }
           );
         }
+      }
+    }
+
+    // Phase 1.1: trigger_category 라벨링 결과를 logs row에 저장.
+    // 마이그레이션 06이 적용 안 된 환경에서도 분석 자체는 통과하도록 에러는 로그만.
+    if (analysisResult.trigger_category) {
+      const { error: categoryError } = await supabase
+        .from('logs')
+        .update({ trigger_category: analysisResult.trigger_category })
+        .eq('id', logId)
+        .eq('user_id', user.id);
+      if (categoryError) {
+        console.error('logs.trigger_category 업데이트 실패:', categoryError);
       }
     }
 

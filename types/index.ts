@@ -9,6 +9,39 @@ export enum DistortionType {
 
 export type FrameType = 'loss' | 'gain' | 'mixed';
 
+// 트리거 카테고리 — 사용자 트리거의 도메인 분류 (Phase 1.1)
+export type TriggerCategory =
+  | 'work'
+  | 'relationship'
+  | 'family'
+  | 'health'
+  | 'self'
+  | 'finance'
+  | 'study'
+  | 'other';
+
+export const TRIGGER_CATEGORIES: readonly TriggerCategory[] = [
+  'work',
+  'relationship',
+  'family',
+  'health',
+  'self',
+  'finance',
+  'study',
+  'other',
+] as const;
+
+export const TriggerCategoryKorean: Record<TriggerCategory, string> = {
+  work: '직장/일',
+  relationship: '관계/사람',
+  family: '가족',
+  health: '건강/몸',
+  self: '자기/존재',
+  finance: '금전/미래',
+  study: '학업/시험',
+  other: '기타',
+};
+
 export interface CasSignal {
   rumination: number; // 0~1
   worry: number; // 0~1
@@ -40,6 +73,7 @@ export interface Log {
   thought: string;
   pain_score?: number | null;
   log_type?: 'normal' | 'success';
+  trigger_category?: TriggerCategory | null;
   created_at: string;
 }
 
@@ -95,6 +129,7 @@ export interface AIAnalysisResult {
   cas_signal?: CasSignal;
   system2_question_seed?: string;
   decentering_prompt?: string;
+  trigger_category?: TriggerCategory;
 }
 
 // 전망이론 시각화 데이터 타입

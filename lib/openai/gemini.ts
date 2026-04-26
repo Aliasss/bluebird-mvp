@@ -9,13 +9,16 @@ import {
 import { sanitizeForPrompt } from '@/lib/safety/prompt-sanitize';
 import {
   DistortionType,
+  TRIGGER_CATEGORIES,
   type AIAnalysisResult,
   type CasSignal,
   type DistortionAnalysis,
   type FrameType,
+  type TriggerCategory,
 } from '@/types';
 
 const VALID_DISTORTION_TYPES = new Set<string>(Object.values(DistortionType));
+const VALID_TRIGGER_CATEGORIES = new Set<string>(TRIGGER_CATEGORIES);
 const DEFAULT_SOCRATIC_QUESTIONS = [
   '이 상황이 실제로 최악으로 전개될 확률을 0~100%로 추정하면 몇 %인가요?',
   '지금 생각을 뒷받침하는 객관적 증거와 반대 증거를 각각 3가지씩 적어볼 수 있나요?',
@@ -64,6 +67,11 @@ const ANALYSIS_RESPONSE_SCHEMA: Schema = {
     },
     system2_question_seed: { type: SchemaType.STRING },
     decentering_prompt: { type: SchemaType.STRING },
+    trigger_category: {
+      type: SchemaType.STRING,
+      format: 'enum',
+      enum: ['work', 'relationship', 'family', 'health', 'self', 'finance', 'study', 'other'],
+    },
   },
   required: [
     'distortions',
@@ -73,6 +81,7 @@ const ANALYSIS_RESPONSE_SCHEMA: Schema = {
     'cas_signal',
     'system2_question_seed',
     'decentering_prompt',
+    'trigger_category',
   ],
 };
 
@@ -195,6 +204,11 @@ function toFrameType(input: unknown): FrameType {
   return 'mixed';
 }
 
+function toTriggerCategory(input: unknown): TriggerCategory {
+  const raw = String(input ?? '').toLowerCase();
+  return VALID_TRIGGER_CATEGORIES.has(raw) ? (raw as TriggerCategory) : 'other';
+}
+
 function normalizeDistortions(payload: unknown): DistortionAnalysis[] {
   if (!payload || typeof payload !== 'object') {
     return [];
@@ -271,6 +285,19 @@ function buildAnalysisPrompt(input: { trigger: string; thought: string; pain_sco
     '- 경계 케이스에서는 반드시 differentialRule을 참조해 왜곡 유형을 확정하라.',
     '- 복수 왜곡이 탐지되면 모두 포함하되, intensity로 주도 왜곡을 구분하라.',
     '',
+    '[Trigger Category Rules]',
+    '- trigger_category는 trigger 문장의 도메인을 8개 중 하나로 라벨링한다.',
+    '  · work: 직장 업무, 상사·동료, 회사, 커리어, 면접, 출근, 발표, 마감',
+    '  · relationship: 친구, 연인, 지인, 데이트, 이별, 비연애 인간관계 갈등',
+    '  · family: 부모, 형제자매, 자녀, 배우자, 친척',
+    '  · health: 신체 컨디션, 수면, 통증, 질병, 의료 검진, 식이',
+    '  · self: 자존감, 정체성, 외모, 성격, 능력 자기평가',
+    '  · finance: 돈, 소비, 부채, 투자, 노후, 가격 결정',
+    '  · study: 학교, 시험, 과제, 자격증, 진학',
+    '  · other: 위 7개 모두에 해당하지 않을 때만 사용',
+    '- 모호하면 가장 dominant한 도메인 1개를 고른다. 절대 복수 라벨 금지.',
+    '- 반드시 8개 중 하나만 사용. 새 라벨 생성 금지.',
+    '',
     '[Few-shot Examples]',
     buildFewShotPromptBlock(),
     '',
@@ -318,6 +345,9 @@ function normalizeAnalysisPayload(payload: unknown): AIAnalysisResult {
     decentering_prompt:
       String((payload as { decentering_prompt?: unknown })?.decentering_prompt ?? '').trim() ||
       '현재 생각을 사실이 아닌 가설로 두고, 관찰 가능한 증거만 분리해보세요.',
+    trigger_category: toTriggerCategory(
+      (payload as { trigger_category?: unknown })?.trigger_category
+    ),
   };
 }
 
@@ -340,6 +370,7 @@ export async function analyzeDistortionsWithGemini(input: {
       cas_signal: { rumination: 0.3, worry: 0.3 },
       system2_question_seed: '이 생각을 지지/반박하는 데이터 비율은 각각 몇 %인가요?',
       decentering_prompt: '생각을 사실이 아닌 가설로 표기하고 관찰 사실만 분리하세요.',
+      trigger_category: 'other',
     };
   }
   return normalizeAnalysisPayload(parsed);

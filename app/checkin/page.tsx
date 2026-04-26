@@ -62,7 +62,8 @@ export default function CheckinPage() {
         }
         throw new Error(payload.error || '저장에 실패했습니다.');
       }
-      router.push('/dashboard?checkin=1');
+      sessionStorage.setItem('justCheckedIn', '1');
+      router.push('/dashboard');
     } catch (err: any) {
       setError(err.message);
     } finally {

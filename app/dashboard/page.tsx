@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { formatDate } from '@/lib/utils';
 import StreakBanner from '@/components/ui/StreakBanner';
@@ -34,7 +34,6 @@ function getGreeting(email: string) {
 
 function DashboardContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [successLogs, setSuccessLogs] = useState<LogWithType[]>([]);
@@ -48,22 +47,25 @@ function DashboardContent() {
   const [todayCheckin, setTodayCheckin] = useState<{ morning: boolean; evening: boolean }>({ morning: false, evening: false });
 
   useEffect(() => {
-    if (searchParams.get('success') === '1') {
+    // sessionStorage 기반 — Router Cache가 stale searchParams를 복원해도 토스트 재발사 안 됨.
+    if (typeof window === 'undefined') return;
+    if (sessionStorage.getItem('justSuccessLogged') === '1') {
+      sessionStorage.removeItem('justSuccessLogged');
       setSuccessToast(true);
-      router.replace('/dashboard');
       const timer = setTimeout(() => setSuccessToast(false), 3000);
       return () => clearTimeout(timer);
     }
-  }, [searchParams, router]);
+  }, []);
 
   useEffect(() => {
-    if (searchParams.get('checkin') === '1') {
+    if (typeof window === 'undefined') return;
+    if (sessionStorage.getItem('justCheckedIn') === '1') {
+      sessionStorage.removeItem('justCheckedIn');
       setCheckinToast(true);
-      router.replace('/dashboard');
       const timer = setTimeout(() => setCheckinToast(false), 3000);
       return () => clearTimeout(timer);
     }
-  }, [searchParams, router]);
+  }, []);
 
   useEffect(() => {
     const checkUser = async () => {

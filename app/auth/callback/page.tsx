@@ -27,6 +27,13 @@ function AuthCallbackContent() {
           const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
           if (exchangeError) {
+            // 코드 교환은 실패했지만 Supabase가 이미 세션을 만들어 두었을 수 있음
+            // (PKCE race / 중복 콜백 등). 세션이 이미 존재하면 silent recovery.
+            const { data: { session: fallbackSession } } = await supabase.auth.getSession();
+            if (fallbackSession) {
+              router.push('/dashboard');
+              return;
+            }
             console.error('토큰 교환 실패:', exchangeError);
             setError('인증에 실패했습니다.');
             timer = setTimeout(() => router.push('/auth/login'), 3000);

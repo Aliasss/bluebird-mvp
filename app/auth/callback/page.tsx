@@ -1,86 +1,75 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { evaluateDeletionState, purgeExpiredAccount } from '@/lib/auth/account-deletion';
 
-async function routeAfterAuth(router: ReturnType<typeof useRouter>) {
+type Router = ReturnType<typeof useRouter>;
+
+async function routeAfterAuth(router: Router) {
   const { data: { user } } = await supabase.auth.getUser();
   const action = evaluateDeletionState(user);
 
   if (action.kind === 'expired') {
     await purgeExpiredAccount();
-    router.push('/auth/login?deleted=expired');
+    router.replace('/auth/login?deleted=expired');
     return;
   }
 
   if (action.kind === 'recover') {
-    router.push('/account/recover');
+    router.replace('/account/recover');
     return;
   }
 
-  router.push('/dashboard');
+  router.replace('/dashboard');
 }
 
 function AuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
+  const handledRef = useRef(false);
 
   useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
+    const error_description = searchParams.get('error_description');
+    if (error_description) {
+      setError(error_description);
+      const t = setTimeout(() => router.replace('/auth/login'), 3000);
+      return () => clearTimeout(t);
+    }
 
-    const handleCallback = async () => {
-      try {
-        const code = searchParams.get('code');
-        const error_description = searchParams.get('error_description');
-
-        if (error_description) {
-          setError(error_description);
-          timer = setTimeout(() => router.push('/auth/login'), 3000);
-          return;
-        }
-
-        if (code) {
-          const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-
-          if (exchangeError) {
-            // 코드 교환은 실패했지만 Supabase가 이미 세션을 만들어 두었을 수 있음
-            // (PKCE race / 중복 콜백 등). 세션이 이미 존재하면 silent recovery.
-            const { data: { session: fallbackSession } } = await supabase.auth.getSession();
-            if (fallbackSession) {
-              await routeAfterAuth(router);
-              return;
-            }
-            console.error('토큰 교환 실패:', exchangeError);
-            setError('인증에 실패했습니다.');
-            timer = setTimeout(() => router.push('/auth/login'), 3000);
-            return;
-          }
-
-          if (data.session) {
-            await routeAfterAuth(router);
-            return;
-          }
-        }
-
-        const { data: { session } } = await supabase.auth.getSession();
-
-        if (session) {
-          await routeAfterAuth(router);
-        } else {
-          router.push('/auth/login');
-        }
-      } catch (err: any) {
-        console.error('Callback 처리 중 오류:', err);
-        setError(err.message || '인증 처리 중 오류가 발생했습니다.');
-        timer = setTimeout(() => router.push('/auth/login'), 3000);
+    // detectSessionInUrl이 자동으로 code 처리 → SIGNED_IN 이벤트로 받음.
+    const { data: subscription } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (handledRef.current) return;
+      if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
+        handledRef.current = true;
+        await routeAfterAuth(router);
       }
-    };
+    });
 
-    handleCallback();
-    return () => clearTimeout(timer);
+    // 안전망: 자동 감지가 누락된 경우(이미 세션이 있어 SIGNED_IN 이벤트가 없거나 PKCE race)
+    // 1초 후 직접 세션 확인 + 6초 후 최종 timeout.
+    const probe = setTimeout(async () => {
+      if (handledRef.current) return;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        handledRef.current = true;
+        await routeAfterAuth(router);
+      }
+    }, 1000);
+
+    const fail = setTimeout(() => {
+      if (handledRef.current) return;
+      setError('인증 세션을 만들지 못했습니다.');
+      setTimeout(() => router.replace('/auth/login'), 2500);
+    }, 6000);
+
+    return () => {
+      subscription.subscription.unsubscribe();
+      clearTimeout(probe);
+      clearTimeout(fail);
+    };
   }, [router, searchParams]);
 
   return (

@@ -1,10 +1,16 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { track } from '@vercel/analytics';
 import { ExternalLink } from 'lucide-react';
 
 export default function HomePage() {
   const router = useRouter();
+
+  const handleSampleStart = () => {
+    track('sample_funnel_start');
+    router.push('/sample');
+  };
 
   return (
     <main className="min-h-screen bg-background flex flex-col items-center justify-center px-6 pt-20 pb-10 sm:p-6">
@@ -21,7 +27,7 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* 시나리오 예시 */}
+        {/* 시나리오 예시 + 샘플 funnel 진입점 */}
         <div className="bg-white border border-background-tertiary rounded-2xl p-6 text-left space-y-4 shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-wide text-text-tertiary">이런 순간에 쓰세요</p>
           <div className="space-y-3">
@@ -38,6 +44,12 @@ export default function HomePage() {
               <p className="text-sm text-text-secondary">잘 될 것 같았는데 "어차피 망할 것 같다"는 느낌이 들 때</p>
             </div>
           </div>
+          <button
+            onClick={handleSampleStart}
+            className="w-full mt-2 bg-white border-2 border-primary text-primary text-sm font-semibold py-3 px-4 rounded-xl active:scale-95 transition-transform touch-manipulation"
+          >
+            위 사례로 60초 체험해보기 →
+          </button>
         </div>
 
         {/* 철학 페이지 링크 */}

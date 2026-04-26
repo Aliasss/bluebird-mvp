@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
+import { Analytics } from '@vercel/analytics/next';
 import BottomTabBar from '@/components/ui/BottomTabBar';
 import './globals.css';
 
@@ -59,6 +60,7 @@ export default function RootLayout({
         </Script>
         {children}
         <BottomTabBar />
+        <Analytics />
       </body>
     </html>
   );

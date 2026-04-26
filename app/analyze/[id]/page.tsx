@@ -7,16 +7,25 @@ import { supabase } from '@/lib/supabase/client';
 import {
   DistortionManualAnchor,
   DistortionTypeKorean,
+  TriggerCategoryKorean,
   type CasSignal,
   type DistortionAnalysis,
   type FrameType,
   type Log,
+  type TriggerCategory,
 } from '@/types';
 import PageHeader from '@/components/ui/PageHeader';
 import SkeletonCard from '@/components/ui/SkeletonCard';
 import InfoSheet from '@/components/ui/InfoSheet';
 import { SafetyNotice } from '@/components/safety/SafetyNotice';
 import type { CrisisLevel } from '@/lib/safety/types';
+import {
+  findTriggerRevisit,
+  getDominantDistortion,
+  type RevisitCandidate,
+  type RevisitDistortion,
+  type RevisitLogRow,
+} from '@/lib/insights/trigger-revisit';
 
 type Stage = 'fetch' | 'analyze' | 'question' | 'done';
 type InterventionRow = {
@@ -110,6 +119,8 @@ export default function AnalyzePage() {
     system2QuestionSeed: '판단 근거의 비율을 숫자로 분리해보세요.',
     decenteringPrompt: '생각을 사실이 아닌 가설로 두고 관찰 가능한 데이터만 분리하세요.',
   });
+  const [triggerCategory, setTriggerCategory] = useState<TriggerCategory | null>(null);
+  const [revisit, setRevisit] = useState<RevisitCandidate | null>(null);
 
   const startAnalysis = useCallback(async () => {
     const logId = params.id;
@@ -145,6 +156,11 @@ export default function AnalyzePage() {
       if (logError) throw logError;
 
       setLogData(data);
+      const cachedCategory = (data as { trigger_category?: TriggerCategory | null } | null)
+        ?.trigger_category;
+      if (cachedCategory) {
+        setTriggerCategory(cachedCategory);
+      }
 
       const [{ data: analysisRows }, { data: interventionRow }] = await Promise.all([
         supabase
@@ -227,6 +243,9 @@ export default function AnalyzePage() {
 
       const analyzedDistortions = (analyzePayload.distortions ?? []) as DistortionAnalysis[];
       setDistortions(analyzedDistortions);
+      if (analyzePayload.trigger_category) {
+        setTriggerCategory(analyzePayload.trigger_category as TriggerCategory);
+      }
       setTheoryMeta({
         frameType: (analyzePayload.frame_type as FrameType) || 'mixed',
         referencePoint: analyzePayload.reference_point || '준거점 정보 없음',
@@ -286,6 +305,63 @@ export default function AnalyzePage() {
     }
     startAnalysis();
   }, [params.id, startAnalysis]);
+
+  // Phase 1.2: 비슷한 패턴(같은 카테고리 × 같은 dominant 왜곡) 60일 내 과거 로그 매칭.
+  // 분석이 완료(stage === 'done')되어 distortions와 카테고리가 모두 결정된 후에만 실행.
+  useEffect(() => {
+    if (stage !== 'done') return;
+    if (!params.id || !triggerCategory || distortions.length === 0) return;
+
+    const dominant = getDominantDistortion(
+      distortions.map((d) => ({ type: d.type, intensity: d.intensity }))
+    );
+    if (!dominant) return;
+
+    let cancelled = false;
+    (async () => {
+      const sixtyDaysAgoIso = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString();
+      const { data, error } = await supabase
+        .from('logs')
+        .select('id, trigger, trigger_category, created_at, analysis(distortion_type, intensity)')
+        .eq('trigger_category', triggerCategory)
+        .neq('id', params.id)
+        .gte('created_at', sixtyDaysAgoIso)
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (cancelled || error || !data) return;
+
+      const history: RevisitLogRow[] = data.map((row: any) => ({
+        id: row.id,
+        trigger: row.trigger ?? '',
+        trigger_category: row.trigger_category ?? null,
+        created_at: row.created_at,
+        distortions: ((row.analysis ?? []) as Array<{
+          distortion_type: string | null;
+          intensity: number | null;
+        }>)
+          .filter((a) => a.distortion_type != null && a.intensity != null)
+          .map((a) => ({
+            type: a.distortion_type as RevisitDistortion['type'],
+            intensity: Number(a.intensity),
+          })),
+      }));
+
+      const candidate = findTriggerRevisit({
+        currentLogId: params.id,
+        currentCategory: triggerCategory,
+        currentDominantDistortion: dominant,
+        history,
+        now: new Date(),
+      });
+
+      if (!cancelled) setRevisit(candidate);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [stage, params.id, triggerCategory, distortions]);
 
   const retryAnalysis = () => {
     window.location.reload();
@@ -439,6 +515,32 @@ export default function AnalyzePage() {
   return (
     <main className="min-h-screen bg-background p-4 sm:p-6">
       <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
+        {/* Phase 1.2: 트리거 재방문 배너 — 같은 카테고리 × 같은 dominant 왜곡 60일 내 매칭 */}
+        {revisit && (
+          <Link
+            href={`/analyze/${revisit.logId}`}
+            className="block bg-primary/5 border border-primary/20 rounded-2xl p-4 hover:bg-primary/10 transition-colors"
+          >
+            <div className="flex items-start gap-3">
+              <span className="text-xl">🔁</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-text-primary">
+                  {revisit.daysAgo}일 전에도 비슷한 패턴이 있었어요
+                </p>
+                <p className="text-xs text-text-secondary mt-0.5">
+                  {TriggerCategoryKorean[revisit.category]} · {DistortionTypeKorean[revisit.distortionType]}
+                </p>
+                <p className="text-xs text-text-secondary mt-1.5 line-clamp-1">
+                  &ldquo;{revisit.triggerSnippet}&rdquo;
+                </p>
+                <p className="text-xs font-semibold text-primary mt-1.5">
+                  그때 분석 보기 →
+                </p>
+              </div>
+            </div>
+          </Link>
+        )}
+
         <div className="bg-white rounded-2xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
           <h1 className="text-xl font-bold text-text-primary mb-4 tracking-tight">AI 분석 결과</h1>
           <p className="text-xs md:text-sm text-text-secondary mb-1.5 sm:mb-2">어떤 일이 있었나요</p>

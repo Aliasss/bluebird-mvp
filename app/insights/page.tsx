@@ -8,10 +8,12 @@ import {
   LineChart, Line, RadarChart, PolarGrid, PolarAngleAxis, Radar, ReferenceLine,
 } from 'recharts';
 import { supabase } from '@/lib/supabase/client';
-import { DistortionType, DistortionTypeKorean } from '@/types';
+import { DistortionType, DistortionTypeKorean, type TriggerCategory } from '@/types';
 import ArchetypePanel from '@/components/ui/ArchetypePanel';
 import BottomTabBar from '@/components/ui/BottomTabBar';
+import PatternReport from '@/components/insights/PatternReport';
 import { getArchetypeResult, type ArchetypeResult } from '@/lib/utils/archetype';
+import type { PatternRow } from '@/lib/insights/pattern-report';
 
 type Period = '7d' | '30d' | 'all';
 type DistortionFreq = { name: string; count: number };
@@ -55,6 +57,7 @@ export default function InsightsPage() {
   const [growth, setGrowth] = useState<GrowthMetrics>({ intensityDelta: null, completionDelta: null, mostImprovedType: null });
   const [archetypeResult, setArchetypeResult] = useState<ArchetypeResult | null>(null);
   const [deltaPainSeries, setDeltaPainSeries] = useState<DeltaDayPoint[]>([]);
+  const [patternRows, setPatternRows] = useState<PatternRow[]>([]);
 
   useEffect(() => {
     const load = async () => {
@@ -205,6 +208,55 @@ export default function InsightsPage() {
           }))
       );
 
+      // Phase 1.3: 패턴 리포트 데이터 — logs + analysis + intervention 조인 단일 쿼리.
+      // trigger_category가 null인 로그(마이그레이션 06 적용 전)는 제외.
+      let patternQuery = supabase
+        .from('logs')
+        .select(
+          'id, trigger_category, pain_score, created_at, analysis(distortion_type, intensity), intervention(reevaluated_pain_score)'
+        )
+        .eq('user_id', user.id)
+        .not('trigger_category', 'is', null);
+      if (since) patternQuery = patternQuery.gte('created_at', since);
+      const { data: patternLogs } = await patternQuery;
+
+      const newPatternRows: PatternRow[] = [];
+      for (const log of patternLogs ?? []) {
+        const cat = (log as { trigger_category: TriggerCategory | null }).trigger_category;
+        if (!cat) continue;
+        const distortionEntries = ((log as { analysis?: unknown }).analysis ?? []) as Array<{
+          distortion_type: string | null;
+          intensity: number | null;
+        }>;
+        const validDistortions = distortionEntries.filter(
+          (d) => d.distortion_type != null && d.intensity != null
+        );
+        if (validDistortions.length === 0) continue;
+        let dominant = validDistortions[0];
+        for (let i = 1; i < validDistortions.length; i++) {
+          if ((validDistortions[i].intensity ?? 0) > (dominant.intensity ?? 0)) {
+            dominant = validDistortions[i];
+          }
+        }
+        const initialPain = (log as { pain_score: number | null }).pain_score;
+        const interventionField = (log as { intervention?: unknown }).intervention;
+        const intervention = Array.isArray(interventionField)
+          ? (interventionField[0] as { reevaluated_pain_score: number | null } | undefined)
+          : (interventionField as { reevaluated_pain_score: number | null } | null);
+        const re = intervention?.reevaluated_pain_score ?? null;
+        const deltaPain =
+          initialPain != null && re != null && Number.isFinite(initialPain) && Number.isFinite(re)
+            ? initialPain - re
+            : null;
+
+        newPatternRows.push({
+          category: cat,
+          distortion: dominant.distortion_type as DistortionType,
+          deltaPain,
+        });
+      }
+      setPatternRows(newPatternRows);
+
       setLoading(false);
     };
     load();
@@ -307,6 +359,9 @@ export default function InsightsPage() {
             <p className="text-2xl font-bold text-text-primary">{completionRate}%</p>
           </div>
         </div>
+
+        {/* Phase 1.3: 개인화 패턴 리포트 */}
+        <PatternReport rows={patternRows} periodLabel={periodLabel} />
 
         {/* 왜곡 유형 분포 */}
         <div className="bg-white border border-background-tertiary rounded-xl p-4 sm:p-6">

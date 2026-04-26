@@ -285,6 +285,44 @@ export const BLUEBIRD_FEW_SHOT_CASES: BluebirdFewShotCase[] = [
         '"불안하다"를 사건이 아닌 내부 신호로 기록하고 사실 데이터와 분리하라.',
     },
   },
+  // 한국어 우회 어미("~할까 두렵다", "~할 수 있을지 모르겠다") + 부정 결과 결합 케이스.
+  // 표면이 비단정이라도 미래 부정 결과·타인 반응을 단정하는 임의적 추론으로 라벨링한다.
+  {
+    input: {
+      trigger: '중요한 업무를 맡았는데 일정이 빠듯하고 복잡도가 높다.',
+      thought: '내가 이걸 잘 해낼 수 있을지 모르겠고, 상사가 실망할까 두렵다.',
+    },
+    output: {
+      distortions: [
+        {
+          type: DistortionType.ARBITRARY_INFERENCE,
+          intensity: 0.68,
+          segment: '상사가 실망할까 두렵다',
+          rationale:
+            '관찰되지 않은 타인의 미래 부정 반응을 우회 어미("~할까 두렵다")로 단정한다. 한국어 점쟁이 오류 패턴이며, 어미가 비단정적이라도 결합된 결과의 부정성으로 왜곡으로 본다.',
+        },
+        {
+          type: DistortionType.ARBITRARY_INFERENCE,
+          intensity: 0.55,
+          segment: '잘 해낼 수 있을지 모르겠고',
+          rationale:
+            '자신의 미래 수행을 부정적으로 예측하는 점쟁이 오류. "모르겠다" 어미는 한국어 자기 의심 우회 표현이며, 보통 부정 예측과 결합된다.',
+        },
+      ],
+      frame_type: 'loss',
+      reference_point: '완벽 수행만이 평가 유지의 기준',
+      probability_estimate: 65,
+      loss_aversion_signal: 0.72,
+      cas_signal: {
+        rumination: 0.35,
+        worry: 0.82,
+      },
+      system2_question_seed:
+        '"상사가 실망한다"는 결론을 지지하는 관찰 가능 데이터가 몇 개 있는가?',
+      decentering_prompt:
+        '"실망할까 두렵다"를 사실이 아닌 가설로 보고 근거와 반증을 분리하라.',
+    },
+  },
 ];
 
 export const BLUEBIRD_ANALYSIS_JSON_SCHEMA = {

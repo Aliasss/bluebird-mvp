@@ -250,13 +250,31 @@ ${JSON.stringify(example.output, null, 2)}`;
   }).join('\n\n');
 }
 
-function buildAnalysisPrompt(input: { trigger: string; thought: string; pain_score?: number | null }) {
+function buildAnalysisPrompt(input: {
+  trigger: string;
+  thought: string;
+  pain_score?: number | null;
+  retryHint?: boolean;
+}) {
   const safeTrigger = sanitizeForPrompt(input.trigger);
   const safeThought = sanitizeForPrompt(input.thought);
 
   const distortionRules = Object.entries(BLUEBIRD_DISTORTION_TAXONOMY)
     .map(([key, value]) => `- ${key}:\n  진단: ${value.diagnosticRule}\n  감별: ${value.differentialRule}`)
     .join('\n');
+
+  const retryBlock = input.retryHint
+    ? [
+        '',
+        '[Retry Notice]',
+        '- 이 입력은 이전 분석에서 distortions=[]로 판정됐다.',
+        '- 사고가 정말 사실 기반·행동 지향적이라면 다시 빈 배열을 반환해도 된다.',
+        '- 그러나 [Distortion Reporting Threshold]의 다섯 신호 중 하나라도 보이는 경우,',
+        '  특히 [Korean Hedge Expressions]의 우회 어미가 부정 결과와 결합돼 있다면,',
+        '  반드시 가장 가까운 왜곡 1개 이상을 intensity 0.3 이상으로 보고하라.',
+        '- 첫 분석이 신중을 위한 false negative였는지 재검토하라.',
+      ].join('\n')
+    : '';
 
   return [
     '너는 Bluebird DDE(Distortion Detection Engine) 분석가다.',
@@ -285,6 +303,26 @@ function buildAnalysisPrompt(input: { trigger: string; thought: string; pain_sco
     '- 경계 케이스에서는 반드시 differentialRule을 참조해 왜곡 유형을 확정하라.',
     '- 복수 왜곡이 탐지되면 모두 포함하되, intensity로 주도 왜곡을 구분하라.',
     '',
+    '[Distortion Reporting Threshold]',
+    '- distortions=[] 빈 배열 반환은 사고가 명확히 사실 기반이고 행동 지향적인 경우에만 허용한다.',
+    '  · 허용 예: "다음 주 일정을 점검하자", "원인을 데이터로 분석해보자", "3일 쉬었으니 다시 시작하자"',
+    '- 다음 신호 중 하나라도 보이면 반드시 가장 가까운 왜곡 1개 이상을 intensity 0.3 이상으로 보고하라:',
+    '  · 부정적 미래 예언 (사건이 어떻게 흘러갈지 부정적으로 단정)',
+    '  · 타인의 마음/평가에 대한 단정 (실제 관찰되지 않은 타인의 반응을 확정)',
+    '  · 이분법적 결과 평가 (성공 아니면 실패 / 완벽 아니면 무가치)',
+    '  · 감정을 사실 근거로 사용 (불안하니까 위험하다 류)',
+    '  · 자기 결함/책임으로의 과도 귀속',
+    '- 모호함이 의심을 불러도 differentialRule을 적용해 가장 가까운 라벨로 단정하라.',
+    '  "확신이 없어 빈 배열" 보고는 protocol 위반이다.',
+    '',
+    '[Korean Hedge Expressions]',
+    '- 한국어 화자는 단정적 표현을 다음과 같이 우회한다. 표면적 비단정으로 보이지만 내적으로는 부정 결과를 확정한 상태다.',
+    '  · "~할까 봐", "~할까 두렵다", "~할까 걱정된다" → 미래 부정 결과 예언 (점쟁이 오류 = 임의적 추론)',
+    '  · "~할 것 같다", "~할지 모르겠다" → 부정 결과와 결합되면 임의적 추론 또는 파국화 후보',
+    '  · "잘 ~할 수 있을지 모르겠다" → 자기 능력 의심 / 결과 비관 — 임의적 추론 또는 흑백논리 후보',
+    '  · "~로 인해 ~할까" → 인과 단정 + 미래 예언 — 임의적 추론',
+    '- 어미가 비단정적이라는 이유만으로 왜곡 미보고하지 마라. 결합되는 결과의 부정성으로 판단한다.',
+    '',
     '[Trigger Category Rules]',
     '- trigger_category는 trigger 문장의 도메인을 8개 중 하나로 라벨링한다.',
     '  · work: 직장 업무, 상사·동료, 회사, 커리어, 면접, 출근, 발표, 마감',
@@ -311,6 +349,7 @@ function buildAnalysisPrompt(input: { trigger: string; thought: string; pain_sco
       null,
       2
     ),
+    retryBlock,
   ].join('\n');
 }
 
@@ -351,15 +390,20 @@ function normalizeAnalysisPayload(payload: unknown): AIAnalysisResult {
   };
 }
 
+// 사고 텍스트 길이 임계값. 미만이면 false negative retry를 트리거하지 않음
+// (입력 정보 자체가 부족하면 재시도해도 같은 결과 — 오히려 오탐 위험).
+const FALSE_NEGATIVE_RETRY_MIN_THOUGHT_LENGTH = 15;
+
 export async function analyzeDistortionsWithGemini(input: {
   trigger: string;
   thought: string;
   pain_score?: number | null;
 }): Promise<AIAnalysisResult> {
-  const prompt = buildAnalysisPrompt(input);
-  const text = await generateContentWithRetry(prompt, getAnalysisModel());
-  const parsed = safeJsonParse<Record<string, unknown>>(text);
-  if (!parsed) {
+  const firstPrompt = buildAnalysisPrompt(input);
+  const firstText = await generateContentWithRetry(firstPrompt, getAnalysisModel());
+  const firstParsed = safeJsonParse<Record<string, unknown>>(firstText);
+
+  if (!firstParsed) {
     return {
       distortions: [],
       questions: [],
@@ -373,7 +417,27 @@ export async function analyzeDistortionsWithGemini(input: {
       trigger_category: 'other',
     };
   }
-  return normalizeAnalysisPayload(parsed);
+
+  const firstResult = normalizeAnalysisPayload(firstParsed);
+
+  // Fix B: 의미 있는 입력에 distortions=[]가 나오면 1회 재시도. 두 번째도 0개면 그대로 수용.
+  const thoughtLength = input.thought.trim().length;
+  const shouldRetry =
+    firstResult.distortions.length === 0 &&
+    thoughtLength >= FALSE_NEGATIVE_RETRY_MIN_THOUGHT_LENGTH;
+
+  if (!shouldRetry) {
+    return firstResult;
+  }
+
+  const retryPrompt = buildAnalysisPrompt({ ...input, retryHint: true });
+  const retryText = await generateContentWithRetry(retryPrompt, getAnalysisModel());
+  const retryParsed = safeJsonParse<Record<string, unknown>>(retryText);
+  if (!retryParsed) return firstResult;
+
+  const retryResult = normalizeAnalysisPayload(retryParsed);
+  // 재시도가 distortion을 1개 이상 발견한 경우에만 채택. 아니면 첫 결과 유지.
+  return retryResult.distortions.length > 0 ? retryResult : firstResult;
 }
 
 function normalizeQuestions(payload: unknown): string[] {

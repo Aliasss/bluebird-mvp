@@ -3,6 +3,25 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
+import { evaluateDeletionState, purgeExpiredAccount } from '@/lib/auth/account-deletion';
+
+async function routeAfterAuth(router: ReturnType<typeof useRouter>) {
+  const { data: { user } } = await supabase.auth.getUser();
+  const action = evaluateDeletionState(user);
+
+  if (action.kind === 'expired') {
+    await purgeExpiredAccount();
+    router.push('/auth/login?deleted=expired');
+    return;
+  }
+
+  if (action.kind === 'recover') {
+    router.push('/account/recover');
+    return;
+  }
+
+  router.push('/dashboard');
+}
 
 function AuthCallbackContent() {
   const router = useRouter();
@@ -31,7 +50,7 @@ function AuthCallbackContent() {
             // (PKCE race / 중복 콜백 등). 세션이 이미 존재하면 silent recovery.
             const { data: { session: fallbackSession } } = await supabase.auth.getSession();
             if (fallbackSession) {
-              router.push('/dashboard');
+              await routeAfterAuth(router);
               return;
             }
             console.error('토큰 교환 실패:', exchangeError);
@@ -41,7 +60,7 @@ function AuthCallbackContent() {
           }
 
           if (data.session) {
-            router.push('/dashboard');
+            await routeAfterAuth(router);
             return;
           }
         }
@@ -49,7 +68,7 @@ function AuthCallbackContent() {
         const { data: { session } } = await supabase.auth.getSession();
 
         if (session) {
-          router.push('/dashboard');
+          await routeAfterAuth(router);
         } else {
           router.push('/auth/login');
         }

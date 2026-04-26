@@ -185,6 +185,12 @@ export default function PrivacyPage() {
                 으로 요청해주시면 영업일 기준 7일 이내 처리합니다.
               </li>
               <li>
+                30일 경과 후 영구 삭제는{' '}
+                <strong className="text-text-primary">월 1회 정기 처리</strong>됩니다. 처리 전이라도
+                Row Level Security로 본인 외 누구도 접근할 수 없으며, 새로운 분석에는 사용되지
+                않습니다.
+              </li>
+              <li>
                 법령(전자상거래법, 통신비밀보호법 등)에 따른 별도 보유 의무가 있는 경우 해당 법령이
                 정하는 기간까지 보유 후 파기합니다.
               </li>

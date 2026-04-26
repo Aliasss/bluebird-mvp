@@ -187,13 +187,21 @@ export default function MePage() {
           </div>
         </div>
 
-        {/* 로그아웃 */}
-        <button
-          onClick={handleLogout}
-          className="w-full py-3 text-sm text-danger font-medium border border-danger border-opacity-30 rounded-2xl"
-        >
-          로그아웃
-        </button>
+        {/* 로그아웃 / 탈퇴 */}
+        <div className="space-y-2">
+          <button
+            onClick={handleLogout}
+            className="w-full py-3 text-sm text-danger font-medium border border-danger border-opacity-30 rounded-2xl"
+          >
+            로그아웃
+          </button>
+          <button
+            onClick={() => router.push('/me/delete-account')}
+            className="w-full py-3 text-xs text-text-tertiary font-medium hover:text-danger transition-colors"
+          >
+            회원 탈퇴
+          </button>
+        </div>
 
         {/* 법적 문서 */}
         <div className="pt-2 pb-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-text-tertiary">

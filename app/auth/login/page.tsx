@@ -1,14 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
+import { evaluateDeletionState, purgeExpiredAccount } from '@/lib/auth/account-deletion';
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
+
+  const deletedFlag = searchParams.get('deleted');
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,6 +39,22 @@ export default function LoginPage() {
       if (error) throw error;
 
       if (data.session && data.user) {
+        const action = evaluateDeletionState(data.user);
+
+        if (action.kind === 'expired') {
+          setStatus('탈퇴 예약 기간이 경과하여 계정을 영구 삭제합니다...');
+          await purgeExpiredAccount();
+          router.replace('/auth/login?deleted=expired');
+          router.refresh();
+          return;
+        }
+
+        if (action.kind === 'recover') {
+          router.replace('/account/recover');
+          router.refresh();
+          return;
+        }
+
         setStatus('로그인 성공! 대시보드로 이동합니다...');
         router.replace('/dashboard');
         router.refresh();
@@ -59,6 +79,17 @@ export default function LoginPage() {
           <p className="text-sm font-semibold text-primary tracking-wide">Project Bluebird</p>
           <h1 className="text-2xl font-bold text-text-primary">로그인</h1>
         </div>
+
+        {/* 탈퇴 처리 안내 */}
+        {deletedFlag === 'expired' && (
+          <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 space-y-1.5">
+            <p className="text-sm font-semibold text-rose-900">계정이 영구 삭제되었습니다</p>
+            <p className="text-xs text-rose-800 leading-relaxed">
+              30일 유예 기간이 경과하여 모든 데이터가 삭제되었습니다. 다시 시작하시려면 회원가입을
+              해주세요.
+            </p>
+          </div>
+        )}
 
         {/* 로그인 폼 */}
         <form onSubmit={handleLogin} className="space-y-6">
@@ -134,5 +165,19 @@ export default function LoginPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-background flex items-center justify-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
+        </main>
+      }
+    >
+      <LoginPageContent />
+    </Suspense>
   );
 }

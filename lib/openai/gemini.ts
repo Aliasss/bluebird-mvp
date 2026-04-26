@@ -6,6 +6,7 @@ import {
   BLUEBIRD_OPERATING_PRINCIPLES,
   BLUEBIRD_THEORY_SUMMARY,
 } from '@/lib/ai/bluebird-protocol';
+import { trackAnalysisQuality } from '@/lib/analytics/server';
 import { sanitizeForPrompt } from '@/lib/safety/prompt-sanitize';
 import {
   DistortionType,
@@ -406,11 +407,21 @@ export async function analyzeDistortionsWithGemini(input: {
   thought: string;
   pain_score?: number | null;
 }): Promise<AIAnalysisResult> {
+  const thoughtLength = input.thought.trim().length;
   const firstPrompt = buildAnalysisPrompt(input);
   const firstText = await generateContentWithRetry(firstPrompt, getAnalysisModel());
   const firstParsed = safeJsonParse<Record<string, unknown>>(firstText);
 
   if (!firstParsed) {
+    await trackAnalysisQuality('analyze_parse_failed', {
+      thought_length: thoughtLength,
+      stage: 'first',
+    });
+    await trackAnalysisQuality('analyze_distortion_zero', {
+      thought_length: thoughtLength,
+      retry_attempted: false,
+      reason: 'parse_failed',
+    });
     return {
       distortions: [],
       questions: [],
@@ -428,23 +439,53 @@ export async function analyzeDistortionsWithGemini(input: {
   const firstResult = normalizeAnalysisPayload(firstParsed);
 
   // Fix B: 의미 있는 입력에 distortions=[]가 나오면 1회 재시도. 두 번째도 0개면 그대로 수용.
-  const thoughtLength = input.thought.trim().length;
   const shouldRetry =
     firstResult.distortions.length === 0 &&
     thoughtLength >= FALSE_NEGATIVE_RETRY_MIN_THOUGHT_LENGTH;
 
   if (!shouldRetry) {
+    if (firstResult.distortions.length === 0) {
+      await trackAnalysisQuality('analyze_distortion_zero', {
+        thought_length: thoughtLength,
+        retry_attempted: false,
+        reason: thoughtLength < FALSE_NEGATIVE_RETRY_MIN_THOUGHT_LENGTH ? 'too_short' : 'model_zero',
+      });
+    }
     return firstResult;
   }
+
+  await trackAnalysisQuality('analyze_retry_fired', {
+    thought_length: thoughtLength,
+  });
 
   const retryPrompt = buildAnalysisPrompt({ ...input, retryHint: true });
   const retryText = await generateContentWithRetry(retryPrompt, getAnalysisModel());
   const retryParsed = safeJsonParse<Record<string, unknown>>(retryText);
-  if (!retryParsed) return firstResult;
+  if (!retryParsed) {
+    await trackAnalysisQuality('analyze_parse_failed', {
+      thought_length: thoughtLength,
+      stage: 'retry',
+    });
+    await trackAnalysisQuality('analyze_distortion_zero', {
+      thought_length: thoughtLength,
+      retry_attempted: true,
+      reason: 'retry_parse_failed',
+    });
+    return firstResult;
+  }
 
   const retryResult = normalizeAnalysisPayload(retryParsed);
   // 재시도가 distortion을 1개 이상 발견한 경우에만 채택. 아니면 첫 결과 유지.
-  return retryResult.distortions.length > 0 ? retryResult : firstResult;
+  if (retryResult.distortions.length > 0) {
+    return retryResult;
+  }
+
+  await trackAnalysisQuality('analyze_distortion_zero', {
+    thought_length: thoughtLength,
+    retry_attempted: true,
+    reason: 'retry_also_zero',
+  });
+  return firstResult;
 }
 
 function normalizeQuestions(payload: unknown): string[] {
@@ -581,6 +622,11 @@ export async function generateSocraticQuestionsWithGemini(input: {
 
   // 두 번 모두 3개 못 받으면 마지막 안전망. 가능한 부분이라도 살리고 부족분만 디폴트로 채움.
   const merged = retryQuestions.length > firstQuestions.length ? retryQuestions : firstQuestions;
+  await trackAnalysisQuality('questions_fallback', {
+    from_llm_count: merged.length,
+    first_count: firstQuestions.length,
+    retry_count: retryQuestions.length,
+  });
   if (merged.length === 0) {
     return DEFAULT_SOCRATIC_QUESTIONS;
   }

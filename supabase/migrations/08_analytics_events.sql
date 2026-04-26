@@ -39,8 +39,14 @@ CREATE POLICY "Users can insert own analytics events" ON analytics_events
 -- ============================================================
 -- Supabase SQL editor에서:
 --   SELECT * FROM analytics_quality_summary;
--- 형태로 빠르게 확인. service_role만 접근 가능.
-CREATE OR REPLACE VIEW analytics_quality_summary AS
+-- 형태로 빠르게 확인.
+--
+-- security_invoker=true로 설정해 underlying 테이블 RLS를 강제.
+-- analytics_events 에 SELECT 정책이 없으므로 authenticated·anon은 빈 결과,
+-- service_role만 RLS bypass로 전체 조회 가능.
+CREATE OR REPLACE VIEW analytics_quality_summary
+WITH (security_invoker = true)
+AS
 SELECT
   event_name,
   date_trunc('day', created_at) AS day,

@@ -1,11 +1,16 @@
-import { track as vercelTrack } from '@vercel/analytics/server';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 /**
  * 서버사이드 분석 품질 이벤트.
- * - 분석 결과가 distortions=[]로 끝났는가 (사일런트 false negative 추적)
- * - 1차 분석 후 재시도가 발동됐는가
- * - 분석 응답이 JSON 파싱 자체에 실패했는가 (모델 응답 단절·잘림)
- * - 소크라테스 질문이 디폴트 폴백으로 채워졌는가
+ * Vercel Analytics Custom Events 대신 Supabase analytics_events 테이블에 기록.
+ *
+ * 운영자는 Supabase SQL editor에서 다음 쿼리로 점검:
+ *   SELECT * FROM analytics_quality_summary;
+ *   SELECT properties->>'reason' AS reason, COUNT(*)
+ *     FROM analytics_events
+ *     WHERE event_name = 'analyze_distortion_zero'
+ *       AND created_at > NOW() - INTERVAL '7 days'
+ *     GROUP BY 1;
  *
  * 모든 이벤트는 best-effort. 텔레메트리 실패가 사용자 요청을 깨면 안 된다.
  */
@@ -23,9 +28,23 @@ export async function trackAnalysisQuality(
   properties?: Record<string, AllowedValue>
 ): Promise<void> {
   try {
-    await vercelTrack(event, properties);
+    const supabase = await createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      // 비인증 호출은 무시. RLS가 어차피 거부하므로 명시적으로 짧게 종료.
+      return;
+    }
+
+    const { error } = await supabase.from('analytics_events').insert({
+      user_id: user.id,
+      event_name: event,
+      properties: properties ?? {},
+    });
+
+    if (error) {
+      console.warn(`[analytics] ${event} insert 실패:`, error.message);
+    }
   } catch (err) {
-    // 텔레메트리는 silent. 운영 로그에만 남김.
-    console.warn(`[analytics] ${event} 전송 실패:`, err);
+    console.warn(`[analytics] ${event} 처리 실패:`, err);
   }
 }

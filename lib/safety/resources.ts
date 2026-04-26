@@ -25,7 +25,7 @@ export const SAFETY_RESOURCES: SafetyResource[] = [
     id: 'youth-1388',
     name: '청소년전화',
     phone: '1388',
-    webUrl: 'https://www.cyber1388.kr',
+    webUrl: 'https://www.1388.go.kr/',
     description: '청소년 위기·정서 상담, 온라인 채팅 상담 병행',
     availability: '24시간',
     tags: ['youth', 'suicide', 'sms'],

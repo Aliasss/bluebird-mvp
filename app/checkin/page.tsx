@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import PageHeader from '@/components/ui/PageHeader';
+import { supabase } from '@/lib/supabase/client';
 
 const MOOD_OPTIONS = [
   { word: '집중', emoji: '🎯' },
@@ -20,6 +21,15 @@ function getCheckinType(): 'morning' | 'evening' {
   return kstHour >= 5 && kstHour < 13 ? 'morning' : 'evening';
 }
 
+function getKstTodayStartIso(): string {
+  const KST_OFFSET = 9 * 60 * 60 * 1000;
+  const now = Date.now();
+  const kst = new Date(now + KST_OFFSET);
+  const kstMidnightUtcMs =
+    Date.UTC(kst.getUTCFullYear(), kst.getUTCMonth(), kst.getUTCDate()) - KST_OFFSET;
+  return new Date(kstMidnightUtcMs).toISOString();
+}
+
 export default function CheckinPage() {
   const router = useRouter();
   const [type, setType] = useState<'morning' | 'evening'>('morning');
@@ -27,9 +37,29 @@ export default function CheckinPage() {
   const [moment, setMoment] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [statusChecking, setStatusChecking] = useState(true);
+  const [alreadyDone, setAlreadyDone] = useState(false);
 
   useEffect(() => {
-    setType(getCheckinType());
+    const currentType = getCheckinType();
+    setType(currentType);
+
+    // 마운트 시 오늘 해당 type의 체크인 존재 여부 확인 (RLS로 자동 user 필터링됨)
+    (async () => {
+      try {
+        const { data, error: queryError } = await supabase
+          .from('checkins')
+          .select('id')
+          .eq('type', currentType)
+          .gte('created_at', getKstTodayStartIso())
+          .limit(1);
+        if (!queryError) {
+          setAlreadyDone((data ?? []).length > 0);
+        }
+      } finally {
+        setStatusChecking(false);
+      }
+    })();
   }, []);
 
   const handleSubmit = async () => {
@@ -70,6 +100,50 @@ export default function CheckinPage() {
       setLoading(false);
     }
   };
+
+  if (statusChecking) {
+    return (
+      <main className="min-h-screen bg-background flex flex-col">
+        <PageHeader
+          title="체크인"
+          onBack={() => router.push('/dashboard')}
+        />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
+        </div>
+      </main>
+    );
+  }
+
+  if (alreadyDone) {
+    return (
+      <main className="min-h-screen bg-background flex flex-col">
+        <PageHeader
+          title={type === 'morning' ? '모닝 체크인' : '이브닝 체크인'}
+          onBack={() => router.push('/dashboard')}
+        />
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="max-w-md w-full text-center space-y-5">
+            <div className="text-5xl">✓</div>
+            <h1 className="text-xl font-bold text-text-primary">
+              오늘 {type === 'morning' ? '아침' : '저녁'} 체크인은 이미 완료했어요
+            </h1>
+            <p className="text-sm text-text-secondary">
+              {type === 'morning'
+                ? '저녁 체크인은 오늘 저녁에 이어서 할 수 있어요.'
+                : '아침 체크인은 내일 아침에 만나요.'}
+            </p>
+            <button
+              onClick={() => router.push('/dashboard')}
+              className="w-full bg-primary text-white font-semibold py-3 px-6 rounded-2xl touch-manipulation active:scale-95 transition-transform"
+            >
+              대시보드로 돌아가기
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-background flex flex-col">

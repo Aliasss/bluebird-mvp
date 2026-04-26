@@ -281,12 +281,26 @@ function DashboardContent() {
               >
                 기록 보기
               </button>
-              <button
-                onClick={() => router.push('/checkin')}
-                className="text-xs text-primary font-semibold"
-              >
-                체크인하기
-              </button>
+              {(() => {
+                // 현재 KST 시각대의 type 결정 — /checkin 페이지의 getCheckinType과 동일 로직
+                const kstHour = (new Date().getUTCHours() + 9) % 24;
+                const currentType: 'morning' | 'evening' =
+                  kstHour >= 5 && kstHour < 13 ? 'morning' : 'evening';
+                const currentTypeDone =
+                  currentType === 'morning' ? todayCheckin.morning : todayCheckin.evening;
+                return currentTypeDone ? (
+                  <span className="text-xs text-text-tertiary font-medium">
+                    오늘 완료 ✓
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => router.push('/checkin')}
+                    className="text-xs text-primary font-semibold"
+                  >
+                    체크인하기
+                  </button>
+                );
+              })()}
             </div>
           </div>
           <div className="flex gap-3">

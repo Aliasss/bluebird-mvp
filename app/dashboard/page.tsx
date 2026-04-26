@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { BookOpen } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { formatDate } from '@/lib/utils';
 import StreakBanner from '@/components/ui/StreakBanner';
@@ -289,7 +290,7 @@ function DashboardContent() {
         {showManualNudge && (
           <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4">
             <div className="flex items-start gap-3">
-              <span className="text-xl">📖</span>
+              <BookOpen className="text-primary mt-0.5 shrink-0" size={20} strokeWidth={1.75} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-text-primary mb-0.5">
                   왜곡이 작동하는 이유가 궁금하다면

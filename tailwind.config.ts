@@ -11,19 +11,18 @@ const config: Config = {
       colors: {
         // Project Bluebird 브랜드 컬러 시스템 (Digital Stoicism)
         primary: {
+          // 주 액센트 — 모든 강조·CTA·active state. 다른 액센트 색은 절제.
           DEFAULT: '#1E40AF', // Electric Cobalt Blue
           dark: '#1E3A8A',
           light: '#3B82F6',
         },
+        // /our-philosophy 페이지의 의도된 액센트.
+        // "시스템 2의 가치"를 설명하는 페이지에 그 이름의 색을 일관되게 적용.
+        // 다른 페이지에서 사용 금지 — 액센트 dilution 방지.
         system2: {
           DEFAULT: '#0891B2', // Lucid Cyan
           dark: '#0E7490',
           light: '#22D3EE',
-        },
-        distortion: {
-          DEFAULT: '#E11D48',
-          dark: '#9F1239',
-          light: '#F43F5E',
         },
         success: {
           DEFAULT: '#16A34A', // Green-600

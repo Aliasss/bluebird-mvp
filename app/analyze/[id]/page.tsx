@@ -3,6 +3,7 @@
 import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
+import { RotateCcw } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import {
   DistortionManualAnchor,
@@ -522,7 +523,7 @@ export default function AnalyzePage() {
             className="block bg-primary/5 border border-primary/20 rounded-2xl p-4 hover:bg-primary/10 transition-colors"
           >
             <div className="flex items-start gap-3">
-              <span className="text-xl">🔁</span>
+              <RotateCcw className="text-primary mt-0.5 shrink-0" size={20} strokeWidth={1.75} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-text-primary">
                   {revisit.daysAgo}일 전에도 비슷한 패턴이 있었어요

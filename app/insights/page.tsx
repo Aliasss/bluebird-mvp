@@ -12,7 +12,7 @@ import { DistortionType, DistortionTypeKorean, type TriggerCategory } from '@/ty
 import ArchetypePanel from '@/components/ui/ArchetypePanel';
 import BottomTabBar from '@/components/ui/BottomTabBar';
 import PatternReport from '@/components/insights/PatternReport';
-import { getArchetypeResult, type ArchetypeResult } from '@/lib/utils/archetype';
+import { getArchetypeResultFromRows, type ArchetypeResult } from '@/lib/utils/archetype';
 import type { PatternRow } from '@/lib/insights/pattern-report';
 
 type Period = '7d' | '30d' | 'all';
@@ -161,19 +161,14 @@ export default function InsightsPage() {
         setGrowth({ intensityDelta: null, completionDelta: null, mostImprovedType: null });
       }
 
-      // 아키타입 계산 (전체 기간 기준 — period 무관)
+      // 아키타입 계산 (전체 기간 기준 — period 무관, distortion_type=null placeholder 제외)
       const { data: allAnalysis } = await supabase
         .from('analysis')
         .select('distortion_type, logs!inner(user_id)')
         .eq('logs.user_id', user.id);
 
-      const allRows = (allAnalysis ?? []) as Array<{ distortion_type: string }>;
-      const distortionCounts: Partial<Record<DistortionType, number>> = {};
-      allRows.forEach((r) => {
-        const t = r.distortion_type as DistortionType;
-        distortionCounts[t] = (distortionCounts[t] ?? 0) + 1;
-      });
-      setArchetypeResult(getArchetypeResult(distortionCounts, allRows.length));
+      const allRows = (allAnalysis ?? []) as Array<{ distortion_type: string | null }>;
+      setArchetypeResult(getArchetypeResultFromRows(allRows));
 
       // Δpain 시계열: reevaluated_at 일자별 평균 Δpain (재평가 없는 건 제외)
       let deltaQuery = supabase

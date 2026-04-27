@@ -10,10 +10,10 @@ import StreakBanner from '@/components/ui/StreakBanner';
 import ArchetypeCard from '@/components/ui/ArchetypeCard';
 import BottomTabBar from '@/components/ui/BottomTabBar';
 import { calculateStreak, type StreakResult } from '@/lib/utils/streak';
-import { getArchetypeResult, type ArchetypeResult } from '@/lib/utils/archetype';
+import { getArchetypeResultFromRows, type ArchetypeResult } from '@/lib/utils/archetype';
 import { getRankResult } from '@/lib/utils/rank';
 import type { User } from '@supabase/supabase-js';
-import type { Log, DistortionType } from '@/types';
+import type { Log } from '@/types';
 import { findPendingReview, type PendingReviewClient, type PendingReview } from '@/lib/review/pending-review';
 import { sumPositiveDeltaPain, type PainPair } from '@/lib/review/delta-pain';
 import { ReviewCard } from '@/components/review/ReviewCard';
@@ -185,21 +185,15 @@ function DashboardContent() {
       });
       setWeeklyPositiveDeltaPain(sumPositiveDeltaPain(pairs));
 
-      // 아키타입
-      const distortionCounts: Partial<Record<DistortionType, number>> = {};
-      const distortionRows = (analysisData ?? []).filter(
-        (r) => (r as { distortion_type: string | null }).distortion_type != null
-      );
-      distortionRows.forEach((r) => {
-        const t = (r as { distortion_type: string }).distortion_type as DistortionType;
-        distortionCounts[t] = (distortionCounts[t] ?? 0) + 1;
-      });
-      setArchetype(getArchetypeResult(distortionCounts, distortionRows.length));
+      // 아키타입 — distortion_type=null placeholder는 자동 제외 (insights와 통일)
+      const archetypeRows = (analysisData ?? []) as Array<{ distortion_type: string | null }>;
+      setArchetype(getArchetypeResultFromRows(archetypeRows));
 
-      // 매뉴얼 너지 배너: 3회 이상 분석 + 영구 dismiss 안 한 사용자에게만
+      // 매뉴얼 너지 배너: 3회 이상 분석(왜곡 탐지된 것만) + 영구 dismiss 안 한 사용자에게만
+      const realDistortionCount = archetypeRows.filter((r) => r.distortion_type != null).length;
       if (typeof window !== 'undefined') {
         const dismissed = localStorage.getItem('manual-nudge-dismissed') === '1';
-        setShowManualNudge(!dismissed && distortionRows.length >= 3);
+        setShowManualNudge(!dismissed && realDistortionCount >= 3);
       }
 
       // 오늘 체크인 상태

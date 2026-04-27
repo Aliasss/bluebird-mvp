@@ -10,6 +10,32 @@ export type ArchetypeResult = {
 };
 
 /**
+ * analysis 테이블의 row 배열에서 archetype 계산용 입력을 추출한다.
+ * 왜곡이 탐지되지 않은 분석은 distortion_type=null placeholder로 저장되므로
+ * archetype 카운트에서는 반드시 제외한다.
+ *
+ * 이 함수는 dashboard·insights 두 페이지가 같은 입력으로 archetype을 계산하도록
+ * 유일한 진입점이 된다.
+ */
+export function getArchetypeResultFromRows(
+  rows: ReadonlyArray<{ distortion_type: string | null }>
+): ArchetypeResult | null {
+  const realRows = rows.filter(
+    (r): r is { distortion_type: string } => r.distortion_type != null
+  );
+
+  if (realRows.length === 0) return null;
+
+  const distortionCounts: Partial<Record<DistortionType, number>> = {};
+  for (const row of realRows) {
+    const t = row.distortion_type as DistortionType;
+    distortionCounts[t] = (distortionCounts[t] ?? 0) + 1;
+  }
+
+  return getArchetypeResult(distortionCounts, realRows.length);
+}
+
+/**
  * 왜곡 유형별 빈도 카운트와 총 분석 횟수를 받아 아키타입 결과를 반환한다.
  * totalCount가 0이면 null 반환.
  */

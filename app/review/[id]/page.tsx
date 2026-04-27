@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { formatActionPlanForDisplay } from '@/lib/intervention/action-plan';
 import { ReviewForm } from './review-form';
 
 interface PageProps {
@@ -62,7 +63,9 @@ export default async function ReviewPage({ params }: PageProps) {
         {intervention.final_action && (
           <div className="space-y-1">
             <p className="text-xs text-gray-500">행동 계획</p>
-            <p className="text-sm text-gray-900">{intervention.final_action}</p>
+            <p className="text-sm text-gray-900">
+              {formatActionPlanForDisplay(intervention.final_action)}
+            </p>
           </div>
         )}
       </section>

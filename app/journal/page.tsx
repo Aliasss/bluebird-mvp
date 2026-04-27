@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { formatDate } from '@/lib/utils';
+import { formatActionPlanForDisplay } from '@/lib/intervention/action-plan';
 import BottomTabBar from '@/components/ui/BottomTabBar';
 import type { Log } from '@/types';
 
@@ -169,7 +170,7 @@ export default function JournalPage() {
                       </span>
                     </div>
                     <p className="text-sm text-text-secondary line-clamp-2">
-                      {item.final_action || '행동 계획이 아직 작성되지 않았습니다.'}
+                      {formatActionPlanForDisplay(item.final_action) || '행동 계획이 아직 작성되지 않았습니다.'}
                     </p>
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-xs text-text-secondary">{formatDate(item.created_at)}</span>

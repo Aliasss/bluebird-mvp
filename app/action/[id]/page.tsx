@@ -6,6 +6,11 @@ import { supabase } from '@/lib/supabase/client';
 import type { DistortionAnalysis, Log } from '@/types';
 import PageHeader from '@/components/ui/PageHeader';
 import SkeletonCard from '@/components/ui/SkeletonCard';
+import {
+  parseActionPlan,
+  serializeActionPlan,
+  validateActionPlan,
+} from '@/lib/intervention/action-plan';
 
 type ActionState = {
   log: Log | null;
@@ -83,7 +88,10 @@ export default function ActionPage() {
     isCompleted: false,
     autonomyScore: null,
   });
-  const [actionInput, setActionInput] = useState('');
+  const [whenInput, setWhenInput] = useState('');
+  const [whatInput, setWhatInput] = useState('');
+  const [howLongInput, setHowLongInput] = useState('');
+  const [legacyAction, setLegacyAction] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -149,7 +157,18 @@ export default function ActionPage() {
               ? interventionResult.data.autonomy_score
               : null,
         });
-        setActionInput(existingAction);
+
+        const parsedPlan = parseActionPlan(existingAction);
+        if (parsedPlan) {
+          setWhenInput(parsedPlan.when);
+          setWhatInput(parsedPlan.what);
+          setHowLongInput(parsedPlan.howLong);
+          setLegacyAction(null);
+        } else if (existingAction.trim()) {
+          // Legacy free text — '무엇을' 필드에 옮겨 사용자가 다시 구조화하도록 유도.
+          setLegacyAction(existingAction.trim());
+          setWhatInput(existingAction.trim());
+        }
       } catch (err: any) {
         console.error('행동 페이지 로드 실패:', err);
         setError(err.message || '데이터를 불러오지 못했어요.');
@@ -166,18 +185,14 @@ export default function ActionPage() {
     [state.log?.trigger, state.dominantDistortion]
   );
 
-  const validateAction = (value: string) => {
-    if (value.trim().length < 8) {
-      return '8자 이상으로 적어주세요.';
-    }
-    if (!/\d/.test(value)) {
-      return '5분 안에 실행 가능하도록 시간이나 횟수 같은 숫자를 넣어주세요.';
-    }
-    return null;
+  const currentPlan = {
+    when: whenInput,
+    what: whatInput,
+    howLong: howLongInput,
   };
 
   const handleCompleteClick = () => {
-    const validationError = validateAction(actionInput);
+    const validationError = validateActionPlan(currentPlan);
     if (validationError) {
       setError(validationError);
       return;
@@ -188,7 +203,7 @@ export default function ActionPage() {
   };
 
   const saveAction = async (markCompleted: boolean, completionNote?: string, completionReaction?: string) => {
-    const validationError = validateAction(actionInput);
+    const validationError = validateActionPlan(currentPlan);
     if (validationError) {
       setError(validationError);
       return;
@@ -199,12 +214,13 @@ export default function ActionPage() {
       setError(null);
       setNotice(null);
 
+      const serialized = serializeActionPlan(currentPlan);
       const response = await fetch('/api/action', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           logId: params.id,
-          finalAction: actionInput.trim(),
+          finalAction: serialized,
           markCompleted,
           completionNote: completionNote?.trim() || undefined,
           completionReaction: completionReaction || undefined,
@@ -223,8 +239,9 @@ export default function ActionPage() {
           ...prev,
           isCompleted: true,
           autonomyScore: score,
-          existingAction: actionInput.trim(),
+          existingAction: serialized,
         }));
+        setLegacyAction(null);
         setNotice(
           hasNote
             ? `안개를 뚫고 나아갔어요! +${score}점 획득 (메모 보너스 포함) ⚓`
@@ -233,9 +250,10 @@ export default function ActionPage() {
       } else {
         setState((prev) => ({
           ...prev,
-          existingAction: actionInput.trim(),
+          existingAction: serialized,
         }));
-        setNotice('항해 계획을 저장했어요.');
+        setLegacyAction(null);
+        setNotice('행동 계획을 저장했어요. 내일 이 시간 즈음 다시 들어오시면 결과를 적을 수 있어요.');
       }
     } catch (err: any) {
       setError(err.message || '처리 중에 문제가 생겼어요.');
@@ -310,19 +328,88 @@ export default function ActionPage() {
         </div>
 
         <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm space-y-4">
-          <h2 className="text-base md:text-lg font-bold text-text-primary">내 행동 계획</h2>
-          <textarea
-            value={actionInput}
-            onChange={(event) => {
-              setActionInput(event.target.value);
-              setError(null);
-              setNotice(null);
-            }}
-            placeholder="예: 오늘 21:00에 5분 동안 보고서 첫 문단만 작성하고 체크리스트에 완료 표시한다."
-            aria-label="실행할 행동 계획을 입력하세요"
-            className="w-full h-32 p-4 border border-background-tertiary rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-            disabled={saving || state.isCompleted}
-          />
+          <div>
+            <h2 className="text-base md:text-lg font-bold text-text-primary">내 행동 계획</h2>
+            <p className="text-xs text-text-tertiary mt-1">
+              측정 가능한 한 가지 행동으로 좁혀주세요. 24시간 후 결과를 다시 적으러 들어옵니다.
+            </p>
+          </div>
+
+          {legacyAction && (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 leading-relaxed">
+              이전에 자유 형식으로 저장하신 계획이 있어요: <strong>{legacyAction}</strong>
+              <br />
+              아래 3칸으로 다시 정리해 저장하시면 결과 측정이 더 정확해져요.
+            </div>
+          )}
+
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <label
+                htmlFor="action-when"
+                className="text-xs font-semibold text-text-secondary tracking-wide"
+              >
+                ⏰ 언제
+              </label>
+              <input
+                id="action-when"
+                type="text"
+                value={whenInput}
+                onChange={(e) => {
+                  setWhenInput(e.target.value);
+                  setError(null);
+                  setNotice(null);
+                }}
+                placeholder="예: 오늘 21:00 / 내일 점심 후"
+                className="w-full px-4 py-3 border border-background-tertiary rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                disabled={saving || state.isCompleted}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label
+                htmlFor="action-what"
+                className="text-xs font-semibold text-text-secondary tracking-wide"
+              >
+                🎯 무엇을
+              </label>
+              <input
+                id="action-what"
+                type="text"
+                value={whatInput}
+                onChange={(e) => {
+                  setWhatInput(e.target.value);
+                  setError(null);
+                  setNotice(null);
+                }}
+                placeholder="예: 보고서 첫 문단만 쓰기"
+                className="w-full px-4 py-3 border border-background-tertiary rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                disabled={saving || state.isCompleted}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label
+                htmlFor="action-howlong"
+                className="text-xs font-semibold text-text-secondary tracking-wide"
+              >
+                ⏱️ 얼마나
+              </label>
+              <input
+                id="action-howlong"
+                type="text"
+                value={howLongInput}
+                onChange={(e) => {
+                  setHowLongInput(e.target.value);
+                  setError(null);
+                  setNotice(null);
+                }}
+                placeholder="예: 5분 / 1번"
+                className="w-full px-4 py-3 border border-background-tertiary rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                disabled={saving || state.isCompleted}
+              />
+            </div>
+          </div>
 
           {error && (
             <div className="bg-danger bg-opacity-10 border border-danger rounded-xl p-3">
@@ -335,22 +422,49 @@ export default function ActionPage() {
             </div>
           )}
 
-          <div className="flex flex-col sm:flex-row gap-3">
+          {/* 1단계: 계획 미저장 → 계획 확정 (primary). 2단계: 계획 저장됨, 미완료 → 결과 기록 안내 */}
+          {!state.isCompleted && !state.existingAction && (
             <button
               onClick={() => saveAction(false)}
-              disabled={saving || state.isCompleted}
-              className="flex-1 bg-white border border-background-tertiary text-text-secondary font-semibold min-h-[44px] py-3 rounded-2xl text-sm disabled:opacity-50"
+              disabled={saving}
+              className="w-full bg-primary text-white font-semibold min-h-[44px] py-3 rounded-2xl text-sm disabled:opacity-50"
             >
-              계획 저장
+              {saving ? '저장 중...' : '행동 계획 확정'}
             </button>
+          )}
+
+          {!state.isCompleted && state.existingAction && (
+            <div className="space-y-3">
+              <div className="bg-primary bg-opacity-5 border border-primary border-opacity-20 rounded-xl p-3 text-xs text-text-secondary leading-relaxed">
+                계획이 저장됐어요. 이 행동을 시도한 뒤 다시 들어오시면 결과를 적을 수 있어요.
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={() => saveAction(false)}
+                  disabled={saving}
+                  className="flex-1 bg-white border border-background-tertiary text-text-secondary font-medium min-h-[44px] py-3 rounded-2xl text-sm disabled:opacity-50"
+                >
+                  {saving ? '저장 중...' : '계획 수정'}
+                </button>
+                <button
+                  onClick={handleCompleteClick}
+                  disabled={saving}
+                  className="flex-1 bg-primary text-white font-semibold min-h-[44px] py-3 rounded-2xl text-sm disabled:opacity-50"
+                >
+                  이미 했어요 — 결과 기록
+                </button>
+              </div>
+            </div>
+          )}
+
+          {state.isCompleted && (
             <button
-              onClick={handleCompleteClick}
-              disabled={saving || state.isCompleted}
-              className="flex-1 bg-primary text-white font-semibold min-h-[44px] py-3 rounded-2xl text-sm disabled:opacity-50"
+              disabled
+              className="w-full bg-success bg-opacity-10 border border-success text-success font-semibold min-h-[44px] py-3 rounded-2xl text-sm"
             >
-              {saving ? '처리 중...' : state.isCompleted ? '완료됨 ✓' : '항해 완료! 체크하기'}
+              완료됨 ✓
             </button>
-          </div>
+          )}
         </div>
 
         <div className="bg-white rounded-2xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">

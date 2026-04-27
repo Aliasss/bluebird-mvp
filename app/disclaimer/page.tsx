@@ -160,8 +160,10 @@ export default function DisclaimerPage() {
               상담전화(1393) 또는 정신건강위기상담전화(1577-0199)로 연락해주세요.
             </li>
             <li>
-              본 서비스는 위기 신호를 *놓친* 경우, 위기 신호에 *적절히 대응하지 못한* 경우 발생할 수
-              있는 모든 결과에 대해 법령상 허용되는 최대한 책임을 제한합니다.
+              본 서비스는 위기 신호를{' '}
+              <strong className="text-text-primary">놓친</strong> 경우, 위기 신호에{' '}
+              <strong className="text-text-primary">적절히 대응하지 못한</strong> 경우 발생할 수 있는
+              모든 결과에 대해 법령상 허용되는 최대한 책임을 제한합니다.
             </li>
           </ul>
         </article>

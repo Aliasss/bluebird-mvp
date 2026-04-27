@@ -64,6 +64,13 @@ const CASES: Case[] = [
     expectAtLeastOne: true,
   },
   {
+    name: 'gf-conflict-2026-04-28',
+    trigger: '여자친구가 나 때문에 울었다.',
+    thought:
+      '여자친구가 날 떠날까봐 두렵다. 혼자 사는 게 맞는건가 싶은 생각도 들고 그렇게 되는게 불안하기도 하다.',
+    expectAtLeastOne: true,
+  },
+  {
     name: 'catastrophizing-presentation',
     trigger: '내일 임원 보고가 있다.',
     thought: '내일 보고에서 한 번이라도 막히면 내 평판이 완전히 끝난다.',

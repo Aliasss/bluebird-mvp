@@ -109,7 +109,10 @@ function getAnalysisModel() {
       temperature: 0.2,
       topP: 0.9,
       topK: 20,
-      maxOutputTokens: 2048,
+      // 한국어 응답이 길어지면(rationale + reference_point + decentering_prompt
+      // + 복수 distortions) 2048에서 잘려 미완성 JSON → safeJsonParse 실패 →
+      // 전체 default fallback 발동. 4096으로 상향해 false negative 회귀 방지.
+      maxOutputTokens: 4096,
       responseMimeType: 'application/json',
       responseSchema: ANALYSIS_RESPONSE_SCHEMA,
     },
@@ -413,6 +416,9 @@ export async function analyzeDistortionsWithGemini(input: {
   const firstParsed = safeJsonParse<Record<string, unknown>>(firstText);
 
   if (!firstParsed) {
+    if (process.env.DEBUG_ANALYZE === '1') {
+      console.error('[DEBUG_ANALYZE] first parse failed. raw response:\n', firstText);
+    }
     await trackAnalysisQuality('analyze_parse_failed', {
       thought_length: thoughtLength,
       stage: 'first',
@@ -462,6 +468,9 @@ export async function analyzeDistortionsWithGemini(input: {
   const retryText = await generateContentWithRetry(retryPrompt, getAnalysisModel());
   const retryParsed = safeJsonParse<Record<string, unknown>>(retryText);
   if (!retryParsed) {
+    if (process.env.DEBUG_ANALYZE === '1') {
+      console.error('[DEBUG_ANALYZE] retry parse failed. raw response:\n', retryText);
+    }
     await trackAnalysisQuality('analyze_parse_failed', {
       thought_length: thoughtLength,
       stage: 'retry',

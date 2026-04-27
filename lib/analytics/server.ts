@@ -45,6 +45,11 @@ export async function trackAnalysisQuality(
       console.warn(`[analytics] ${event} insert 실패:`, error.message);
     }
   } catch (err) {
+    // request scope 밖 호출(eval 스크립트 등)은 cookies()가 throw — 의도된 silent skip.
+    const message = err instanceof Error ? err.message : String(err);
+    if (message.includes('cookies') && message.includes('request scope')) {
+      return;
+    }
     console.warn(`[analytics] ${event} 처리 실패:`, err);
   }
 }

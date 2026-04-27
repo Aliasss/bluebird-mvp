@@ -82,6 +82,7 @@ export async function POST(request: Request) {
       );
     }
 
+
     const { data: logData, error: logError } = await supabase
       .from('logs')
       .select('id, trigger, thought, pain_score, user_id')
@@ -190,7 +191,8 @@ export async function POST(request: Request) {
       }
     }
 
-    // 일별 분석 한도 체크 (하루 6회, 계정당 / 한국시간 자정 기준 리셋)
+    // 일별 분석 한도 체크. CBT 임상 권장(3~5회/일) + 반추 증폭 회피 + 비용 통제.
+    // KST 자정 기준 리셋. 같은 log를 재분석하는 경우는 1회로 카운트(log_id Set 중복 제거).
     const KST_OFFSET = 9 * 60 * 60 * 1000;
     const kstDate = new Date(Date.now() + KST_OFFSET);
     const todayStart = new Date(
@@ -203,10 +205,22 @@ export async function POST(request: Request) {
       .eq('logs.user_id', user.id)
       .gte('created_at', todayStart.toISOString());
 
-    const analyzedTodayCount = new Set((todayAnalyses ?? []).map((r) => (r as { log_id: string }).log_id)).size;
-    if (analyzedTodayCount >= 6) {
+    const analyzedTodayCount = new Set(
+      (todayAnalyses ?? []).map((r) => (r as { log_id: string }).log_id)
+    ).size;
+    // 현재 분석하려는 log가 이미 오늘 분석된 경우엔 카운트에 들어있으므로 그대로 통과.
+    const isReanalysis = (todayAnalyses ?? []).some(
+      (r) => (r as { log_id: string }).log_id === logId
+    );
+    if (!isReanalysis && analyzedTodayCount >= 5) {
       return NextResponse.json(
-        { error: '오늘의 분석 한도(6회)에 도달했습니다. 내일 다시 시도해주세요.' },
+        {
+          error: 'daily_limit_reached',
+          title: '오늘은 충분히 기록하셨어요',
+          message:
+            '하루 5번까지 기록할 수 있어요. 너무 자주 분석하면 오히려 반추가 깊어질 수 있어 한도를 두고 있어요. 내일 다시 만나요.',
+          safetyResourceUrl: '/safety/resources',
+        },
         { status: 429 }
       );
     }

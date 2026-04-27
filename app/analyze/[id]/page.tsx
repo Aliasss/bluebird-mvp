@@ -111,6 +111,7 @@ export default function AnalyzePage() {
   const [safetyLevel, setSafetyLevel] = useState<Exclude<CrisisLevel, 'none'> | null>(null);
   const [safetyOverride, setSafetyOverride] = useState(false);
   const safetyOverrideRef = useRef(false);
+  const [dailyLimit, setDailyLimit] = useState<{ title: string; message: string } | null>(null);
   const [theoryMeta, setTheoryMeta] = useState<TheoryMeta>({
     frameType: 'mixed',
     referencePoint: '준거점 정보 없음',
@@ -231,6 +232,14 @@ export default function AnalyzePage() {
       const analyzePayload = await analyzeRes.json();
 
       if (!analyzeRes.ok) {
+        if (analyzeRes.status === 429 && analyzePayload.error === 'daily_limit_reached') {
+          setDailyLimit({
+            title: analyzePayload.title ?? '오늘은 충분히 기록하셨어요',
+            message: analyzePayload.message ?? '내일 다시 만나요.',
+          });
+          setLoading(false);
+          return;
+        }
         throw new Error(analyzePayload.error || '분석을 완료하지 못했어요.');
       }
 
@@ -471,6 +480,44 @@ export default function AnalyzePage() {
             </div>
           </div>
         )}
+      </main>
+    );
+  }
+
+  if (dailyLimit) {
+    return (
+      <main className="min-h-screen bg-background">
+        <PageHeader title="오늘의 한도" backHref="/dashboard" />
+        <div className="max-w-md mx-auto px-4 sm:px-6 py-12 space-y-6">
+          <div className="bg-white rounded-2xl shadow-card p-8 space-y-5 text-center">
+            <div className="w-14 h-14 bg-primary bg-opacity-10 rounded-full mx-auto flex items-center justify-center">
+              <RotateCcw className="text-primary" size={26} strokeWidth={1.75} />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-lg font-bold text-text-primary tracking-tight">
+                {dailyLimit.title}
+              </h2>
+              <p className="text-sm text-text-secondary leading-relaxed">{dailyLimit.message}</p>
+            </div>
+            <div className="bg-background rounded-xl p-3 text-xs text-text-tertiary leading-relaxed">
+              방금 적으신 기록은 그대로 보관돼요. 내일 다시 들어와 분석을 이어갈 수 있어요.
+            </div>
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => router.push('/dashboard')}
+                className="flex-1 bg-primary text-white font-semibold py-3 px-4 rounded-xl"
+              >
+                홈으로
+              </button>
+              <Link
+                href="/safety/resources"
+                className="flex-1 bg-white border border-primary text-primary font-semibold py-3 px-4 rounded-xl text-center"
+              >
+                안전 자원 보기
+              </Link>
+            </div>
+          </div>
+        </div>
       </main>
     );
   }

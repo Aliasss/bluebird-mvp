@@ -36,7 +36,7 @@ export default function DisclaimerPage() {
           <p className="text-sm text-text-secondary leading-relaxed">
             BlueBird를 안전하게 이용하기 위한 안내입니다. 가입 전에 한 번 읽어주세요.
           </p>
-          <p className="text-xs text-text-tertiary">최종 수정일: 2026년 4월 26일</p>
+          <p className="text-xs text-text-tertiary">최종 수정일: 2026년 4월 28일</p>
         </section>
 
         {/* 1. 의료 면책 */}
@@ -51,6 +51,15 @@ export default function DisclaimerPage() {
             </div>
           </div>
           <ul className="text-sm text-text-secondary leading-relaxed space-y-2 list-disc pl-5">
+            <li>
+              BlueBird는{' '}
+              <strong className="text-text-primary">
+                식품의약품안전처(식약처) 의료기기 인허가를 받지 않았으며, 향후 받을 계획도 없는 일반
+                웰니스 도구
+              </strong>
+              입니다. 디지털의료제품법(2025년 2월 시행) 상 의료기기 트랙을 명시적으로 따르지
+              않습니다.
+            </li>
             <li>
               BlueBird는 <strong className="text-text-primary">의료기기·의료 서비스가 아닙니다.</strong>{' '}
               정신과적 진단, 심리치료, 약물 처방을 대체하거나 그에 준하는 효과를 약속하지 않습니다.
@@ -120,6 +129,41 @@ export default function DisclaimerPage() {
           >
             전체 정신건강 자원 보기 →
           </Link>
+        </article>
+
+        {/* 2-1. 위기 대응 한계 면책 */}
+        <article className="bg-white rounded-2xl shadow-card p-6 space-y-4">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="text-warning mt-0.5 flex-shrink-0" size={22} strokeWidth={1.75} />
+            <div className="space-y-1">
+              <h2 className="text-lg font-bold text-text-primary tracking-tight">
+                위기 신호의 자동 인지·개입은 보장되지 않습니다
+              </h2>
+              <p className="text-sm text-text-tertiary">자동 시스템의 한계 명시</p>
+            </div>
+          </div>
+          <ul className="text-sm text-text-secondary leading-relaxed space-y-2 list-disc pl-5">
+            <li>
+              본 서비스는 사용자가 입력한 텍스트에서 위기 신호(자살·자해·타해 의도 등)를{' '}
+              <strong className="text-text-primary">자동 인지·개입할 의무를 지지 않습니다.</strong>{' '}
+              일부 키워드 기반 보조 안내가 작동할 수 있으나, 이는 안전 대책의 일부일 뿐 완전성을
+              보장하지 않습니다.
+            </li>
+            <li>
+              위기 상황의 인지 및 적절한 대응은{' '}
+              <strong className="text-text-primary">사용자 본인 또는 보호자의 책임</strong>입니다. 어떤
+              자동 시스템도 인간 전문가의 판단을 대체할 수 없으며, 본 서비스 또한 그러합니다.
+            </li>
+            <li>
+              위기 신호가 감지되거나 본인이 위기를 자각한 경우{' '}
+              <strong className="text-text-primary">즉시 본 서비스 사용을 중단하고</strong> 위 자살예방
+              상담전화(1393) 또는 정신건강위기상담전화(1577-0199)로 연락해주세요.
+            </li>
+            <li>
+              본 서비스는 위기 신호를 *놓친* 경우, 위기 신호에 *적절히 대응하지 못한* 경우 발생할 수
+              있는 모든 결과에 대해 법령상 허용되는 최대한 책임을 제한합니다.
+            </li>
+          </ul>
         </article>
 
         {/* 3. AI 분석의 한계 */}

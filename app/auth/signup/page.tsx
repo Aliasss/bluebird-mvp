@@ -10,6 +10,7 @@ export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [agreeAge, setAgreeAge] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [agreeMarketing, setAgreeMarketing] = useState(false);
@@ -18,11 +19,12 @@ export default function SignupPage() {
   const [success, setSuccess] = useState(false);
   const [needsEmailVerification, setNeedsEmailVerification] = useState(false);
 
-  const allRequiredAgreed = agreeTerms && agreePrivacy;
-  const allAgreed = agreeTerms && agreePrivacy && agreeMarketing;
+  const allRequiredAgreed = agreeAge && agreeTerms && agreePrivacy;
+  const allAgreed = agreeAge && agreeTerms && agreePrivacy && agreeMarketing;
 
   const toggleAll = () => {
     const next = !allAgreed;
+    setAgreeAge(next);
     setAgreeTerms(next);
     setAgreePrivacy(next);
     setAgreeMarketing(next);
@@ -32,6 +34,12 @@ export default function SignupPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    if (!agreeAge) {
+      setError('만 14세 이상만 가입할 수 있습니다.');
+      setLoading(false);
+      return;
+    }
 
     if (!agreeTerms || !agreePrivacy) {
       setError('이용약관 및 개인정보 처리방침에 동의해주세요.');
@@ -58,12 +66,13 @@ export default function SignupPage() {
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: {
+            age_confirmed_at: new Date().toISOString(),
             terms_agreed_at: new Date().toISOString(),
             privacy_agreed_at: new Date().toISOString(),
             marketing_agreed: agreeMarketing,
             marketing_agreed_at: agreeMarketing ? new Date().toISOString() : null,
-            terms_version: '2026-04-26',
-            privacy_version: '2026-04-26',
+            terms_version: '2026-04-28',
+            privacy_version: '2026-04-28',
           },
         },
       });
@@ -211,6 +220,20 @@ export default function SignupPage() {
             </button>
 
             <ul className="space-y-3">
+              <li>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={agreeAge}
+                    onChange={(e) => setAgreeAge(e.target.checked)}
+                    disabled={loading}
+                    className="mt-0.5 w-4 h-4 rounded accent-primary"
+                  />
+                  <span className="text-sm text-text-secondary leading-snug">
+                    <span className="text-primary font-medium">[필수]</span> 본인은 만 14세 이상입니다.
+                  </span>
+                </label>
+              </li>
               <li>
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input

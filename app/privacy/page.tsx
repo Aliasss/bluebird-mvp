@@ -40,7 +40,7 @@ export default function PrivacyPage() {
             BlueBird(이하 "회사" 또는 "서비스")는 「개인정보 보호법」(PIPA) 및 관련 법령을 준수하여
             이용자의 개인정보를 다음과 같이 처리합니다.
           </p>
-          <p className="text-xs text-text-tertiary">최종 수정일: 2026년 4월 26일 / 시행일: 2026년 4월 26일</p>
+          <p className="text-xs text-text-tertiary">최종 수정일: 2026년 4월 28일 / 시행일: 2026년 4월 28일</p>
         </section>
 
         {/* 1. 수집 항목·목적 */}
@@ -83,6 +83,12 @@ export default function PrivacyPage() {
                 <li>
                   <strong className="text-text-primary">서비스 이용 로그</strong> (접속 시간, 분석
                   요청 빈도 등 — 익명 통계 수준) — 서비스 품질 개선
+                </li>
+                <li>
+                  <strong className="text-text-primary">분석 품질 메트릭</strong> (분석 성공·재시도·파싱
+                  실패·질문 폴백 발동 등의 이벤트와 user_id) — 회사가 자체 운영하는 Supabase
+                  테이블에 저장되며, 사일런트 실패를 빠르게 감지·수정해 분석 품질을 개선하기 위한
+                  내부 운영 목적으로만 사용됩니다. 외부에 공유되지 않습니다.
                 </li>
               </ul>
             </div>

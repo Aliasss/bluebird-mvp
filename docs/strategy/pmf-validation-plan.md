@@ -1,6 +1,6 @@
 # Bluebird PMF 검증 계획
 
-> 마지막 업데이트: 2026-04-28 (경쟁 전략 v1 통합)
+> 마지막 업데이트: 2026-04-28 (경쟁 전략 v1 통합 + research 카탈로그 트리거)
 > 살아있는 문서. 마일스톤 통과/실패 시 본 파일 직접 수정.
 >
 > **목적:** "기능을 더 만들어야 하나"를 결정하기 전에 *현재 가설이 시장에서 작동하는가*를
@@ -295,3 +295,45 @@ PMF 게이트 통과 또는 미시 결정이 필요할 때 활성화:
 - 누적 분석 품질 메트릭 (`analytics_events` 테이블)
 
 재방문 결과는 본 부록 §11.3 표를 직접 갱신한다.
+
+---
+
+## 12. 부록 — Research 자료 활용 트리거 (2026-04-28 추가)
+
+원문 카탈로그: [`docs/research/README.md`](../research/README.md)
+
+베타 단계에 학술 자료를 prompt·UI에 무리하게 박는 것은 §0 motivated reasoning
+회피 원칙 위반. 다음 트리거가 발생할 때만 활용한다.
+
+### 12.1 60일 게이트(§4) 진입 시 의무 검토
+
+다음 자료의 *추가 활용 여부*를 인터뷰 데이터로 결정:
+
+| 자료 | 활용 트리거 (인터뷰·메트릭 시그널) | 활용 위치 |
+|---|---|---|
+| Heuer — Psychology of Intelligence Analysis | 분석직 세그먼트 ≥40% | prompt Distortion Reporting Threshold + ACH 룰 |
+| Camus — Myth of Sisyphus | 톤 인식: 분석적 우세 + 깊이 부족 시그널 | `/our-philosophy` 보강 + 카피 톤 강화 |
+| Kahneman — Thinking, Fast and Slow (본문 발췌) | 재평가 회로 약함 (행동→Δpain 측정 미흡) | prompt `decentering_prompt` 강화 |
+| Kahneman & Tversky 1979 (본문 발췌) | 결제 의향 ≥20% 미달 + 손실 프레이밍 약함 | prompt + 결제 페이지 카피 (G3 진입 시) |
+
+### 12.2 기각 시나리오
+
+다음의 경우 해당 자료는 *이 사이클에서 활용하지 않음*:
+- 정서적 톤이 인터뷰에서 우세 → Heuer 보류
+- 분석가형 사용자가 자발 가치 언급에서 강하게 안 잡힘 → Camus·Heuer 둘 다 보류
+- 결제 의향이 *기능 차별화*가 아닌 *인간 코치 부재*에서 약하면 → Kahneman 본문 보강이 아니라 코치 인프라 검토(피벗 시그널)
+
+### 12.3 활용 결정 후 작업 분해
+
+각 자료가 트리거되면 다음 패턴으로 작업한다:
+1. 해당 자료 *발췌 챕터*만 읽고 `docs/research/summaries/` 에 1~2페이지 markdown 요약
+2. 요약을 `lib/ai/bluebird-protocol.ts` 또는 UI 카피로 *최소 변경* 반영
+3. eval 스크립트(`scripts/eval-distortion-fix.ts`)로 회귀 검증
+4. commit 메시지에 트리거된 인터뷰 시그널·메트릭 명시 (motivated reasoning 추적성)
+
+### 12.4 신규 자료 도착 시
+
+1. PDF: `docs/research/sources/`로 이동
+2. `docs/research/README.md` 자료 목록에 항목 추가 — *BlueBird 활용 위치*와
+   *트리거* 명시 필수
+3. 본 §12.1 표에도 트리거 행 추가 (60일 게이트 검토 대상에 포함)

@@ -72,7 +72,7 @@ function PatternRowItem({
 }) {
   const toneClass =
     rightTone === 'positive'
-      ? 'text-green-600 font-semibold'
+      ? 'text-success font-semibold'
       : rightTone === 'muted'
         ? 'text-text-tertiary'
         : 'text-text-primary font-semibold';

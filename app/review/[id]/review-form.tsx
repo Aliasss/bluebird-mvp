@@ -41,10 +41,10 @@ export function ReviewForm({ logId }: ReviewFormProps) {
   }
 
   return (
-    <section className="rounded-2xl border border-blue-200 bg-blue-50 p-5 space-y-4">
+    <section className="rounded-2xl border border-primary/20 bg-primary/5 p-5 space-y-4">
       <div>
-        <h2 className="text-sm font-semibold text-blue-900">고통 점수 (1 편함 ~ 5 힘듦)</h2>
-        <p className="mt-1 text-xs text-blue-800">
+        <h2 className="text-sm font-semibold text-primary">고통 점수 (1 편함 ~ 5 힘듦)</h2>
+        <p className="mt-1 text-xs text-text-secondary">
           지금 이 문제를 다시 생각하면 얼마나 고통스러운가요?
         </p>
       </div>
@@ -56,8 +56,8 @@ export function ReviewForm({ logId }: ReviewFormProps) {
             onClick={() => setSelected(n)}
             className={`rounded-xl py-3 text-lg font-semibold border transition ${
               selected === n
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'bg-white text-blue-900 border-blue-200 hover:border-blue-400'
+                ? 'bg-primary text-white border-primary'
+                : 'bg-white text-primary border-primary/20 hover:border-primary/50'
             }`}
             aria-pressed={selected === n}
           >
@@ -65,12 +65,12 @@ export function ReviewForm({ logId }: ReviewFormProps) {
           </button>
         ))}
       </div>
-      {error && <p className="text-sm text-red-700">{error}</p>}
+      {error && <p className="text-sm text-danger">{error}</p>}
       <button
         type="button"
         disabled={selected == null || submitting}
         onClick={handleSubmit}
-        className="w-full rounded-xl bg-blue-900 py-3 text-sm font-semibold text-white disabled:bg-gray-300"
+        className="w-full rounded-xl bg-primary-dark py-3 text-sm font-semibold text-white disabled:bg-background-tertiary disabled:text-text-tertiary"
       >
         {submitting ? '저장 중…' : '저장하기'}
       </button>

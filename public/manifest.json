@@ -1,11 +1,11 @@
 {
   "name": "Project Bluebird",
   "short_name": "Bluebird",
-  "description": "인지 왜곡 탐지 및 교정을 통한 실존적 자율성 회복",
+  "description": "AI 기반 인지 패턴 분석으로 사고 습관을 관찰하고 기록하는 도구",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FFFFFF",
-  "theme_color": "#007AFF",
+  "theme_color": "#1E40AF",
   "orientation": "portrait",
   "icons": [
     {

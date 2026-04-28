@@ -41,7 +41,7 @@ export default function ManualPage() {
   const router = useRouter();
   return (
     <main className="min-h-screen bg-background">
-      <PageHeader title="항해사 매뉴얼" onBack={() => router.push('/me')} />
+      <PageHeader title="기술 매뉴얼" onBack={() => router.push('/me')} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)] gap-6 sm:gap-8">
 
         {/* 사이드바 */}

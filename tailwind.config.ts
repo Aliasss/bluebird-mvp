@@ -47,7 +47,7 @@ const config: Config = {
         text: {
           primary: '#0F172A',
           secondary: '#475569', // Slate-600
-          tertiary: '#94A3B8', // Slate-400
+          tertiary: '#64748B', // Slate-500 (WCAG AA on #F8FAFC)
         },
       },
       letterSpacing: {

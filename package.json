@@ -1,12 +1,13 @@
 {
   "name": "project-bluebird-mvp",
   "version": "1.0.0",
-  "description": "인지 왜곡 탐지 및 교정을 통한 실존적 자율성(Autonomy) 회복 PWA 앱",
+  "description": "AI 기반 인지 패턴 분석으로 사고 습관을 관찰하고 기록하는 PWA",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "tsc --noEmit",
+    "lint:copy": "tsx scripts/lint-copy.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },

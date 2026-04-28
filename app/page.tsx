@@ -20,10 +20,10 @@ export default function HomePage() {
         <div className="space-y-3">
           <h1 className="text-4xl font-extrabold text-primary tracking-tighter">Project Bluebird</h1>
           <p className="text-xl font-semibold text-text-primary leading-snug tracking-tight">
-            흔들리는 마음의 영점을 맞추고,<br />당신의 삶을 다시 항해하세요.
+            반복되는 사고 패턴을<br />구조로 본다.
           </p>
           <p className="text-sm text-text-secondary leading-relaxed">
-            AI 인지 디버깅으로 불안의 안개를 걷어내고,<br />실존적 주체성을 회복하는 시간.
+            AI 기반 인지 패턴 분석으로<br />사고 습관을 관찰하고 기록하는 도구.
           </p>
         </div>
 
@@ -46,7 +46,7 @@ export default function HomePage() {
           </div>
           <button
             onClick={handleSampleStart}
-            className="w-full mt-2 bg-white border-2 border-primary text-primary text-sm font-semibold py-3 px-4 rounded-xl active:scale-95 transition-transform touch-manipulation"
+            className="w-full mt-2 bg-primary text-white text-sm font-semibold py-4 px-4 rounded-xl active:scale-95 transition-transform touch-manipulation"
           >
             위 사례로 60초 체험해보기 →
           </button>
@@ -66,10 +66,10 @@ export default function HomePage() {
             CBT, CAS, 전망이론을 기반으로 설계된 인지 분석 도구
           </p>
           <button
-            className="w-full bg-primary text-white font-semibold py-4 px-6 rounded-2xl touch-manipulation active:scale-95 transition-transform"
+            className="w-full bg-white border-2 border-primary text-primary font-semibold py-3 px-6 rounded-2xl touch-manipulation active:scale-95 transition-transform"
             onClick={() => router.push('/auth/signup')}
           >
-            나의 항해 시작하기
+            가입하기
           </button>
           <button
             className="w-full bg-white border border-background-tertiary text-text-secondary font-medium py-3 px-6 rounded-2xl touch-manipulation active:scale-95 transition-transform"
@@ -89,7 +89,7 @@ export default function HomePage() {
 
         {/* Footer */}
         <p className="text-xs text-text-tertiary leading-relaxed pb-2">
-          불안은 바다의 파도와 같지만,<br />주체성을 가진 항해사는 길을 잃지 않습니다.
+          분석 횟수가 쌓일수록<br />당신의 사고 패턴이 더 또렷이 보입니다.
         </p>
 
         {/* 법적 문서 */}

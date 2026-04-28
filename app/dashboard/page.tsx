@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, SunMedium, Moon } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { formatDate } from '@/lib/utils';
 import StreakBanner from '@/components/ui/StreakBanner';
@@ -25,11 +25,11 @@ function getGreeting(email: string) {
   const kstHour = (new Date().getUTCHours() + 9) % 24;
   let message = '';
   if (kstHour >= 5 && kstHour < 13) {
-    message = '오늘의 항해를 준비할 시간이에요.';
+    message = '오늘 분석할 트리거가 있나요?';
   } else if (kstHour >= 13 && kstHour < 19) {
-    message = '지금 이 순간도 주체적으로 항해하고 있어요.';
+    message = '지금 떠오른 자동 사고를 기록해보세요.';
   } else {
-    message = '오늘 하루를 갈무리해보세요.';
+    message = '오늘 하루의 사고 패턴을 정리해보세요.';
   }
   return { name, message };
 }
@@ -238,12 +238,12 @@ function DashboardContent() {
     <main className="min-h-screen bg-background">
       {successToast && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-success text-white text-sm font-semibold px-6 py-3 rounded-2xl shadow-lg">
-          성공 순간이 기록됐습니다 +15점 🎉
+          성공 순간이 기록됐습니다 +15점 (분석 보너스 포함)
         </div>
       )}
       {checkinToast && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-primary text-white text-sm font-semibold px-6 py-3 rounded-2xl shadow-lg">
-          체크인 완료! 연속 기록이 유지됩니다 ✓
+          체크인 완료. 연속 기록이 유지됩니다.
         </div>
       )}
 
@@ -255,7 +255,7 @@ function DashboardContent() {
             onClick={() => router.push('/me')}
             className="text-xs text-text-tertiary"
           >
-            {greeting?.name} 항해사님
+            {greeting?.name}님
           </button>
         </div>
       </header>
@@ -266,9 +266,8 @@ function DashboardContent() {
         {/* 인사말 */}
         <div>
           <p className="text-xl font-bold text-text-primary tracking-tight">
-            안녕하세요, {greeting?.name} 항해사님 🧭
+            {greeting?.name}님, {greeting?.message}
           </p>
-          <p className="text-sm text-text-secondary mt-0.5">{greeting?.message}</p>
         </div>
 
         {/* 재평가 대기 카드 */}
@@ -348,7 +347,11 @@ function DashboardContent() {
             <div className={`flex-1 flex items-center gap-2 p-3 rounded-xl border ${
               todayCheckin.morning ? 'border-success bg-success bg-opacity-5' : 'border-background-tertiary'
             }`}>
-              <span className="text-lg">🌅</span>
+              <SunMedium
+                size={18}
+                strokeWidth={1.75}
+                className={todayCheckin.morning ? 'text-success' : 'text-text-tertiary'}
+              />
               <div>
                 <p className="text-xs font-semibold text-text-primary">모닝</p>
                 <p className={`text-[10px] ${todayCheckin.morning ? 'text-success' : 'text-text-tertiary'}`}>
@@ -359,7 +362,11 @@ function DashboardContent() {
             <div className={`flex-1 flex items-center gap-2 p-3 rounded-xl border ${
               todayCheckin.evening ? 'border-success bg-success bg-opacity-5' : 'border-background-tertiary'
             }`}>
-              <span className="text-lg">🌙</span>
+              <Moon
+                size={18}
+                strokeWidth={1.75}
+                className={todayCheckin.evening ? 'text-success' : 'text-text-tertiary'}
+              />
               <div>
                 <p className="text-xs font-semibold text-text-primary">이브닝</p>
                 <p className={`text-[10px] ${todayCheckin.evening ? 'text-success' : 'text-text-tertiary'}`}>
@@ -376,14 +383,14 @@ function DashboardContent() {
           return (
             <>
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
-                  <p className="text-xs text-text-secondary mb-1">연속 항해</p>
-                  <p className="text-2xl font-extrabold text-primary tracking-tight">{streak.current}일 🔥</p>
+                <div className="bg-white rounded-2xl p-4 shadow-card">
+                  <p className="text-xs text-text-secondary mb-1">연속 기록</p>
+                  <p className="text-2xl font-extrabold text-primary tracking-tight">{streak.current}일</p>
                   <p className="text-[10px] text-text-tertiary mt-1">
-                    {streak.doneToday ? '오늘도 달성!' : streak.best > 0 ? `최고 ${streak.best}일` : '오늘 시작해보세요'}
+                    {streak.doneToday ? '오늘 기록 완료' : streak.best > 0 ? `최고 ${streak.best}일` : '오늘 시작해보세요'}
                   </p>
                 </div>
-                <div className="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
+                <div className="bg-white rounded-2xl p-4 shadow-card">
                   <p className="text-xs text-text-secondary mb-1">자율성 지수</p>
                   <p className="text-xl font-extrabold text-warning tracking-tight">{autonomyScore}점</p>
                   <p className="text-[10px] font-semibold text-primary mt-0.5">{rank.title}</p>
@@ -394,12 +401,12 @@ function DashboardContent() {
                     />
                   </div>
                   <p className="text-[10px] text-text-tertiary mt-1">
-                    {pointsToNext !== null ? `다음 등급까지 ${pointsToNext}점` : '최고 등급 달성 ⚓'}
+                    {pointsToNext !== null ? `다음 단계까지 ${pointsToNext}점` : '최종 단계 도달'}
                   </p>
                 </div>
               </div>
-              <div className="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
-                <p className="text-xs text-text-secondary mb-1">이번 주 줄어든 고통</p>
+              <div className="bg-white rounded-2xl p-4 shadow-card">
+                <p className="text-xs text-text-secondary mb-1">이번 주 Δpain 누적</p>
                 <p className="text-2xl font-extrabold text-primary tracking-tight">
                   {weeklyPositiveDeltaPain}
                   <span className="text-sm text-text-tertiary ml-1">점</span>

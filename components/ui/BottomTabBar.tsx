@@ -41,13 +41,13 @@ export default function BottomTabBar() {
             onClick={() => { setFabOpen(false); router.push('/log/success'); }}
             className="bg-success text-white text-sm font-semibold py-3 px-7 rounded-2xl shadow-xl whitespace-nowrap active:scale-95 transition-transform touch-manipulation"
           >
-            ✦ 성공 순간 기록하기
+            성공 순간 기록하기
           </button>
           <button
             onClick={() => { setFabOpen(false); router.push('/log'); }}
             className="bg-primary text-white text-sm font-semibold py-3 px-7 rounded-2xl shadow-xl whitespace-nowrap active:scale-95 transition-transform touch-manipulation"
           >
-            ✦ 왜곡 기록하기
+            왜곡 기록하기
           </button>
         </div>
       )}

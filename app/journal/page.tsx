@@ -79,7 +79,7 @@ export default function JournalPage() {
       {/* 헤더 */}
       <header className="sticky top-0 z-40 bg-white border-b border-background-tertiary">
         <div className="max-w-lg mx-auto px-4 py-3">
-          <h1 className="text-lg font-bold text-text-primary tracking-tight">항해 일지</h1>
+          <h1 className="text-lg font-bold text-text-primary tracking-tight">기록 일지</h1>
         </div>
         {/* 탭 */}
         <div className="max-w-lg mx-auto px-4 flex gap-4 border-t border-background-tertiary">

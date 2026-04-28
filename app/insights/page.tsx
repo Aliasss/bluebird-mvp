@@ -306,7 +306,7 @@ export default function InsightsPage() {
             <div className="bg-white border border-background-tertiary rounded-xl p-4 text-center">
               <p className="text-xs text-text-secondary mb-1">왜곡 강도 변화</p>
               {growth.intensityDelta !== null ? (
-                <p className={`text-lg font-bold ${growth.intensityDelta < 0 ? 'text-green-600' : growth.intensityDelta > 0 ? 'text-red-500' : 'text-text-secondary'}`}>
+                <p className={`text-lg font-bold ${growth.intensityDelta < 0 ? 'text-success' : growth.intensityDelta > 0 ? 'text-danger' : 'text-text-secondary'}`}>
                   {growth.intensityDelta > 0 ? '+' : ''}{growth.intensityDelta}%
                 </p>
               ) : (
@@ -318,7 +318,7 @@ export default function InsightsPage() {
             <div className="bg-white border border-background-tertiary rounded-xl p-4 text-center">
               <p className="text-xs text-text-secondary mb-1">완료율 변화</p>
               {growth.completionDelta !== null ? (
-                <p className={`text-lg font-bold ${growth.completionDelta > 0 ? 'text-green-600' : growth.completionDelta < 0 ? 'text-red-500' : 'text-text-secondary'}`}>
+                <p className={`text-lg font-bold ${growth.completionDelta > 0 ? 'text-success' : growth.completionDelta < 0 ? 'text-danger' : 'text-text-secondary'}`}>
                   {growth.completionDelta > 0 ? '+' : ''}{growth.completionDelta}%p
                 </p>
               ) : (
@@ -329,7 +329,7 @@ export default function InsightsPage() {
             {/* 가장 개선된 왜곡 */}
             <div className="bg-white border border-background-tertiary rounded-xl p-4 text-center">
               <p className="text-xs text-text-secondary mb-1">가장 개선</p>
-              <p className="text-xs font-bold text-green-600 leading-tight mt-1">
+              <p className="text-xs font-bold text-success leading-tight mt-1">
                 {growth.mostImprovedType ?? '—'}
               </p>
               <p className="text-[10px] text-text-tertiary mt-0.5">빈도 감소 왜곡</p>

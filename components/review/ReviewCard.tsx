@@ -39,13 +39,13 @@ export function ReviewCard({ logId, triggerSnippet, daysAgo }: ReviewCardProps) 
     <button
       type="button"
       onClick={handleOpen}
-      className="w-full text-left rounded-2xl border border-blue-200 bg-blue-50 p-4 hover:bg-blue-100 transition"
-      aria-label="지난 항해 돌아보기"
+      className="w-full text-left rounded-2xl border border-primary/20 bg-primary/5 p-4 hover:bg-primary/10 transition"
+      aria-label="지난 기록 재평가하기"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1">
-          <p className="text-sm font-medium text-blue-900">지난 항해 돌아보기</p>
-          <p className="mt-1 text-xs text-blue-800">
+          <p className="text-sm font-medium text-primary">지난 기록 재평가하기</p>
+          <p className="mt-1 text-xs text-text-secondary">
             {daysAgo === 1 ? '어제' : `${daysAgo}일 전`} 기록한 「{triggerSnippet}」, 지금은 어떠신가요?
           </p>
         </div>
@@ -56,7 +56,7 @@ export function ReviewCard({ logId, triggerSnippet, daysAgo }: ReviewCardProps) 
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') handleDismiss(e as unknown as React.MouseEvent);
           }}
-          className="text-blue-400 hover:text-blue-700 px-2 py-1 text-xs"
+          className="text-text-tertiary hover:text-text-secondary px-2 py-1 text-xs"
           aria-label="카드 숨기기"
         >
           ✕

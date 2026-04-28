@@ -244,8 +244,8 @@ export default function ActionPage() {
         setLegacyAction(null);
         setNotice(
           hasNote
-            ? `안개를 뚫고 나아갔어요! +${score}점 획득 (메모 보너스 포함) ⚓`
-            : `한 걸음 더 나아갔어요! +${score}점 획득 ⚓`
+            ? `행동이 기록됐습니다. +${score}점 (메모 보너스 포함)`
+            : `행동이 기록됐습니다. +${score}점`
         );
       } else {
         setState((prev) => ({
@@ -295,7 +295,7 @@ export default function ActionPage() {
     <main className="min-h-screen bg-background">
       <PageHeader title="행동 설계" />
       <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
-        <div className="bg-white rounded-2xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-2xl p-5 shadow-card">
           <h1 className="text-xl md:text-2xl font-bold text-text-primary mb-2">행동 확약</h1>
           <p className="text-sm text-text-secondary">
             분석 결과를 행동으로 전환하면 자율성 지수가 올라갑니다.
@@ -467,7 +467,7 @@ export default function ActionPage() {
           )}
         </div>
 
-        <div className="bg-white rounded-2xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-2xl p-5 shadow-card">
           <h2 className="text-base md:text-lg font-bold text-text-primary mb-3">자율성 지수</h2>
           <p className="text-3xl font-bold text-primary">
             {state.autonomyScore ?? 0}
@@ -499,8 +499,7 @@ export default function ActionPage() {
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 px-4 pb-6 sm:pb-0">
           <div className="w-full max-w-sm bg-white rounded-3xl p-6 space-y-5 shadow-2xl">
             <div className="text-center space-y-1">
-              <p className="text-2xl">⚓</p>
-              <h3 className="text-base font-bold text-text-primary tracking-tight">항해를 완료했어요!</h3>
+              <h3 className="text-base font-bold text-text-primary tracking-tight">행동을 완료했어요</h3>
             </div>
 
             {/* 원탭 반응 */}
@@ -530,7 +529,7 @@ export default function ActionPage() {
 
             {/* 소감 메모 */}
             <div>
-              <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wide mb-2">항해 메모 <span className="text-primary normal-case font-normal">(+15점)</span></p>
+              <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wide mb-2">행동 메모 <span className="text-primary normal-case font-normal">(+15점)</span></p>
               <textarea
                 value={insightInput}
                 onChange={(e) => setInsightInput(e.target.value)}

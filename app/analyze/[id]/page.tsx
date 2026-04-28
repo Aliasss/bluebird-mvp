@@ -589,7 +589,7 @@ export default function AnalyzePage() {
           </Link>
         )}
 
-        <div className="bg-white rounded-2xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-2xl p-5 shadow-card">
           <h1 className="text-xl font-bold text-text-primary mb-4 tracking-tight">AI 분석 결과</h1>
           <p className="text-xs md:text-sm text-text-secondary mb-1.5 sm:mb-2">어떤 일이 있었나요</p>
           <p className="text-text-primary mb-4">{logData?.trigger}</p>
@@ -599,7 +599,7 @@ export default function AnalyzePage() {
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-2xl p-5 shadow-card">
           <h2 className="text-lg font-bold text-text-primary mb-4 tracking-tight">이론 기반 해석</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 text-xs md:text-sm">
             <div className="bg-background-secondary rounded-xl p-4">
@@ -687,7 +687,7 @@ export default function AnalyzePage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-2xl p-5 shadow-card">
           <h2 className="text-lg font-bold text-text-primary mb-4 tracking-tight">발견된 생각의 패턴</h2>
           {distortions.length === 0 ? (
             <p className="text-text-secondary">이번 기록에서는 뚜렷한 왜곡 패턴이 보이지 않아요.</p>
@@ -730,7 +730,7 @@ export default function AnalyzePage() {
           )}
         </div>
 
-        <div className="bg-white rounded-2xl p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-2xl p-5 shadow-card">
           <h2 className="text-lg font-bold text-text-primary mb-4 tracking-tight">생각을 점검하는 질문</h2>
           {questions.length === 0 ? (
             <p className="text-text-secondary">질문을 만들지 못했어요. 다시 시도해주세요.</p>

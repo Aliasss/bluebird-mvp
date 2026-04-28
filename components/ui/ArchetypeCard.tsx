@@ -45,7 +45,7 @@ export default function ArchetypeCard({ result, onClick }: Props) {
         </div>
         <p className="text-[10px] text-text-tertiary">
           {isJustUpdated
-            ? '✓ 아키타입이 업데이트됐습니다'
+            ? '아키타입이 업데이트됐습니다'
             : `다음 업데이트까지 ${untilNextUpdate}회 더`}
         </p>
       </div>

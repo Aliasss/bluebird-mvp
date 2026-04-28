@@ -6,7 +6,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Project Bluebird',
-  description: '인지 왜곡 탐지 및 교정을 통한 실존적 자율성 회복',
+  description: 'AI 기반 인지 패턴 분석으로 사고 습관을 관찰하고 기록하는 도구',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
@@ -24,7 +24,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: 'cover',
-  themeColor: '#007AFF',
+  themeColor: '#1E40AF',
 };
 
 export default function RootLayout({

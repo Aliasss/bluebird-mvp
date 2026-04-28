@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { consumeRateLimit, getClientIp } from '@/lib/security/rate-limit';
+import { AUTONOMY_NOTE_BONUS, calcAutonomyScore } from '@/lib/intervention/autonomy-score';
 import { z } from 'zod';
 
 type ActionRequestBody = {
@@ -17,13 +18,6 @@ const actionRequestSchema = z.object({
   completionNote: z.string().trim().max(200).optional(),
   completionReaction: z.enum(['improved', 'same', 'worse']).optional(),
 });
-
-function calcAutonomyScore(params: { averageIntensity: number; answerCount: number }): number {
-  const base = 10;
-  const distortionBonus = Math.round(params.averageIntensity * 5);
-  const answerBonus = Math.min(3, params.answerCount);
-  return base + distortionBonus + answerBonus;
-}
 
 export async function POST(request: Request) {
   try {
@@ -127,7 +121,7 @@ export async function POST(request: Request) {
         (key) => Boolean(intervention?.user_answers?.[key])
       ).length;
 
-      const noteBonus = completionNote.length > 0 ? 15 : 0;
+      const noteBonus = completionNote.length > 0 ? AUTONOMY_NOTE_BONUS : 0;
       actionPayload.is_completed = true;
       actionPayload.autonomy_score = calcAutonomyScore({ averageIntensity, answerCount }) + noteBonus;
       if (completionNote.length > 0) {

@@ -186,7 +186,6 @@ export default function VisualizePage() {
 
     return {
       objectiveProbability,
-      subjectiveLossWeight,
       averageIntensity,
       curveData,
       userPoint: {
@@ -273,7 +272,6 @@ export default function VisualizePage() {
             <ul className="text-xs md:text-sm text-text-secondary space-y-1">
               <li>객관 확률(답변1): {(chartMeta.objectiveProbability * 100).toFixed(0)}%</li>
               <li>평균 왜곡 강도: {(chartMeta.averageIntensity * 100).toFixed(0)}%</li>
-              <li>주관 손실 가중치: {chartMeta.subjectiveLossWeight.toFixed(2)}</li>
               <li>준거점: {state.referencePoint}</li>
             </ul>
           </div>

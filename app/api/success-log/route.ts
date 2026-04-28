@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { AUTONOMY_NOTE_BONUS, calcAutonomyScore } from '@/lib/intervention/autonomy-score';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -60,14 +61,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: '저장에 실패했습니다.' }, { status: 500 });
     }
 
-    // intervention 테이블에 완료 상태로 저장 (autonomy_score: 15)
+    // intervention 테이블에 완료 상태로 저장
+    // 분석 데이터·소크라테스 답변이 없는 회고형 기록이므로 averageIntensity=0, answerCount=0.
+    // system2Action(최소 10자)이 완료 노트 역할을 하므로 noteBonus를 일관되게 적용한다.
+    const autonomyScore =
+      calcAutonomyScore({ averageIntensity: 0, answerCount: 0 }) + AUTONOMY_NOTE_BONUS;
+
     const { error: interventionError } = await supabase.from('intervention').insert({
       log_id: logData.id,
       socratic_questions: [],
       user_answers: {},
       final_action: system2Action,
       is_completed: true,
-      autonomy_score: 15,
+      autonomy_score: autonomyScore,
     });
 
     if (interventionError) {

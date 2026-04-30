@@ -322,6 +322,30 @@ export async function POST(request: Request) {
       }
     }
 
+    // bluebird_retention_mechanisms_v1.md (c) 통계 데이터 수집(미노출):
+    // user_patterns 테이블에 distortion 1건당 1 row INSERT.
+    //   - logs/analysis 트랜잭션과 *분리*. best-effort. 실패 시 분석 응답엔 영향 X.
+    //   - 마이그레이션 09가 미적용된 환경에서도 분석이 정상 동작해야 한다 (logs 우선 정책).
+    //   - 사용자 노출 X — 본 INSERT 결과는 UI에서 읽지 않는다.
+    //   - RLS: auth.uid() = user_id 정책에 따라 본인 row만 INSERT 가능 (정책 약화 0).
+    if (distortions.length > 0) {
+      const patternRows = distortions.map((item) => ({
+        user_id: user.id,
+        log_id: logId,
+        distortion_type: item.type,
+        trigger_category: analysisResult.trigger_category ?? null,
+        // pain_score_delta는 follow-up checkin 시점에서 산출. 분석 시점엔 NULL.
+        pain_score_delta: null as number | null,
+      }));
+      const { error: patternsError } = await supabase
+        .from('user_patterns')
+        .insert(patternRows);
+      if (patternsError) {
+        // 마이그레이션 미적용·일시 장애 등 — 분석 결과 자체는 그대로 반환.
+        console.warn('user_patterns insert best-effort 실패:', patternsError.message);
+      }
+    }
+
     return NextResponse.json({ ...normalized }, { status: 200 });
   } catch (error) {
     console.error('POST /api/analyze 실패:', error);

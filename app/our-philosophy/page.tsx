@@ -133,7 +133,7 @@ export default function OurPhilosophyPage() {
               </div>
             </div>
 
-            {/* 통계 카드 grid — gradient 제거, BA 톤 */}
+            {/* 통계 카드 grid — gradient 제거, 분석가 톤 */}
             <div className="px-6 py-5 bg-background-secondary border-b border-background-tertiary">
               <div className="flex items-baseline gap-4">
                 <p className="text-2xl sm:text-3xl font-bold text-primary tracking-tight flex-shrink-0">
@@ -157,7 +157,7 @@ export default function OurPhilosophyPage() {
           </article>
         ))}
 
-        {/* CTA — gradient 제거, BA 톤 */}
+        {/* CTA — gradient 제거, 분석가 톤 */}
         <div className="bg-white border border-primary border-opacity-30 rounded-2xl p-6 sm:p-8 space-y-4">
           <h3 className="text-lg sm:text-xl font-bold text-text-primary tracking-tight">
             첫 분석으로 자신의 인지 패턴을 측정해보세요

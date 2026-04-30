@@ -30,7 +30,7 @@ export default function HomePage() {
         {/* 시나리오 예시 + 샘플 funnel 진입점 */}
         <div className="bg-white border border-background-tertiary rounded-2xl p-6 text-left space-y-4 shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-wide text-text-tertiary">이런 순간에 쓰세요</p>
-          <ul className="space-y-3 list-none">
+          <ul className="space-y-3 list-none" role="list">
             <li className="text-sm text-text-secondary border-l-2 border-primary/30 pl-3 leading-relaxed">
               회의에서 한마디 한 뒤 "괜히 말했다, 다음부턴 가만히 있어야지"로 굳어질 때
             </li>
@@ -91,19 +91,19 @@ export default function HomePage() {
 
         {/* 법적 문서 */}
         <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-xs text-text-tertiary pt-2">
-          <a href="/disclaimer" className="py-1 hover:text-text-secondary underline-offset-2 hover:underline">
+          <a href="/disclaimer" className="py-2 hover:text-text-secondary underline-offset-2 hover:underline">
             면책 안내
           </a>
           <span aria-hidden>·</span>
-          <a href="/terms" className="py-1 hover:text-text-secondary underline-offset-2 hover:underline">
+          <a href="/terms" className="py-2 hover:text-text-secondary underline-offset-2 hover:underline">
             이용약관
           </a>
           <span aria-hidden>·</span>
-          <a href="/privacy" className="py-1 hover:text-text-secondary underline-offset-2 hover:underline">
+          <a href="/privacy" className="py-2 hover:text-text-secondary underline-offset-2 hover:underline">
             개인정보 처리방침
           </a>
           <span aria-hidden>·</span>
-          <a href="/safety/resources" className="py-1 hover:text-text-secondary underline-offset-2 hover:underline">
+          <a href="/safety/resources" className="py-2 hover:text-text-secondary underline-offset-2 hover:underline">
             정신건강 자원
           </a>
         </div>

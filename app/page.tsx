@@ -30,20 +30,17 @@ export default function HomePage() {
         {/* 시나리오 예시 + 샘플 funnel 진입점 */}
         <div className="bg-white border border-background-tertiary rounded-2xl p-6 text-left space-y-4 shadow-sm">
           <p className="text-xs font-semibold uppercase tracking-wide text-text-tertiary">이런 순간에 쓰세요</p>
-          <div className="space-y-3">
-            <div className="flex gap-3 items-start">
-              <span className="text-primary font-bold mt-0.5">✦</span>
-              <p className="text-sm text-text-secondary">발표에서 실수한 뒤 "나는 항상 이런다"는 생각이 들 때</p>
-            </div>
-            <div className="flex gap-3 items-start">
-              <span className="text-primary font-bold mt-0.5">✦</span>
-              <p className="text-sm text-text-secondary">친구 답장이 늦어서 "날 싫어하나"라는 생각이 들 때</p>
-            </div>
-            <div className="flex gap-3 items-start">
-              <span className="text-primary font-bold mt-0.5">✦</span>
-              <p className="text-sm text-text-secondary">잘 될 것 같았는데 "어차피 망할 것 같다"는 느낌이 들 때</p>
-            </div>
-          </div>
+          <ul className="space-y-3 list-none">
+            <li className="text-sm text-text-secondary border-l-2 border-primary/30 pl-3 leading-relaxed">
+              회의에서 한마디 한 뒤 "괜히 말했다, 다음부턴 가만히 있어야지"로 굳어질 때
+            </li>
+            <li className="text-sm text-text-secondary border-l-2 border-primary/30 pl-3 leading-relaxed">
+              답장이 하루 늦어진 걸 보고 "내가 뭘 잘못한 거지"부터 떠오를 때
+            </li>
+            <li className="text-sm text-text-secondary border-l-2 border-primary/30 pl-3 leading-relaxed">
+              평가를 앞두고 "이번에도 결국 부족하다고 드러날 것이다"가 미리 결론처럼 들릴 때
+            </li>
+          </ul>
           <button
             onClick={handleSampleStart}
             className="w-full mt-2 bg-primary text-white text-sm font-semibold py-4 px-4 rounded-xl active:scale-95 transition-transform touch-manipulation"
@@ -93,20 +90,20 @@ export default function HomePage() {
         </p>
 
         {/* 법적 문서 */}
-        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[11px] text-text-tertiary pt-2">
-          <a href="/disclaimer" className="hover:text-text-secondary underline-offset-2 hover:underline">
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-xs text-text-tertiary pt-2">
+          <a href="/disclaimer" className="py-1 hover:text-text-secondary underline-offset-2 hover:underline">
             면책 안내
           </a>
           <span aria-hidden>·</span>
-          <a href="/terms" className="hover:text-text-secondary underline-offset-2 hover:underline">
+          <a href="/terms" className="py-1 hover:text-text-secondary underline-offset-2 hover:underline">
             이용약관
           </a>
           <span aria-hidden>·</span>
-          <a href="/privacy" className="hover:text-text-secondary underline-offset-2 hover:underline">
+          <a href="/privacy" className="py-1 hover:text-text-secondary underline-offset-2 hover:underline">
             개인정보 처리방침
           </a>
           <span aria-hidden>·</span>
-          <a href="/safety/resources" className="hover:text-text-secondary underline-offset-2 hover:underline">
+          <a href="/safety/resources" className="py-1 hover:text-text-secondary underline-offset-2 hover:underline">
             정신건강 자원
           </a>
         </div>

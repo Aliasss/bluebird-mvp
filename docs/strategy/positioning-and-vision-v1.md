@@ -53,6 +53,8 @@
 | **누적 가치 (락인)** | 내 사용설명서 (패턴 리포트) — 사용할수록 정교해지는 자기 지도 | 30일+ 사용자에게 통증·왜곡 상관관계 surface |
 | **차별 가치 (카테고리 우위)** | 한국어 fine-tuning (우회 어미·체면 어휘) + 분석가 톤 | 인터뷰 자발 가치 언급 코딩 |
 
+> **누적 가치 락인 메커니즘**: [`bluebird_retention_mechanisms_v1.md`](./bluebird_retention_mechanisms_v1.md) — *내 사용설명서*(매뉴얼)와 *익명 통계 맥락화* 메커니즘으로 구체화. 베타 단계는 데이터 스키마만 / G2 통과 후 매뉴얼 v1.0 / G3 통과 후 통계 노출.
+
 ---
 
 ## 4. 차별화 3축 (vs 디스턴싱)
@@ -152,11 +154,12 @@
 
 ## Cross-references
 
-본 문서는 다음 4개 strategy 문서의 *통합 기준점*:
+본 문서는 다음 5개 strategy 문서의 *통합 기준점*:
 
 - [`pmf-validation-plan.md`](./pmf-validation-plan.md) — 가설·임계·트리거 (살아있는 문서)
 - [`bluebird_competitive_strategy_v1.md`](./bluebird_competitive_strategy_v1.md) — 차별화 축·가드레일
 - [`bluebird_stress_integration_review_v1.md`](./bluebird_stress_integration_review_v1.md) — 입력 vs 결과 원칙
+- [`bluebird_retention_mechanisms_v1.md`](./bluebird_retention_mechanisms_v1.md) — 누적 가치 락인 메커니즘 (매뉴얼·통계 맥락화)
 - [`development-backlog.md`](./development-backlog.md) — 작업 우선순위·tier 분류
 
 이론적 배경: [`docs/research/README.md`](../research/README.md)

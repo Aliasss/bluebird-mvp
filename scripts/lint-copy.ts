@@ -41,6 +41,10 @@ const NAUTICAL_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
   { pattern: /(?<!짙은\s)안개(?!\s+지역|\s*등급)/g, label: '항해 메타포 "안개"' },
   { pattern: /별빛/g, label: '항해 메타포 "별빛"' },
   { pattern: /(?<![\w가-힣])바다(?![\w가-힣])/g, label: '항해 메타포 "바다"' },
+  { pattern: /✦/g, label: '항해 메타포 글리프 "✦" (별)' },
+  { pattern: /✧/g, label: '항해 메타포 글리프 "✧" (별)' },
+  { pattern: /★/g, label: '항해 메타포 글리프 "★" (별)' },
+  { pattern: /☆/g, label: '항해 메타포 글리프 "☆" (별)' },
 ];
 
 // 의료기기 표현 — A3에서 메타에서 제거. 사용자 카피·이벤트명에서도 회피.

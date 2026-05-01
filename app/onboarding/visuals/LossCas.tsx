@@ -26,8 +26,8 @@ export default function LossCas() {
           className="text-primary"
         />
 
-        <text x="245" y="28" textAnchor="end" className="fill-text-tertiary text-[9px]">이득</text>
-        <text x="35" y="92" textAnchor="start" className="fill-primary text-[9px] font-semibold">손실 ×2.25</text>
+        <text x="245" y="24" textAnchor="end" className="fill-text-tertiary text-[9px]">이득</text>
+        <text x="60" y="70" textAnchor="start" className="fill-primary text-[9px] font-semibold">손실 ×2.25</text>
       </svg>
 
       {/* 반추/걱정 게이지 */}

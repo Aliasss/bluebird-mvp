@@ -11,7 +11,7 @@ export const ARCHETYPES: Record<DistortionType, Archetype> = {
   [DistortionType.CATASTROPHIZING]: {
     id: DistortionType.CATASTROPHIZING,
     name: '파국화형 시나리오 구축가',
-    tagline: '최악을 먼저 계산하는 분석가',
+    tagline: '최악을 먼저 계산하는 손실 추정자',
     description:
       '당신의 사고 시스템은 불확실한 상황을 마주할 때 가능한 모든 경로 중 가장 극단적인 손실 시나리오를 먼저 처리합니다. 이는 위험을 조기에 감지하려는 시스템 1의 생존 본능에서 비롯된 패턴입니다. 실제 발생 확률과 무관하게 최악의 결과를 기정사실로 처리하는 경향이 있어 현재의 고통이 실제 위험보다 과장되어 있을 가능성이 높습니다.',
   },
@@ -32,7 +32,7 @@ export const ARCHETYPES: Record<DistortionType, Archetype> = {
   [DistortionType.PERSONALIZATION]: {
     id: DistortionType.PERSONALIZATION,
     name: '책임 과잉 수집가',
-    tagline: '모든 원인을 자신에게서 찾는 분석가',
+    tagline: '모든 원인을 자신에게서 찾는 귀인 추적자',
     description:
       '당신의 사고 시스템은 외부 사건의 원인을 분석할 때 환경 변수와 타인 변수를 과소평가하고 자신을 지나치게 큰 원인 변수로 처리합니다. 이는 통제감을 유지하려는 시스템 1의 시도이지만 실제 귀인 비율을 왜곡하여 불필요한 자기 비난을 생성합니다. 원인의 분산(variance)을 정량적으로 분해하는 습관이 핵심입니다.',
   },

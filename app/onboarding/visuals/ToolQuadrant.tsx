@@ -1,5 +1,5 @@
 // act1-3: 4분면 (명상·코칭·일기·챗봇) + 빈 5번 자리.
-// 5번째 슬롯은 점선 박스 ("분석가에게 닿는 도구는 비어 있다").
+// 5번째 슬롯은 점선 박스 ("사고를 구조로 보여주는 도구는 비어 있다").
 // 별 글리프 ✦/★ 사용 금지 (lint:copy 항해 메타포).
 
 export default function ToolQuadrant() {
@@ -24,8 +24,8 @@ export default function ToolQuadrant() {
       </div>
       <div className="mt-2">
         <div className="border border-dashed border-primary rounded-xl p-3 bg-background-secondary text-center">
-          <p className="text-[12px] font-semibold text-primary">분석가용 — 비어 있음</p>
-          <p className="text-[10px] text-text-secondary mt-0.5">디버깅 도구</p>
+          <p className="text-[12px] font-semibold text-primary">사고 디버깅 — 비어 있음</p>
+          <p className="text-[10px] text-text-secondary mt-0.5">BlueBird</p>
         </div>
       </div>
     </div>

@@ -169,6 +169,7 @@ export default function MePage() {
               { label: '체크인 기록', sub: '모닝·이브닝 체크인 히스토리', href: '/checkin/history' },
               { label: '매뉴얼', sub: '서비스 이용 가이드', href: '/manual' },
               { label: '블루버드 철학', sub: '인지 왜곡이 왜 중요한가요?', href: '/our-philosophy' },
+              { label: '온보딩 다시 보기', sub: '9 슬라이드 — 왜·무엇·어떻게', href: '/onboarding/1?replay=1' },
               { label: '홈 화면에 추가', sub: 'PWA 설치 가이드', href: '/install' },
               { label: '정신건강 자원', sub: '위기 상담·전문기관 안내', href: '/safety/resources' },
             ].map(({ label, sub, href }) => (

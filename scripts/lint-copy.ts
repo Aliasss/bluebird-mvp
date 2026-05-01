@@ -33,6 +33,11 @@ const COMFORT_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
   { pattern: /힘내(?:세요|요)?/g, label: '위로 어휘 "힘내"' },
   { pattern: /잘하고\s*있어/g, label: '위로 어휘 "잘하고 있어"' },
   { pattern: /응원(?:해요|합니다|드려요)?/g, label: '위로 어휘 "응원"' },
+  // 만화 톤 회귀 가드 — 온보딩 작업(2026-05-01) 신규 추가.
+  { pattern: /안녕[!?]/g, label: '캐릭터 친근체 "안녕!"' },
+  { pattern: /함께\s*(?:해|들여다|가봐|시작)/g, label: '동반체 "함께"' },
+  { pattern: /친구처럼/g, label: '친구체 "친구처럼"' },
+  { pattern: /마음을\s*안아/g, label: '위로 "마음을 안아"' },
 ];
 
 const NAUTICAL_PATTERNS: Array<{ pattern: RegExp; label: string }> = [

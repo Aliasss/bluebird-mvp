@@ -75,10 +75,23 @@ function DashboardContent() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         router.push('/auth/login');
-      } else {
-        setUser(user);
-        await fetchData(user.id);
+        return;
       }
+
+      // 온보딩 미완 사용자는 /onboarding/1 redirect.
+      // user_onboarding row 부재 = 미완. RLS로 본인 row만 조회.
+      const { data: onboarding } = await supabase
+        .from('user_onboarding')
+        .select('user_id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (!onboarding) {
+        router.push('/onboarding/1');
+        return;
+      }
+
+      setUser(user);
+      await fetchData(user.id);
       setLoading(false);
     };
 

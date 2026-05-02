@@ -59,11 +59,26 @@ npm run dev
 
 ## 환경 변수
 
+`.env.local.example` 을 `.env.local` 로 복사한 뒤 값을 채워 넣으세요.
+
+```bash
+cp .env.local.example .env.local
 ```
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-GEMINI_API_KEY=your_gemini_api_key
-```
+
+### 필수
+
+| 키 | 용도 | 획득 |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase 프로젝트 URL (브라우저·서버 양쪽에서 읽힘) | Supabase 대시보드 → Settings → API |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | RLS 보호 하의 anon JWT 키 (브라우저 노출 OK) | 동일 위치 |
+| `GEMINI_API_KEY` | 분석·질문 생성용. **서버 전용** — 절대 `NEXT_PUBLIC_` 접두 금지 | https://aistudio.google.com/app/apikey |
+
+### 선택
+
+| 키 | 용도 |
+|---|---|
+| `SUPABASE_SERVICE_ROLE_KEY` | `scripts/rls-audit.ts` 전용. RLS bypass 권한 — **스테이징/dev 프로젝트에서만**. Production 절대 금지 |
+| `DEBUG_ANALYZE` | `1` 설정 시 Gemini raw response 를 stderr 출력. production 미설정 |
 
 ## 프로젝트 구조
 

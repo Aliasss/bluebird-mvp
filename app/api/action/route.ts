@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { consumeRateLimit, getClientIp } from '@/lib/security/rate-limit';
 import { AUTONOMY_NOTE_BONUS, calcAutonomyScore } from '@/lib/intervention/autonomy-score';
+import { logServerError } from '@/lib/logging/server-logger';
 import { z } from 'zod';
 
 type ActionRequestBody = {
@@ -163,7 +164,7 @@ export async function POST(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('POST /api/action 실패:', error);
+    logServerError('api/action', error);
     return NextResponse.json({ error: '행동 저장 중 오류가 발생했습니다.' }, { status: 500 });
   }
 }

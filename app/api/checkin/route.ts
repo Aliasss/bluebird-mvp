@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { logServerError } from '@/lib/logging/server-logger';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -62,7 +63,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    console.error('POST /api/checkin 실패:', error);
+    logServerError('api/checkin', error);
     return NextResponse.json({ error: '체크인 중 오류가 발생했습니다.' }, { status: 500 });
   }
 }

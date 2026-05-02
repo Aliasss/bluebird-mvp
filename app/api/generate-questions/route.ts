@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { generateSocraticQuestionsWithGemini } from '@/lib/openai/gemini';
 import { isAiInputTooLong, MAX_AI_TEXT_LENGTH } from '@/lib/security/ai-guard';
+import { logServerError } from '@/lib/logging/server-logger';
 import type { DistortionAnalysis } from '@/types';
 import { z } from 'zod';
 
@@ -158,7 +159,10 @@ export async function POST(request: Request) {
         decenteringPrompt: analysisMeta?.decentering_prompt,
       });
     } catch (aiError) {
-      console.error('Gemini 질문 생성 실패(폴백 적용):', aiError);
+      logServerError('api/generate-questions:gemini-fallback', aiError, {
+        logId,
+        userId: user.id,
+      });
       questions = [
         '이 상황이 실제로 최악으로 전개될 확률을 0~100%로 추정하면 몇 %인가요?',
         '지금 생각을 뒷받침하는 객관적 증거와 반대 증거를 각각 3가지씩 적어볼 수 있나요?',
@@ -218,7 +222,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ questions: normalizedQuestions }, { status: 200 });
   } catch (error) {
-    console.error('POST /api/generate-questions 실패:', error);
+    logServerError('api/generate-questions', error);
     return NextResponse.json(
       { error: '질문 생성 처리 중 오류가 발생했습니다.' },
       { status: 500 }

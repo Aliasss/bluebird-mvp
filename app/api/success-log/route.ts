@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { AUTONOMY_NOTE_BONUS, calcAutonomyScore } from '@/lib/intervention/autonomy-score';
+import { logServerError } from '@/lib/logging/server-logger';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -78,12 +79,15 @@ export async function POST(request: Request) {
 
     if (interventionError) {
       // logs 저장은 됐으니 실패해도 진행 (non-critical)
-      console.error('intervention 저장 실패:', interventionError);
+      logServerError('api/success-log:intervention-insert', interventionError, {
+        userId: user.id,
+        logId: logData.id,
+      });
     }
 
     return NextResponse.json({ success: true, logId: logData.id }, { status: 200 });
   } catch (error) {
-    console.error('POST /api/success-log 실패:', error);
+    logServerError('api/success-log', error);
     return NextResponse.json({ error: '저장 중 오류가 발생했습니다.' }, { status: 500 });
   }
 }

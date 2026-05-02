@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { analyzeDistortionsWithGemini } from '@/lib/openai/gemini';
 import { isAiInputTooLong, MAX_AI_TEXT_LENGTH } from '@/lib/security/ai-guard';
+import { logServerError } from '@/lib/logging/server-logger';
 import type { AIAnalysisResult, DistortionAnalysis } from '@/types';
 import { z } from 'zod';
 import { detect } from '@/lib/safety/detect';
@@ -128,7 +129,11 @@ export async function POST(request: Request) {
           user_override: false,
         });
         if (safetyLogError) {
-          console.error('safety_events insert 실패:', safetyLogError);
+          // P0 안전 가드 — INSERT 실패해도 사용자엔 안전 응답을 그대로 반환.
+          logServerError('api/analyze:safety-events-insert', safetyLogError, {
+            userId: user.id,
+            logId,
+          });
         }
 
         return NextResponse.json(
@@ -243,7 +248,7 @@ export async function POST(request: Request) {
         pain_score: logData.pain_score ?? null,
       });
     } catch (aiError) {
-      console.error('Gemini 분석 실패:', aiError);
+      logServerError('api/analyze:gemini', aiError, { userId: user.id, logId });
       return NextResponse.json(
         { error: 'AI 분석에 실패했어요. 잠시 후 다시 시도해주세요.', retryable: true },
         { status: 503 }
@@ -318,7 +323,10 @@ export async function POST(request: Request) {
         .eq('id', logId)
         .eq('user_id', user.id);
       if (categoryError) {
-        console.error('logs.trigger_category 업데이트 실패:', categoryError);
+        logServerError('api/analyze:trigger-category-update', categoryError, {
+          userId: user.id,
+          logId,
+        });
       }
     }
 
@@ -348,7 +356,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ ...normalized }, { status: 200 });
   } catch (error) {
-    console.error('POST /api/analyze 실패:', error);
+    logServerError('api/analyze', error);
     return NextResponse.json({ error: '분석 처리 중 오류가 발생했습니다.' }, { status: 500 });
   }
 }

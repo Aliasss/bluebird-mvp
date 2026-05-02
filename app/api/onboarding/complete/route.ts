@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { logServerError } from '@/lib/logging/server-logger';
 
 // POST /api/onboarding/complete
 //   body: { reached_act: 1 | 2 | 3 }
@@ -58,7 +59,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    console.error('POST /api/onboarding/complete 실패:', error);
+    logServerError('api/onboarding/complete', error);
     return NextResponse.json({ error: '온보딩 상태 처리 중 오류' }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { logServerError } from '@/lib/logging/server-logger';
 
 const schema = z.object({ logId: z.string().uuid() });
 
@@ -33,7 +34,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (error) {
-    console.error('POST /api/safety/override 실패:', error);
+    logServerError('api/safety/override', error);
     return NextResponse.json({ error: 'override 처리 실패' }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { consumeRateLimit, getClientIp } from '@/lib/security/rate-limit';
+import { logServerError } from '@/lib/logging/server-logger';
 import { z } from 'zod';
 
 type SaveAnswersRequestBody = {
@@ -96,7 +97,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    console.error('POST /api/intervention/answers 실패:', error);
+    logServerError('api/intervention/answers', error);
     return NextResponse.json(
       { error: '답변 저장 처리 중 오류가 발생했습니다.' },
       { status: 500 }

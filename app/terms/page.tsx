@@ -33,8 +33,10 @@ export default function TermsPage() {
           </p>
           <h1 className="text-3xl font-bold text-text-primary tracking-tight">이용약관</h1>
           <p className="text-sm text-text-secondary leading-relaxed">
-            본 약관은 Project BlueBird(이하 "서비스")의 이용 조건을 정합니다. 서비스에 가입함으로써 본
-            약관에 동의하시는 것으로 간주됩니다.
+            Project BlueBird(이하 "서비스")는 1인 운영자가 관리하는 분석 도구입니다 (개인사업자
+            미등록). 본 약관은 서비스의 이용 조건을 정하며, 본 약관에서 "운영자"는 본 서비스를
+            운영·관리하는 개인을 의미합니다. 서비스에 가입함으로써 본 약관에 동의하시는 것으로
+            간주됩니다.
           </p>
           <p className="text-xs text-text-tertiary">
             최종 수정일: 2026년 4월 26일 / 시행일: 2026년 4월 26일
@@ -101,7 +103,7 @@ export default function TermsPage() {
               </ul>
             </li>
             <li>
-              회사는 위 금지 행위가 확인될 경우 사전 고지 없이 해당 계정의 이용을 제한하거나 종료할 수
+              운영자는 위 금지 행위가 확인될 경우 사전 고지 없이 해당 계정의 이용을 제한하거나 종료할 수
               있습니다.
             </li>
           </ol>
@@ -112,12 +114,12 @@ export default function TermsPage() {
           <h2 className={SECTION_HEADER}>제4조 (책임의 한계)</h2>
           <ol className="text-sm text-text-secondary leading-relaxed list-decimal pl-5 space-y-1.5">
             <li>
-              회사는 서비스가 의료적 효과나 특정 결과를 보장하지 않음을 명시하며, 이용자가 서비스 결과를
+              운영자는 서비스가 의료적 효과나 특정 결과를 보장하지 않음을 명시하며, 이용자가 서비스 결과를
               참고하여 내린 결정·행동에 대한 직접적·간접적 손해에 대해 책임을 지지 않습니다.
             </li>
             <li>
               서비스에 사용되는 외부 AI 모델(Google Gemini)·인프라(Supabase, Vercel)의 장애·오류로 인한
-              서비스 일시 중단, 분석 지연·실패는 회사의 통제 범위를 벗어날 수 있으며, 회사는 이러한
+              서비스 일시 중단, 분석 지연·실패는 운영자의 통제 범위를 벗어날 수 있으며, 운영자는 이러한
               사유로 인한 손해에 대해 법령이 허용하는 범위 내에서 책임을 지지 않습니다.
             </li>
             <li>
@@ -147,7 +149,7 @@ export default function TermsPage() {
               를 따릅니다 (30일 유예 보관 후 영구 삭제 또는 즉시 삭제 옵션 선택).
             </li>
             <li>
-              회사는 이용자가 본 약관에 위반하는 경우, 사전 고지 후(긴급한 경우 사후 고지) 해당 이용자의
+              운영자는 이용자가 본 약관에 위반하는 경우, 사전 고지 후(긴급한 경우 사후 고지) 해당 이용자의
               계약을 해지할 수 있습니다.
             </li>
           </ol>
@@ -168,7 +170,7 @@ export default function TermsPage() {
           <h2 className={SECTION_HEADER}>제7조 (약관의 변경)</h2>
           <ol className="text-sm text-text-secondary leading-relaxed list-decimal pl-5 space-y-1.5">
             <li>
-              회사는 관련 법령 및 서비스 운영 정책 변경에 따라 본 약관을 개정할 수 있으며, 변경 시 시행일
+              운영자는 관련 법령 및 서비스 운영 정책 변경에 따라 본 약관을 개정할 수 있으며, 변경 시 시행일
               최소 7일 전에 서비스 내 공지 또는 가입 이메일로 안내합니다.
             </li>
             <li>
@@ -186,9 +188,9 @@ export default function TermsPage() {
         <article className="bg-white rounded-2xl shadow-card p-6 space-y-3">
           <h2 className={SECTION_HEADER}>제8조 (준거법 및 분쟁 해결)</h2>
           <ol className="text-sm text-text-secondary leading-relaxed list-decimal pl-5 space-y-1.5">
-            <li>본 약관의 해석 및 회사와 이용자 간 분쟁에는 대한민국 법령이 적용됩니다.</li>
+            <li>본 약관의 해석 및 운영자와 이용자 간 분쟁에는 대한민국 법령이 적용됩니다.</li>
             <li>
-              분쟁 발생 시 회사와 이용자는 신의성실 원칙에 따라 우선 협의하여 해결하며, 협의가 어려울
+              분쟁 발생 시 운영자와 이용자는 신의성실 원칙에 따라 우선 협의하여 해결하며, 협의가 어려울
               경우 「민사소송법」에 따른 관할 법원에 제소할 수 있습니다.
             </li>
           </ol>

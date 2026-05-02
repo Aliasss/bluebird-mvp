@@ -37,8 +37,9 @@ export default function PrivacyPage() {
             개인정보 처리방침
           </h1>
           <p className="text-sm text-text-secondary leading-relaxed">
-            BlueBird(이하 "회사" 또는 "서비스")는 「개인정보 보호법」(PIPA) 및 관련 법령을 준수하여
-            이용자의 개인정보를 다음과 같이 처리합니다.
+            BlueBird(이하 "서비스")는 1인 운영자가 관리하는 분석 도구로서 (개인사업자 미등록),
+            「개인정보 보호법」(PIPA) 및 관련 법령을 준수하여 이용자의 개인정보를 다음과 같이
+            처리합니다. 본 방침에서 "운영자"는 본 서비스를 운영·관리하는 개인을 의미합니다.
           </p>
           <p className="text-xs text-text-tertiary">최종 수정일: 2026년 4월 28일 / 시행일: 2026년 4월 28일</p>
         </section>
@@ -60,7 +61,7 @@ export default function PrivacyPage() {
                 </li>
                 <li>
                   <strong className="text-text-primary">비밀번호</strong> — Supabase Auth가 단방향
-                  해시 처리하여 저장. 회사는 비밀번호 원문에 접근할 수 없습니다.
+                  해시 처리하여 저장. 운영자는 비밀번호 원문에 접근할 수 없습니다.
                 </li>
               </ul>
             </div>
@@ -86,7 +87,7 @@ export default function PrivacyPage() {
                 </li>
                 <li>
                   <strong className="text-text-primary">분석 품질 메트릭</strong> (분석 성공·재시도·파싱
-                  실패·질문 폴백 발동 등의 이벤트와 user_id) — 회사가 자체 운영하는 Supabase
+                  실패·질문 폴백 발동 등의 이벤트와 user_id) — 운영자가 자체 운영하는 Supabase
                   테이블에 저장되며, 사일런트 실패를 빠르게 감지·수정해 분석 품질을 개선하기 위한
                   내부 운영 목적으로만 사용됩니다. 외부에 공유되지 않습니다.
                 </li>
@@ -119,7 +120,7 @@ export default function PrivacyPage() {
                 제3자 제공
               </p>
               <p>
-                회사는 이용자의 개인정보를{' '}
+                운영자는 이용자의 개인정보를{' '}
                 <strong className="text-text-primary">제3자에게 판매·제공하지 않습니다.</strong> 단,
                 법령에 따른 수사·재판 절차에서 적법한 절차를 거쳐 요청받은 경우에 한하여 제공합니다.
               </p>
@@ -132,7 +133,7 @@ export default function PrivacyPage() {
                   <p className="text-sm font-semibold text-text-primary">Supabase, Inc. (미국)</p>
                   <p className="text-xs text-text-tertiary">위탁 항목: 계정·인증·데이터베이스 호스팅</p>
                   <p className="text-xs text-text-tertiary">
-                    저장 리전: AWS ap-northeast-2 (서울) 등 회사 설정에 따름
+                    저장 리전: AWS ap-northeast-2 (서울) 등 운영자 설정에 따름
                   </p>
                 </li>
                 <li className="border border-background-tertiary rounded-xl p-4 space-y-1.5">

@@ -680,7 +680,7 @@ export default function AnalyzePage() {
             </div>
           </div>
           <div className="mt-4 space-y-2">
-            <p className="text-xs md:text-sm text-text-secondary">System 2 기동 핵심 질문</p>
+            <p className="text-xs md:text-sm text-text-secondary">검증 모드(System 2) 시작. 핵심 질문</p>
             <p className="text-sm text-text-primary">{theoryMeta.system2QuestionSeed}</p>
             <p className="text-xs md:text-sm text-text-secondary">탈중심화 안내</p>
             <p className="text-sm text-text-primary">{theoryMeta.decenteringPrompt}</p>

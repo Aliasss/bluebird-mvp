@@ -72,7 +72,7 @@ export default function HomePage() {
         {/* CTA */}
         <div className="space-y-3 pt-2">
           <p className="text-xs text-text-tertiary text-center">
-            CBT, CAS, 전망이론을 기반으로 설계된 인지 분석 도구
+            인지행동치료(CBT)·메타인지 모형(CAS)·전망이론을 기반으로 설계된 인지 분석 도구
           </p>
           <button
             className="w-full bg-white border border-primary/60 text-primary font-semibold py-3 px-6 rounded-2xl touch-manipulation active:scale-95 transition-transform"

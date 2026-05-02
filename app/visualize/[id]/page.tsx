@@ -310,7 +310,7 @@ export default function VisualizePage() {
               </p>
             </div>
             <div className="border border-background-tertiary rounded-xl p-3">
-              <p className="text-text-secondary mb-1">CAS-반추</p>
+              <p className="text-text-secondary mb-1">반추 신호</p>
               <p className="font-semibold text-text-primary">
                 {state.casRumination !== null
                   ? `${(state.casRumination * 100).toFixed(0)}%`
@@ -318,7 +318,7 @@ export default function VisualizePage() {
               </p>
             </div>
             <div className="border border-background-tertiary rounded-xl p-3">
-              <p className="text-text-secondary mb-1">CAS-걱정</p>
+              <p className="text-text-secondary mb-1">걱정 신호</p>
               <p className="font-semibold text-text-primary">
                 {state.casWorry !== null ? `${(state.casWorry * 100).toFixed(0)}%` : '미측정'}
               </p>

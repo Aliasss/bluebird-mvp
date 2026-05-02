@@ -38,7 +38,6 @@ const PII_LENGTH_ONLY_KEYS = new Set([
   'system2_moment',
   'situation',
   'system2Action',
-  'situation',
   'note',
   'completionNote',
   'completion_note',

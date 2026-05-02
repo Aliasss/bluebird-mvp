@@ -58,7 +58,7 @@ const NAUTICAL_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
 const MEDICAL_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
   { pattern: /교정(?!\s*(?:효능|치료))/g, label: '의료기기 표현 "교정"' },
   { pattern: /진단(?!명|서)/g, label: '의료기기 표현 "진단"' },
-  { pattern: /치료(?!학|법)/g, label: '의료기기 표현 "치료"' },
+  { pattern: /(?<!인지행동)치료(?!학|법)/g, label: '의료기기 표현 "치료"' },
 ];
 
 // 의료 어휘 라인 내 부정 명제 식별자 (예: "치료가 아닙니다" "진단을 대체하지 않습니다")

@@ -1,4 +1,4 @@
-// act3-2: pain 0~10 graph + 디버깅 직전·24시간 후 점 2개 + Δ 라벨.
+// act3-2: pain 0~10 graph + 디버깅 직전·24시간 후 점 2개 + 통증 감소 라벨.
 
 export default function DeltaPain() {
   return (
@@ -28,8 +28,8 @@ export default function DeltaPain() {
         {/* 두 점 잇는 점선 */}
         <line x1="80" y1="38" x2="220" y2="83" stroke="currentColor" strokeWidth="0.8" strokeDasharray="3 2" />
 
-        {/* Δ 라벨 */}
-        <text x="150" y="65" textAnchor="middle" className="fill-primary text-[12px] font-bold">Δ = 5</text>
+        {/* 통증 감소 라벨 */}
+        <text x="150" y="65" textAnchor="middle" className="fill-primary text-[12px] font-bold">통증 5 감소</text>
       </svg>
     </div>
   );

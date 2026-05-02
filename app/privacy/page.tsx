@@ -37,9 +37,9 @@ export default function PrivacyPage() {
             개인정보 처리방침
           </h1>
           <p className="text-sm text-text-secondary leading-relaxed">
-            BlueBird(이하 "서비스")는 1인 운영자가 관리하는 분석 도구로서 (개인사업자 미등록),
-            「개인정보 보호법」(PIPA) 및 관련 법령을 준수하여 이용자의 개인정보를 다음과 같이
-            처리합니다. 본 방침에서 "운영자"는 본 서비스를 운영·관리하는 개인을 의미합니다.
+            BlueBird(이하 "서비스")는 1인 운영자가 관리하는 분석 도구로서 「개인정보
+            보호법」(PIPA) 및 관련 법령을 준수하여 이용자의 개인정보를 다음과 같이 처리합니다. 본
+            방침에서 "운영자"는 본 서비스를 운영·관리하는 개인을 의미합니다.
           </p>
           <p className="text-xs text-text-tertiary">최종 수정일: 2026년 4월 28일 / 시행일: 2026년 4월 28일</p>
         </section>

@@ -33,10 +33,9 @@ export default function TermsPage() {
           </p>
           <h1 className="text-3xl font-bold text-text-primary tracking-tight">이용약관</h1>
           <p className="text-sm text-text-secondary leading-relaxed">
-            Project BlueBird(이하 "서비스")는 1인 운영자가 관리하는 분석 도구입니다 (개인사업자
-            미등록). 본 약관은 서비스의 이용 조건을 정하며, 본 약관에서 "운영자"는 본 서비스를
-            운영·관리하는 개인을 의미합니다. 서비스에 가입함으로써 본 약관에 동의하시는 것으로
-            간주됩니다.
+            Project BlueBird(이하 "서비스")는 1인 운영자가 관리하는 분석 도구입니다. 본 약관은
+            서비스의 이용 조건을 정하며, 본 약관에서 "운영자"는 본 서비스를 운영·관리하는 개인을
+            의미합니다. 서비스에 가입함으로써 본 약관에 동의하시는 것으로 간주됩니다.
           </p>
           <p className="text-xs text-text-tertiary">
             최종 수정일: 2026년 4월 26일 / 시행일: 2026년 4월 26일

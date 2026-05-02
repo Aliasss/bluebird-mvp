@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase/client';
 import type { DistortionAnalysis, Log } from '@/types';
 import PageHeader from '@/components/ui/PageHeader';
 import SkeletonCard from '@/components/ui/SkeletonCard';
+import InfoTooltip from '@/components/ui/InfoTooltip';
 import {
   parseActionPlan,
   serializeActionPlan,
@@ -468,7 +469,9 @@ export default function ActionPage() {
         </div>
 
         <div className="bg-white rounded-2xl p-5 shadow-card">
-          <h2 className="text-base md:text-lg font-bold text-text-primary mb-3">자율성 지수</h2>
+          <h2 className="text-base md:text-lg font-bold text-text-primary mb-3">
+            <InfoTooltip text="행동을 완료할 때마다 올라가는 누적 점수입니다.">자율성 지수</InfoTooltip>
+          </h2>
           <p className="text-3xl font-bold text-primary">
             {state.autonomyScore ?? 0}
             <span className="text-base text-text-secondary ml-1">점</span>

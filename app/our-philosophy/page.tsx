@@ -36,7 +36,7 @@ const SECTIONS: Section[] = [
     subtitle: '비대칭 가중치',
     body:
       '인간의 의사결정 시스템은 동일한 크기의 손실을 동일한 크기의 이익보다 약 2.25배 더 무겁게 평가합니다. 부정적 사건이 과대 표상되는 이유는 의지의 결함이 아니라 진화적 가중치 함수의 결과입니다.',
-    stat: { value: 'λ ≈ 2.25', label: '손실 가중치 계수', source: 'Kahneman & Tversky, 1979' },
+    stat: { value: '약 2.25배', label: '손실 가중치 (이득 대비)', source: 'Kahneman & Tversky, 1979' },
   },
   {
     number: '03',
@@ -66,7 +66,7 @@ const SECTIONS: Section[] = [
 
 const CITATIONS = [
   { category: '유전적 기질', data: '불안 장애의 유전적 기여도 (30–60%)', source: 'NIH (PMC7237282), "A Major Role for Common Genetic Variation in Anxiety Disorders" (2025)' },
-  { category: '손실 회피', data: '손실 가중치 계수 (λ ≈ 2.25)', source: 'Kahneman & Tversky (1979), "Prospect Theory: An Analysis of Decision under Risk"' },
+  { category: '손실 회피', data: '손실 가중치 약 2.25배', source: 'Kahneman & Tversky (1979), "Prospect Theory: An Analysis of Decision under Risk"' },
   { category: '이중 프로세스', data: '시스템 1(10ms)과 시스템 2(3s)의 처리 속도', source: 'Daniel Kahneman (2011), "Thinking, Fast and Slow" / LeDoux (1996)' },
   { category: '사회적 불안', data: '인지 왜곡의 설명력 (R² = .46)', source: 'Khan, S., et al. (2021), "Cognitive Distortions and Social Interaction Anxiety", JPPS' },
   { category: '주의 증후군', data: 'CAS와 반추의 상관관계', source: 'Adrian Wells (2009), "Metacognitive Therapy for Anxiety and Depression"' },
@@ -108,7 +108,7 @@ export default function OurPhilosophyPage() {
             <span className="text-primary">측정 가능한 인지 시스템의 출력</span>입니다.
           </h1>
           <p className="text-sm sm:text-base text-text-secondary leading-relaxed">
-            BlueBird는 사용자의 자동 사고를 인지 왜곡 분류 체계에 따라 구조화하고, Δpain·완료율·재발 빈도를 시계열로 기록합니다. 본 페이지는 그 설계가 근거하는 다섯 가지 연구 결과를 요약합니다.
+            BlueBird는 사용자의 자동 사고를 인지 왜곡 분류 체계에 따라 구조화하고, 통증 변화량·완료율·재발 빈도를 시계열로 기록합니다. 본 페이지는 그 설계가 근거하는 다섯 가지 연구 결과를 요약합니다.
           </p>
         </div>
       </section>
@@ -163,7 +163,7 @@ export default function OurPhilosophyPage() {
             첫 분석으로 자신의 인지 패턴을 측정해보세요
           </h3>
           <p className="text-sm text-text-secondary leading-relaxed">
-            누적된 분석은 왜곡 빈도·Δpain 시계열·완료율로 정리되어 본인의 사고 운영 체계를 객관화하는 자료가 됩니다.
+            누적된 분석은 왜곡 빈도·통증 변화량 시계열·완료율로 정리되어 본인의 사고 운영 체계를 객관화하는 자료가 됩니다.
           </p>
           <div className="space-y-2 pt-2">
             <button

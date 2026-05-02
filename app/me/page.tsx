@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { BookOpen, CheckCircle, Star, ChevronRight } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import BottomTabBar from '@/components/ui/BottomTabBar';
+import InfoTooltip from '@/components/ui/InfoTooltip';
 import { getRankResult, RANKS } from '@/lib/utils/rank';
 import type { User } from '@supabase/supabase-js';
 
@@ -111,7 +112,9 @@ export default function MePage() {
                 <Star size={16} className="text-warning" />
               </div>
               <p className="text-xl font-bold text-text-primary">{stats.autonomyScore}</p>
-              <p className="text-[10px] text-text-secondary mt-0.5">자율성 지수</p>
+              <p className="text-[10px] text-text-secondary mt-0.5">
+                <InfoTooltip text="행동을 완료할 때마다 올라가는 누적 점수입니다.">자율성 지수</InfoTooltip>
+              </p>
             </div>
           </div>
 

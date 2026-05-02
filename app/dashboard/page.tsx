@@ -9,6 +9,7 @@ import { formatDate } from '@/lib/utils';
 import StreakBanner from '@/components/ui/StreakBanner';
 import ArchetypeCard from '@/components/ui/ArchetypeCard';
 import BottomTabBar from '@/components/ui/BottomTabBar';
+import InfoTooltip from '@/components/ui/InfoTooltip';
 import { calculateStreak, type StreakResult } from '@/lib/utils/streak';
 import { getArchetypeResultFromRows, type ArchetypeResult } from '@/lib/utils/archetype';
 import { getRankResult } from '@/lib/utils/rank';
@@ -404,7 +405,9 @@ function DashboardContent() {
                   </p>
                 </div>
                 <div className="bg-white rounded-2xl p-4 shadow-card">
-                  <p className="text-xs text-text-secondary mb-1">자율성 지수</p>
+                  <p className="text-xs text-text-secondary mb-1">
+                    <InfoTooltip text="행동을 완료할 때마다 올라가는 누적 점수입니다.">자율성 지수</InfoTooltip>
+                  </p>
                   <p className="text-xl font-extrabold text-warning tracking-tight">{autonomyScore}점</p>
                   <p className="text-[10px] font-semibold text-primary mt-0.5">{rank.title}</p>
                   <div className="mt-2 h-1 bg-background-secondary rounded-full overflow-hidden">
@@ -419,7 +422,7 @@ function DashboardContent() {
                 </div>
               </div>
               <div className="bg-white rounded-2xl p-4 shadow-card">
-                <p className="text-xs text-text-secondary mb-1">이번 주 Δpain 누적</p>
+                <p className="text-xs text-text-secondary mb-1">이번 주 통증 변화량 누적</p>
                 <p className="text-2xl font-extrabold text-primary tracking-tight">
                   {weeklyPositiveDeltaPain}
                   <span className="text-sm text-text-tertiary ml-1">점</span>

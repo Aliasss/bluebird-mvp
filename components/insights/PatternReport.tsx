@@ -146,7 +146,7 @@ export default function PatternReport({ rows, periodLabel }: PatternReportProps)
 
       <div className="space-y-2">
         <h3 className="text-xs font-semibold text-text-secondary">
-          가장 효과적인 패턴 (Δpain · {MIN_SAMPLES_FOR_DELTA}회 이상)
+          가장 효과적인 패턴 (통증 변화량 · {MIN_SAMPLES_FOR_DELTA}회 이상)
         </h3>
         {effective.length === 0 ? (
           <p className="text-xs text-text-tertiary">
@@ -159,7 +159,7 @@ export default function PatternReport({ rows, periodLabel }: PatternReportProps)
                 key={`eff-${cell.category}-${cell.distortion}`}
                 category={cell.category}
                 distortion={cell.distortion}
-                rightLabel={`Δ ${formatDelta(cell.avgDelta as number)} (${cell.count}회)`}
+                rightLabel={`${formatDelta(cell.avgDelta as number)} (${cell.count}회)`}
                 rightTone={(cell.avgDelta ?? 0) > 0 ? 'positive' : 'muted'}
               />
             ))}

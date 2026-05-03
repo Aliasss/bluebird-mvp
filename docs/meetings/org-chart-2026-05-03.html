@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>BlueBird 조직 구성도 — 2026-05-03</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
+<style>
+  :root {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-tertiary: #64748b;
+    --primary: #2563eb;
+    --primary-deep: #1e40af;
+    --primary-soft: #eff6ff;
+    --accent: #06b6d4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    padding: 48px 24px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  header p {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--text-tertiary);
+    font-family: 'JetBrains Mono', monospace, 'Pretendard Variable';
+  }
+
+  /* ─────────── 트리 구조 ─────────── */
+  .tree { display: flex; flex-direction: column; align-items: center; }
+
+  /* CEO */
+  .row-ceo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0;
+  }
+  .node-ceo {
+    background: var(--primary-deep);
+    color: #fff;
+    padding: 18px 32px;
+    border-radius: 6px;
+    text-align: center;
+    min-width: 220px;
+  }
+  .node-ceo .role { font-size: 14px; font-weight: 700; letter-spacing: 0.02em; }
+  .node-ceo .desc { font-size: 11px; opacity: 0.85; margin-top: 4px; }
+
+  /* 수직 연결선 */
+  .v-line {
+    width: 1px;
+    height: 32px;
+    background: var(--border-strong);
+    margin: 0 auto;
+  }
+
+  /* 수평 분기 (3 임원) */
+  .branch-row {
+    width: 100%;
+    max-width: 960px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    position: relative;
+  }
+  .branch-row::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 16.66%;
+    right: 16.66%;
+    height: 1px;
+    background: var(--border-strong);
+  }
+  .branch-row > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 32px;
+    position: relative;
+  }
+  .branch-row > div::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 1px;
+    height: 32px;
+    background: var(--border-strong);
+  }
+
+  /* 임원 카드 */
+  .node-exec {
+    background: var(--primary);
+    color: #fff;
+    padding: 14px 24px;
+    border-radius: 6px;
+    text-align: center;
+    min-width: 200px;
+  }
+  .node-exec .role { font-size: 13px; font-weight: 700; }
+  .node-exec .domain { font-size: 11px; opacity: 0.9; margin-top: 2px; }
+  .node-exec .desc {
+    font-size: 11px;
+    opacity: 0.85;
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  /* 시니어 row */
+  .seniors-of-exec {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: 280px;
+    position: relative;
+  }
+  .seniors-of-exec::before {
+    content: '';
+    position: absolute;
+    top: -16px;
+    left: 25%;
+    right: 25%;
+    height: 1px;
+    background: var(--border-strong);
+  }
+  .seniors-of-exec > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 16px;
+    position: relative;
+  }
+  .seniors-of-exec > div::before {
+    content: '';
+    position: absolute;
+    top: -16px;
+    width: 1px;
+    height: 16px;
+    background: var(--border-strong);
+  }
+
+  /* 시니어 카드 */
+  .node-senior {
+    background: var(--surface);
+    color: var(--text-primary);
+    padding: 10px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    text-align: center;
+    min-width: 130px;
+    width: 100%;
+  }
+  .node-senior .role {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary-deep);
+    line-height: 1.3;
+  }
+  .node-senior .desc {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+  .node-senior .badge {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 2px 6px;
+    background: var(--primary-soft);
+    color: var(--primary-deep);
+    font-size: 9px;
+    font-weight: 700;
+    border-radius: 3px;
+    letter-spacing: 0.03em;
+  }
+
+  /* 범례 */
+  .legend {
+    margin-top: 64px;
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .legend h2 {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+    letter-spacing: 0.02em;
+  }
+  .legend-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .legend-item {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .legend-item strong {
+    color: var(--text-primary);
+    font-weight: 700;
+  }
+  .legend-item .swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    margin-right: 8px;
+    vertical-align: middle;
+    border: 1px solid var(--border-strong);
+  }
+
+  /* 협업 패턴 표 */
+  .collab {
+    margin-top: 32px;
+  }
+  .collab table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .collab th, .collab td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .collab th {
+    background: var(--primary-soft);
+    color: var(--primary-deep);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+  }
+  .collab td { color: var(--text-secondary); }
+  .collab td strong { color: var(--text-primary); }
+
+  /* footer */
+  footer {
+    margin-top: 48px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-family: 'JetBrains Mono', monospace, 'Pretendard Variable';
+  }
+
+  @media (max-width: 768px) {
+    body { padding: 24px 12px; }
+    .branch-row { grid-template-columns: 1fr; gap: 32px; }
+    .branch-row::before { display: none; }
+    .branch-row > div::before { display: none; }
+    .branch-row > div { padding-top: 0; }
+    .legend-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>BlueBird 조직 구성도</h1>
+    <p>2026-05-03 / CEO + 9명 (3 임원 + 6 시니어)</p>
+  </header>
+
+  <div class="tree">
+
+    <!-- CEO -->
+    <div class="row-ceo">
+      <div class="node-ceo">
+        <div class="role">CEO</div>
+        <div class="desc">최종 의사결정 · 비전 · PMF 정의</div>
+      </div>
+    </div>
+
+    <div class="v-line"></div>
+
+    <!-- 3 임원 row -->
+    <div class="branch-row">
+
+      <!-- CPO 분기 -->
+      <div>
+        <div class="node-exec">
+          <div class="role">CPO</div>
+          <div class="domain">제품</div>
+          <div class="desc">제품 의사결정 · PMF 검증 · 미시 결정</div>
+        </div>
+        <div class="seniors-of-exec">
+          <div>
+            <div class="node-senior">
+              <div class="role">product-designer</div>
+              <div class="desc">시각 · UX · 마이크로카피<br>본질 위협 #1·#2 1차 방어</div>
+              <span class="badge">10년차</span>
+            </div>
+          </div>
+          <div>
+            <div class="node-senior">
+              <div class="role">product-owner</div>
+              <div class="desc">백로그 · AC · 가설→메트릭<br>4 임원 의견 통합</div>
+              <span class="badge">10년차</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CSO 분기 -->
+      <div>
+        <div class="node-exec">
+          <div class="role">CSO</div>
+          <div class="domain">전략</div>
+          <div class="desc">차별화 · 카테고리 락인 · 장기 비전</div>
+        </div>
+        <div class="seniors-of-exec">
+          <div>
+            <div class="node-senior">
+              <div class="role">strategy-manager</div>
+              <div class="desc">경쟁 모니터링<br>자발 언급 코딩 · 분기 분해</div>
+              <span class="badge">시니어</span>
+            </div>
+          </div>
+          <div>
+            <div class="node-senior">
+              <div class="role">risk-manager</div>
+              <div class="desc">법규 · AI 책임 한계<br>약관 · PIPA · 표시광고법</div>
+              <span class="badge">변호사 15년차</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTO 분기 -->
+      <div>
+        <div class="node-exec">
+          <div class="role">CTO</div>
+          <div class="domain">기술</div>
+          <div class="desc">기술 구현 · 회귀 보호 · 안전 가드</div>
+        </div>
+        <div class="seniors-of-exec">
+          <div>
+            <div class="node-senior">
+              <div class="role">senior-fullstack</div>
+              <div class="desc">PWA 구현 · migration<br>RLS · AI 분석 품질</div>
+              <span class="badge">시니어</span>
+            </div>
+          </div>
+          <div>
+            <div class="node-senior">
+              <div class="role">senior-qa</div>
+              <div class="desc">독립 검증 라인<br>회귀 · E2E · AI anomaly</div>
+              <span class="badge">시니어</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- 범례 -->
+  <div class="legend">
+    <h2>범례 · 의사결정 우선순위</h2>
+    <div class="legend-grid">
+      <div class="legend-item">
+        <div><span class="swatch" style="background: var(--primary-deep);"></span><strong>CEO</strong> — 최종 의사결정</div>
+        <div style="margin-top: 6px;"><span class="swatch" style="background: var(--primary);"></span><strong>임원 (CPO · CSO · CTO)</strong> — 영역별 결정</div>
+        <div style="margin-top: 6px;"><span class="swatch" style="background: var(--surface); border-color: var(--border-strong);"></span><strong>시니어</strong> — 실행·운영</div>
+      </div>
+      <div class="legend-item">
+        <strong>CEO 의사결정 우선순위</strong> (positioning-and-vision-v1.md §10)<br>
+        ① Falsifiability — 데이터 신뢰도<br>
+        ② 차별화 정합성 — vs 디스턴싱<br>
+        ③ 미션 정합성 — 자율성 회복<br>
+        ④ 사용자 인지 부하 — 불안 사용자 가드<br>
+        ⑤ 구현 비용 — 위 넷 동등 시
+      </div>
+    </div>
+  </div>
+
+  <!-- 협업 패턴 -->
+  <div class="collab legend">
+    <h2>협업 패턴</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 28%;">패턴</th>
+          <th style="width: 36%;">참여자</th>
+          <th>용도</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>4 임원 합의</strong></td>
+          <td>CPO · CSO · designer · PO</td>
+          <td>제품 의사결정 표준 의결체</td>
+        </tr>
+        <tr>
+          <td><strong>법적·안전 합의</strong></td>
+          <td>4 임원 + risk-manager</td>
+          <td>약관 · PIPA · AI 책임 사안</td>
+        </tr>
+        <tr>
+          <td><strong>기술·회귀 합의</strong></td>
+          <td>CTO + senior-fullstack + senior-qa</td>
+          <td>migration · 안전 가드 · 회귀 검증</td>
+        </tr>
+        <tr>
+          <td><strong>독립 검증 라인</strong></td>
+          <td>senior-qa → CEO 직보 가능</td>
+          <td>senior-fullstack 작업 · CTO 결정 검증</td>
+        </tr>
+        <tr>
+          <td><strong>전 구성원 회의</strong></td>
+          <td>CEO + 9명 전체</td>
+          <td>분기 우선순위 · 1순위 아젠다 합의 (월 1회)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    .claude/agents/*.md 9 페르소나 정의 cross-reference / 회의록: docs/meetings/2026-05-03-all-hands-priority-agenda.md
+  </footer>
+
+</div>
+</body>
+</html>

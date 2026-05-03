@@ -1,6 +1,6 @@
 # 인프라 용량·30명 동시 사용 위험 평가
 
-**문서 버전**: 2026-05-04 v2 (rev — 2차 검토에서 SMTP throttling P0 발견·Resend SOP 추가)
+**문서 버전**: 2026-05-04 v3 (rev — Resend Path B 정정·자연 분산 정책 + 도메인 후 Resend 격상 백로그)
 **대상 독자**: BlueBird CEO·senior-fullstack·운영자(현재 1인 동일)
 **상태**: 베타 단계 — IM.1 모집 직전 (사용자 0명, 모집 후 ≤30명 invite-only)
 **참조**: `docs/external/mvp-overview-2026-05-03.md` §6 (기술 스택), `docs/strategy/pmf-validation-plan.md` §0 (G2 게이트)
@@ -11,10 +11,11 @@
 
 | 항목 | 결과 |
 |---|---|
-| **30명 동시 사용 가능 여부** | ✅ 가능 (단 mitigations 3건 적용 *후*) |
-| **가장 큰 위험** (2차 검토 발견) | **Supabase Auth SMTP 시간당 30통 throttling** — IM.1 batch invite의 직접 위험. Resend 무료 SMTP 등록으로 해소. |
+| **30명 동시 사용 가능 여부** | ✅ 가능 (시스템 mitigations 2건 + 운영 정책 1건 적용 *후*) |
+| **가장 큰 위험** (2차 검토 발견) | **Supabase Auth SMTP 시간당 30통 throttling** — IM.1 batch invite의 직접 위험. **즉시 조치는 시스템 변경 0 + CEO invite DM 자연 분산 (1~2일)**. 도메인 취득 시 Resend로 격상. |
 | **잔여 위험** | Supabase Free shared CPU spike 시 P95 latency 변동 (감수 가능) |
 | **G2 통과 후 추가 검토** | Supabase Pro($25/월) · Upstash Redis(rate limiter) |
+| **백로그** | 도메인 취득(`.kr`/`.com`/`.app` ~₩15K) → Resend Custom SMTP 격상 (§3.0.2 SOP 보유) |
 
 ---
 
@@ -24,7 +25,7 @@
 |---|---|---|---|
 | Hosting | Vercel | **Pro** | 함수 실행 60s까지 확장 가능 / 동시성 1000+ / bandwidth 1TB+/월 |
 | Database·Auth | Supabase | **Free** | 500MB DB · REST API ~2.5K req/sec · 5GB bandwidth · **7일 무활동 시 pause** · **내장 SMTP 30통/시간** |
-| Email (송신) | Supabase 내장 SMTP → **Resend (예정)** | Resend Free | 3,000통/월 무료 · 도메인 인증 시 deliverability 확보 |
+| Email (송신) | **Supabase 내장 SMTP** (현재) → Resend (도메인 취득 후 격상) | 30통/시간 cap | 베타 단계는 자연 분산으로 운영 (§3.0.1). Resend 격상은 §3.0.2 백로그. |
 | AI | Google Gemini API | **Tier 1 (paid)** | gemini-2.5-flash 1,000 RPM / 1M TPM / 일 한도 매우 높음 |
 | Frontend | Next.js 16 (App Router) + PWA | — | next-pwa Service Worker로 정적 자산 캐시 |
 
@@ -53,89 +54,82 @@
 >
 > 1차에서 "60 direct + 200 pool 커넥션" 우려는 *과대 평가*였음 — 본 프로젝트는 `@supabase/ssr` REST API 경유라 PostgreSQL direct connection 미사용. REST API는 ~2.5K req/sec 한도로 30명 규모 무이슈.
 
-### 3.0 P0 — Supabase Auth SMTP throttling (★ 적용 예정 — CEO 외부 작업 필요)
+### 3.0 P0 — Supabase Auth SMTP throttling (★ 즉시 조치 = 운영 정책 / 시스템 변경 0)
 
-**위험**:
+> **v3 정정 (2026-05-04 PM late)**: 본 절의 v2는 "Resend Path B (resend.dev 임시 사용)"를 surface했으나 검증 결과 **작동 불가**. Resend의 Supabase SMTP 공식 가이드는 도메인 인증을 prerequisite로 명시. `onboarding@resend.dev` 발신은 *비공식·deliverability 매우 낮음*이라 IM.1 가입 funnel 손실 위험. v3에서 즉시 조치를 *운영 정책*으로 전환하고 Resend는 *도메인 취득 후* 백로그로 격상.
+
+**위험** (변동 없음):
 - 가입 코드(`app/auth/signup/page.tsx:63`) `supabase.auth.signUp({ emailRedirectTo: ... })`는 Supabase가 confirmation 이메일을 자동 발송.
 - **Supabase Free 내장 SMTP**: 시간당 **30통 제한** (보안 SMTP는 더 보수적 — 4통/시간).
 - IM.1 시나리오: CEO가 30명에게 *batch invite-only 액세스 안내* 발송 → 30명이 같은 1~2시간 내 가입 시도 → **이메일 throttle 발생 → 신규 가입 실패**.
-- 사용자 입장에서는 *가입 버튼은 눌렸는데 confirmation 메일이 오지 않는* 상태 → 재시도 버튼 누름 → 더 많은 이메일이 큐에 적재 → 악순환.
 
-**완화안 — Resend 무료 SMTP 등록** (CEO 결정: 옵션 (a)):
+#### 3.0.1 즉시 조치 — Supabase 내장 SMTP 유지 + invite DM 자연 분산
 
-#### 3.0.1 사전 조건 — 도메인 보유 여부
+**시스템 변경 0건**. CEO의 합격자 안내 DM 발송 패턴만 *자연 분산*시키면 시간당 30통 cap에 거의 닿지 않음.
 
-본 SOP는 사용자(BlueBird CEO)가 *도메인을 보유하고 DNS 레코드 편집 권한이 있는지*에 따라 분기:
+**근거**:
+- IM.1 모집 흐름은 자연적으로 분산: 모집 공고 게시 → 응모 (1~2주에 걸쳐 누적) → 스크리닝 코딩 → CEO 합격자 선별 → 합격 DM 발송 → 합격자 가입.
+- 마지막 단계(합격 DM 발송)에서 CEO가 *카톡 단톡방·일괄 BCC 메일·동시 발송 도구*를 쓰지 않으면, 합격자 30명이 같은 1시간 내 가입할 가능성 매우 낮음.
+- 합격자가 DM 받는 시점·가입 페이지 접속 시점 자체가 *개인 일정에 따라* 자연 분산.
 
-- **Path A — 도메인 보유 (예: `bluebird.kr`)**: Resend 풀 인증 → 프로덕션 deliverability 최상.
-- **Path B — 도메인 미보유**: Resend 가입 후 *resend.dev 테스트 발신*으로 시작 → 이메일 일부 스팸 분류 가능. IM.1 단계만 임시 사용 후 G2 통과 시 도메인 취득 + Path A 격상.
+**CEO 운영 가이드**:
+- 합격 DM은 *개별 메시지*로 전달 (Brunch DM·Disquiet DM·카톡 1:1).
+- 30명을 *1~2일에 걸쳐* 분산 발송 — 예: 하루 10~15명, 또는 5명씩 시간대 다르게.
+- *동시·일괄* 발송 도구 (메일머지·단톡방 멘션·자동화) 회피.
+- 합격자에게 안내 카피 1줄 추가 권장: "*가입 후 confirmation 메일이 1~2분 안에 도착해요. 안 보이면 스팸함도 확인해주세요.*"
 
-**권장**: Path A. 베타 사용자가 confirmation 메일을 *스팸함*에서 찾아야 하면 가입 funnel 손실. 도메인 1년 비용 ~₩15,000 — IM.1 모집 가치 대비 무시.
+**모니터링**:
+- Supabase Dashboard → Authentication → Logs에서 confirmation 발송 실패율 추적.
+- 실패 1건 발생 시 — 사용자에게 직접 follow-up하여 *수동 confirm* 가능 (Supabase Dashboard → Users → "Confirm" 버튼).
 
-#### 3.0.2 Resend 가입 (CEO 직접, ~5분)
+#### 3.0.2 백로그 — 도메인 취득 후 Resend 격상
 
-1. https://resend.com 접속 → **Sign Up**.
-2. 이메일(예: seob6615@gmail.com) + 비밀번호 가입.
-3. 이메일 확인 후 로그인.
-4. Dashboard → **API Keys** → **Create API Key**.
-   - Name: `BlueBird Supabase Auth`
-   - Permission: **Sending access** (full access 불필요)
-   - **Domain**: 아래 §3.0.3 진행 후 등록한 도메인 선택. 도메인 미등록이면 일단 "All domains" 선택하고 §3.0.3 후 재발급 권장.
-5. 생성된 API key (`re_xxxxxxxxxxxxxxxxxxx`) 복사 → 안전한 곳에 보관 (1Password 등).
-   - **중요**: 이 key는 1회만 표시. 분실 시 재발급.
+**트리거**: BlueBird 도메인(`.kr`/`.com`/`.app`) 취득 시 *즉시*.
 
-#### 3.0.3 도메인 인증 (Path A — 권장)
+**왜 도메인 취득이 종착점인가**:
+- Resend는 Supabase SMTP 통합 시 도메인 인증 prerequisite (Resend 공식 가이드).
+- 도메인 인증 시 SPF·DKIM·MX 4종 DNS 레코드로 *발신자 신뢰도* 확보 → deliverability ≥99%.
+- 격상 후 Resend 무료 한도 3,000통/월 → 시간당 cap 사실상 해소.
 
-도메인이 있고 DNS 권한이 있는 경우:
+**격상 SOP** (도메인 취득 후 실행):
 
-1. Resend Dashboard → **Domains** → **Add Domain**.
-2. 도메인 입력 (예: `bluebird.kr`). Region: **AWS US East (N. Virginia) - us-east-1** (Resend 기본).
-3. Resend가 4종 DNS 레코드 표시 (SPF·DKIM 2개·MX·DMARC 권장):
-   - **SPF**: TXT record `send` → `v=spf1 include:amazonses.com ~all`
+##### Step 1. Resend API key 발급 (~3분)
+1. https://resend.com 로그인 (계정 이미 보유 가정).
+2. Dashboard → **API Keys** → **Create API Key**.
+3. Name: `BlueBird Supabase Auth` / Permission: **Sending access**.
+4. 생성된 API key (`re_xxx...`) 복사 → 안전한 곳에 보관 (1회만 표시).
+
+##### Step 2. 도메인 인증 (~10분 + DNS 전파 대기)
+1. Resend Dashboard → **Domains** → **Add Domain** → 본인 도메인 입력.
+2. Region: **AWS US East (N. Virginia) - us-east-1** (기본값).
+3. Resend 표시 4종 DNS 레코드를 도메인 등록업체(가비아·Namecheap·Cloudflare 등) DNS 관리 페이지에 추가:
+   - **SPF**: TXT `send` → `v=spf1 include:amazonses.com ~all`
    - **DKIM #1**: CNAME `resend._domainkey` → `resend._domainkey.amazonses.com.`
    - **DKIM #2**: CNAME `resend2._domainkey` → `resend2._domainkey.amazonses.com.`
-   - **MX (피드백용)**: `feedback-smtp.us-east-1.amazonses.com` priority 10
-   - **DMARC** (선택, 권장): TXT `_dmarc` → `v=DMARC1; p=none;`
-4. 도메인 등록 업체(가비아·후이즈·Namecheap 등) DNS 관리 페이지에서 위 레코드 추가.
-5. Resend Dashboard에서 **Verify DNS Records** 클릭 → 4종 모두 ✓ 표시까지 대기 (보통 5분~24시간).
-6. 인증 완료되면 발신 가능 도메인으로 등록됨.
+   - **DMARC** (권장): TXT `_dmarc` → `v=DMARC1; p=none;`
+4. Resend Dashboard에서 **Verify DNS Records** 클릭 → 모두 ✓ 까지 대기 (5분~24시간).
 
-#### 3.0.3-Alt 도메인 미보유 (Path B — 임시)
-
-도메인 취득 전 IM.1 시작이 시급한 경우:
-
-- Resend 가입만 완료한 상태에서 발신 주소를 `onboarding@resend.dev`로 사용.
-- **단점**: 일부 메일 서비스에서 *스팸 분류·도착률 저하* 가능. 가입 funnel 손실 위험.
-- IM.1 5명 baseline 코딩 시점에 도메인 취득 + Path A 전환 강력 권장.
-
-#### 3.0.4 Supabase에 SMTP 등록 (CEO 직접, ~5분)
-
-1. Supabase Dashboard 접속 → 프로젝트 선택.
-2. **Authentication** → **Settings** → **SMTP Settings** 섹션.
-3. **Enable Custom SMTP** 토글 ON.
-4. 다음 값 입력:
-   - **Sender email**: `noreply@<your-domain>` (Path A) 또는 `onboarding@resend.dev` (Path B 임시)
-   - **Sender name**: `BlueBird` (또는 `BlueBird (해솔)`)
+##### Step 3. Supabase에 SMTP 등록 (~5분)
+1. Supabase Dashboard → 프로젝트 → **Authentication** → **Settings** → **SMTP Settings**.
+2. **Enable Custom SMTP** 토글 ON.
+3. 입력값:
+   - **Sender email**: `noreply@<your-domain>` (인증 완료 도메인)
+   - **Sender name**: `BlueBird`
    - **Host**: `smtp.resend.com`
-   - **Port number**: `465` (SSL/TLS)
+   - **Port number**: `465`
    - **Username**: `resend`
-   - **Password**: 위 §3.0.2에서 생성한 API key (`re_xxx...`)
-   - **Minimum interval between emails**: 60s (기본값 유지)
-5. **Save** 클릭.
+   - **Password**: §Step 1 API key
+4. **Save**.
 
-#### 3.0.5 검증
-
+##### Step 4. 검증
 1. 본인 *다른 이메일* 주소로 BlueBird 신규 가입 시도 (`/auth/signup`).
-2. confirmation 이메일이 *Resend 경유*로 도착하는지 확인:
-   - 메일 헤더 → "Received: from ... amazonses ..." 또는 발신자 도메인이 Resend로 라우팅된 흔적
-   - Resend Dashboard → **Logs** → 발신 기록 1건 surface.
-3. confirmation 링크 클릭 → callback 페이지 정상 처리 확인.
+2. confirmation 이메일이 *본인 도메인 발신*으로 정상 도착 (스팸함 X).
+3. Resend Dashboard → **Logs**에 발신 기록 1건 surface.
 
-#### 3.0.6 운영
-
-- Resend Dashboard → **Logs**에서 일별 발신량 추적. 3,000통/월 cap의 10% 이내 유지가 베타 기준 정상.
-- 발신 실패율 ≥1% 시 — 도메인 인증 상태·DKIM 레코드 재확인.
-- IM.1 30명 batch invite 후 *가입 funnel*에서 confirmation 미수령 사용자 0명 확인 (CEO 직접 follow-up).
+##### Step 5. 운영
+- Resend Logs 일별 발송량 모니터링. 3,000통/월 cap의 10% 이내가 베타 정상 범위.
+- 발신 실패율 ≥1% 시 도메인 인증 상태·DKIM 재확인.
+- 격상 후 본 §3.0.1 *자연 분산* 운영 정책 *해소*. 메모리 시스템 자동 정리.
 
 ---
 
@@ -232,12 +226,15 @@ export const maxDuration = 60;
 
 | # | 작업 | 우선순위 | 상태 | 검증 방법 |
 |---|---|---|---|---|
-| 1 | **Resend SMTP 등록 + Supabase Auth SMTP 입력** | **P0 (모집 전 필수)** | ⏳ **CEO 직접** (§3.0 SOP 6단계) | 본인 다른 이메일로 가입 시도 → Resend Dashboard Logs 1건 확인 |
+| 1 | **invite DM 자연 분산 운영 정책** (1~2일에 걸쳐 합격 DM 분산 발송, 동시·일괄 도구 회피) | **P0 (모집 시작 단계 필수)** | ⏳ **CEO 운영** (§3.0.1) | Supabase Auth Logs에서 confirmation 발송 실패 0건 |
 | 2 | `/api/analyze` `/api/generate-questions`에 `maxDuration = 60` | P0 | ✅ 적용 (50e53de) | Vercel 함수 settings 확인 |
 | 3 | `/api/health` 신설 | P1 | ✅ 적용 (50e53de) | 배포 후 `curl https://<domain>/api/health` → 200 응답 |
 | 4 | UptimeRobot 5분 ping 등록 | P1 | ⏳ **CEO 직접** (§3.2 (b) 가이드) | UptimeRobot 대시보드에서 첫 ping 성공 확인 |
+| 5 (백로그) | 도메인 취득 + Resend Custom SMTP 격상 | P2 | ⏳ 도메인 취득 트리거 (§3.0.2) | 본인 다른 이메일로 가입 → 도메인 발신으로 정상 도착 |
 
-**모집 시작 GO 조건**: 위 4건 모두 ✅ 상태일 것. #1·#4는 CEO 외부 작업이라 *모집 공고 게시 전 마감*.
+**모집 시작 GO 조건**: #1·#2·#3·#4 ✅ 상태. #5는 도메인 취득 시점에 비동기 격상.
+
+**자동 리마인드 메모리**: `memory/project_im1_smtp_stagger_reminder.md` — CEO가 "베타 테스터 선정 완료" 발화 시 자동 트리거. 도메인/Resend 등록 상태 확인 후 분산 가이드 surface.
 
 ---
 
@@ -295,4 +292,5 @@ PMF 게이트(`docs/strategy/pmf-validation-plan.md` §0) 통과 *후* 트리거
 
 **작성**: senior-fullstack (CTO 권한 위임) · CEO 검토 2026-05-04
 **v2 개정 (2026-05-04 PM)**: 2차 검토에서 SMTP throttling P0 신규 발견 → §0 한 줄 요약·§1 인프라 표·§3.0 신설·§4 액션 표 갱신.
-**개정 트리거**: (1) Supabase Pro 전환 시 §1·§5 갱신 (2) 사용자 수 30명 초과 시 본 문서 v3 신규 (3) 도메인 취득 후 Resend Path B → A 전환.
+**v3 개정 (2026-05-04 PM late)**: Resend Path B(`onboarding@resend.dev` 임시 사용) 검증 결과 작동 불가 (Resend 공식 정책상 도메인 인증 prerequisite). §3.0 즉시 조치를 *시스템 변경 0 + 자연 분산 운영 정책*으로 정정. Resend는 도메인 취득 후 백로그로 격상. §4 액션 표 #1·#5 갱신.
+**개정 트리거**: (1) Supabase Pro 전환 시 §1·§5 갱신 (2) 사용자 수 30명 초과 시 본 문서 v4 신규 (3) 도메인 취득 시 §3.0.2 백로그 격상 + 자연 분산 정책 해소.

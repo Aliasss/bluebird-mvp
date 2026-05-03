@@ -39,13 +39,14 @@ export const MANUAL_SECTIONS: ManualPageSection[] = [
     navLabel: '이중 프로세스 이론',
     title: '1. 사고 아키텍처: 이중 프로세스 이론 (Dual Process Theory)',
     intro:
-      '다니엘 카너먼이 정의한 이중 프로세스 이론은 우리가 세상을 인식하고 판단하는 두 가지 근본적인 경로를 설명합니다. 이 두 시스템의 상호작용과 갈등을 이해하는 것이 인지 디버깅의 핵심입니다.',
+      '다니엘 카너먼이 정의한 이중 프로세스 이론은 우리가 세상을 인식하고 판단하는 두 가지 근본적인 경로를 설명합니다. 이 두 시스템의 상호작용과 갈등을 이해하는 것이 인지 디버깅의 핵심입니다. (학술 출처: Kahneman, D., 2011, Thinking, Fast and Slow, Farrar, Straus and Giroux, 533p)',
     subSections: [
       {
         id: 'core-01-s1',
         title: '1.1 시스템 1 (The Automatic Pilot)',
         body: '시스템 1은 우리가 의식하지 않아도 24시간 백그라운드에서 작동하는 자동 조종 장치입니다. 직관적이고 즉각적이며 감정 중심적이고 무엇보다 인지적 에너지를 거의 소모하지 않습니다.',
         items: [
+          { label: '학술 출처', text: 'Kahneman, D. (2011). Thinking, Fast and Slow, Part I~II. 본 시스템 분류는 본인이 약 30년간 수행한 직관적 판단·휴리스틱 연구의 통합 결과입니다.' },
           { label: '작동 원리', text: '연상 기억을 활용하여 패턴을 신속하게 인식합니다.' },
           { label: '장점', text: '긴급 상황에서 생존 가능성을 높이며 일상적인 단순 반복 작업을 효율적으로 처리합니다.' },
           { label: '단점', text: '통계적 사고에 취약하며 논리적 인과관계보다 일관성 있는 이야기를 선호하여 인지 왜곡을 빈번하게 생성합니다.' },
@@ -70,7 +71,7 @@ export const MANUAL_SECTIONS: ManualPageSection[] = [
     navLabel: '전망이론',
     title: '2. 의사결정의 수학적 모델: 전망이론 (Prospect Theory)',
     intro:
-      '우리가 왜 특정한 상황에서 비합리적으로 고통스러워하는지 그리고 왜 낮은 확률의 불행에 집착하는지는 전망이론을 통해 수학적으로 설명될 수 있습니다.',
+      '우리가 왜 특정한 상황에서 비합리적으로 고통스러워하는지 그리고 왜 낮은 확률의 불행에 집착하는지는 전망이론을 통해 수학적으로 설명될 수 있습니다. 본 이론으로 카너먼은 2002년 노벨 경제학상을 수상했습니다. (학술 출처: Kahneman, D., & Tversky, A., 1979, Prospect Theory: An Analysis of Decision under Risk, Econometrica, 47(2), 263-291)',
     subSections: [
       {
         id: 'dyn-02-s1',
@@ -86,6 +87,7 @@ export const MANUAL_SECTIONS: ManualPageSection[] = [
         title: '2.2 손실 회피 (Loss Aversion)',
         body: '인간은 이득에서 얻는 기쁨보다 손실에서 느끼는 고통을 약 2.25배 더 강력하게 인지합니다.',
         items: [
+          { label: '학술 정수 λ ≈ 2.25', text: '본 비대칭 계수는 Kahneman & Tversky (1979) Econometrica 논문에서 실험적으로 도출된 값입니다. 같은 크기의 이득보다 손실에 약 2.25배 더 민감하게 반응한다는 의미이며, 이후 다수 후속 연구에서 일관되게 재현되었습니다.' },
           { label: '시스템 오류', text: '이러한 비대칭성 때문에 우리는 작은 부정적인 신호에도 과도하게 민감하게 반응하며 이는 파국화(Catastrophizing)의 강력한 엔진이 됩니다.' },
           { label: '시각화 지표', text: '가치 함수 곡선에서 당신의 심리적 위치가 얼마나 가파른 손실 영역에 위치해 있는지 시각화함으로써 당신이 느끼는 고통이 실제 손실 규모보다 과장되어 있음을 증명합니다.' },
         ],
@@ -106,7 +108,7 @@ export const MANUAL_SECTIONS: ManualPageSection[] = [
     navLabel: '인지 오류 Taxonomy',
     title: '3. 인지 오류 Taxonomy: 시스템 에러 디버깅',
     intro:
-      '당신의 사고 로그에서 반복적으로 나타나는 주요 소프트웨어 에러들을 정의합니다. 에러에 이름을 붙이는 행위 자체가 이미 시스템 2의 개입을 시작하는 것입니다.',
+      '당신의 사고 로그에서 반복적으로 나타나는 주요 소프트웨어 에러들을 정의합니다. 에러에 이름을 붙이는 행위 자체가 이미 시스템 2의 개입을 시작하는 것입니다. 본 5종 분류는 인지치료의 창시자 아론 벡(Aaron Beck)이 정의한 인지 왜곡 분류 체계를 따릅니다. (학술 출처: Beck, A. T., 1976, Cognitive Therapy and the Emotional Disorders, International Universities Press)',
     subSections: [
       {
         id: 'dbug-03-s1',
@@ -161,7 +163,7 @@ export const MANUAL_SECTIONS: ManualPageSection[] = [
     navLabel: '메타인지와 CAS',
     title: '4. 메타인지와 CAS: 인지적 통제권의 확보',
     intro:
-      '단순히 생각을 바꾸는 것을 넘어 생각하는 방식(Process) 자체를 최적화해야 합니다.',
+      '단순히 생각을 바꾸는 것을 넘어 생각하는 방식(Process) 자체를 최적화해야 합니다. CAS(Cognitive Attentional Syndrome)는 메타인지 치료의 창시자 에이드리언 웰스(Adrian Wells)가 정의한 개념으로, 불안·우울이 *내용*이 아닌 *처리 방식*에 의해 유지된다는 핵심 명제를 담고 있습니다. (학술 출처: Wells, A., 2009, Metacognitive Therapy for Anxiety and Depression, Guilford Press)',
     subSections: [
       {
         id: 'meta-04-s1',
@@ -187,7 +189,7 @@ export const MANUAL_SECTIONS: ManualPageSection[] = [
     navLabel: '실존적 자율성',
     title: '5. 최종 목표: 실존적 자율성 (Existential Agency)',
     intro:
-      'Project Bluebird의 지향점은 감정이 없는 로봇이 되는 것이 아닙니다. 자신의 인지 아키텍처를 명확히 이해하고 시스템 1의 자동적 반응에 휘둘리지 않으며 데이터와 논리에 기반하여 자신의 삶을 직접 선택하고 집행하는 상태입니다.',
+      'Project Bluebird의 지향점은 감정이 없는 로봇이 되는 것이 아닙니다. 자신의 인지 아키텍처를 명확히 이해하고 시스템 1의 자동적 반응에 휘둘리지 않으며 데이터와 논리에 기반하여 자신의 삶을 직접 선택하고 집행하는 상태입니다. 본 절은 알베르 카뮈의 부조리·자유·반항 도식에 근거합니다. (학술 출처: Camus, A., 1942, Le Mythe de Sisyphe, Gallimard / 시지프 신화)',
     subSections: [
       {
         id: 'goal-05-s1',
@@ -198,6 +200,40 @@ export const MANUAL_SECTIONS: ManualPageSection[] = [
         id: 'goal-05-s2',
         title: '5.2 자율성 인프라의 구축',
         body: 'Bluebird는 당신의 사고 과정을 투명하게 시각화하여 보여줌으로써 당신이 환경의 자극에 반응하는 객체가 아니라 환경을 분석하고 선택하는 주체가 되도록 돕습니다. 당신의 뇌는 당신의 명령을 수행하는 도구여야 합니다. 주도권을 탈환하십시오.',
+      },
+    ],
+  },
+  {
+    id: 'sdt-06',
+    navLabel: '자기결정성과 자율성 측정',
+    title: '6. 자기결정성 이론과 자율성 측정: Self-Determination Theory',
+    intro:
+      '자율성(autonomy)은 외부 압력이 아닌 자신의 의지로 행동을 개시하고 표현하는 상태입니다. Project Bluebird는 사용자가 자기 사고를 디버깅하는 사이클에서 *얼마나 자율적으로 행동했는지*를 정량화하기 위해 자기결정성 이론을 측정 도구로 채택했습니다. 본 절은 §5 카뮈의 실존적 자율성을 *측정 가능한 지표*로 변환하는 작업입니다. (학술 출처: Deci, E. L., & Ryan, R. M., 2000, The "What" and "Why" of Goal Pursuits, Psychological Inquiry, 11(4), 227-268)',
+    subSections: [
+      {
+        id: 'sdt-06-s1',
+        title: '6.1 자기결정성 이론과 3대 기본 욕구',
+        body: '인간 동기를 외재적 규제(External Regulation)에서 내재적 동기(Intrinsic Motivation)로 이어지는 스펙트럼으로 모델링한 이론입니다. Deci와 Ryan은 자율적 동기를 강화하기 위한 3대 기본 심리욕구를 제안했습니다.',
+        items: [
+          { label: '학술 출처', text: 'Deci, E. L., & Ryan, R. M. (2000). Psychological Inquiry, 11(4), 227-268. 보충: Ryan, R. M., & Deci, E. L. (2017). Self-Determination Theory: Basic Psychological Needs in Motivation, Development, and Wellness. Guilford Press.' },
+          { label: 'Autonomy (자율성)', text: '자기 의지로 행동을 *개시*(initiation)하고 *표현*(expression)하는 능력입니다. 외부 보상·압력이 아닌 자신의 가치에서 출발한 행동입니다.' },
+          { label: 'Competence (유능성)', text: '환경과 효과적으로 상호작용한다는 감각입니다.' },
+          { label: 'Relatedness (관계성)', text: '타인과 의미 있게 연결되어 있다는 감각입니다.' },
+          { label: 'Bluebird의 측정 범위', text: '3대 욕구 중 *autonomy만* 측정합니다. relatedness는 1인 도구라는 카테고리 정의와 충돌하며, competence는 자칫 유능감 부여형 게임화로 미끄러질 위험이 있어 의도적으로 비측정합니다.' },
+        ],
+      },
+      {
+        id: 'sdt-06-s2',
+        title: '6.2 자율성 지수 (autonomy_score) — v2 산식',
+        body: '사용자가 1회 디버깅 사이클을 *얼마나 적극적으로* 통과했는가를 측정합니다. 게임화 카운터가 아니라 SDT autonomy 차원에 정렬된 정량 지표입니다.',
+        items: [
+          { label: '산식', text: 'autonomy_score = min(15, answerCount × 5) + (note ? 15 : 0). 최대 30점. answerCount는 소크라테스 질문에 직접 답한 횟수, note는 완료 노트 작성 여부입니다.' },
+          { label: 'Autonomy 매핑', text: '*개시*(initiation) ↔ answerCount(자기 검증 답변 횟수). *표현*(expression) ↔ completion_note(자기 노트 작성). 점수는 오직 사용자 자기 행위에서만 누적됩니다.' },
+          { label: '한계효용 cap', text: '4번째 답변부터는 한계효용 체감 + 시간 비용을 반영해 3답에서 cap(15점)을 둡니다. 학술적 정수가 아닌 운용 합의 값입니다.' },
+          { label: 'v1 → v2 개정 사유', text: 'v1(2026-04)은 averageIntensity(AI 추정 왜곡 강도) 가중치를 포함했으나, AI 출력값이 자율성 점수에 결합되는 구조는 SDT autonomy 정의와 충돌합니다. v2(2026-05-04)에서 averageIntensity 항을 제거하여 AI 추정값과의 결합도를 0으로 만들었습니다. 이로써 점수 변동의 원인이 *오직 사용자 자기 행위*로 한정됩니다.' },
+          { label: '코드 위치', text: 'lib/intervention/autonomy-score.ts + app/api/action/route.ts:107~133. DB 컬럼 intervention.autonomy_score INTEGER ≥ 0.' },
+        ],
+        debuggingQuestion: '"이 점수가 올라가는 것은 내가 *직접* 한 행위 때문인가요, 아니면 외부 시스템이 부여한 평가 때문인가요?"',
       },
     ],
   },

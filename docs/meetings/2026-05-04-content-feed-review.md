@@ -246,12 +246,13 @@ PMF plan §11.3 형태 트리거 정의:
 
 `docs/im1/coding-rubric-v1-2026-05-04.md`에 신규 카테고리 추가:
 
-> **C7 (신규). 학습 자원 자발 언급** (≥10% → 대안 검토 트리거)
+> **C10 (신규). 학습 자원 자발 언급** (≥10% → 대안 검토 트리거)
 > - 자발 표현 sample: "이론 더 알고 싶어요" / "이게 왜 일어나는지 설명이 있으면" / "참고 자료 읽고 싶어요" / "더 자세히 배우고 싶어요" / "왜곡 종류가 정확히 뭐였더라"
 > - 미정합 sample: "그냥 좋아요" (라벨 X)
 > - 카운트 기준: 응답자별 0/1 (이진)
+> - 상호 배타 가드 (CSO 환기): C10 ↔ C5(분석가 톤)·B4(누적 매뉴얼)·C1(매뉴얼 기대치)와의 카운트 중복 규칙 별도 명시
 
-→ 본 회의 결과로 senior-ux-researcher + strategy-manager가 coding-rubric v1.1로 격상.
+→ 본 회의 결과로 senior-ux-researcher + strategy-manager가 coding-rubric에 C10으로 격상 (기존 C7 = 수치 framing 이미 점유). 헤더 27 → 28 카테고리.
 
 ---
 
@@ -260,7 +261,7 @@ PMF plan §11.3 형태 트리거 정의:
 | # | 액션 | 책임 | 시점 |
 |---|---|---|---|
 | 1 | 본 회의록 commit + push | senior-fullstack | 즉시 |
-| 2 | coding-rubric v1.1로 격상 — C7 신규 카테고리 추가 | senior-ux-researcher + strategy-manager | IM.1 모집 시작 전 (5/5 EOD) |
+| 2 | coding-rubric — C10 신규 카테고리 추가 | senior-ux-researcher + strategy-manager | IM.1 모집 시작 전 (5/5 EOD) |
 | 3 | mvp-overview §8.2 명시적 비목표 표에 "별도 콘텐츠 피드"·트리거 1줄 추가 | senior-fullstack | 본 회의록 commit 동반 |
 | 4 | (G2 통과 후) 대안 A·B 정식 검토 회의 | CPO 주관 | G2 트리거 발생 시 |
 | 5 | (CEO 자율) Brunch @해솔에 *외부 콘텐츠 발행* — 앱 외부 채널 | CEO | 자율 — 앱 카테고리 영향 0 |
@@ -270,7 +271,7 @@ PMF plan §11.3 형태 트리거 정의:
 ## 7. CEO 의사결정 요청 항목
 
 1. **결정**: 별도 콘텐츠 피드 거부에 동의?
-2. **결정**: 코딩 rubric v1.1 C7 신규 카테고리 격상 진행?
+2. **결정**: 코딩 rubric C10 신규 카테고리 격상 진행?
 3. **결정**: mvp-overview §8.2 비목표 표 갱신 진행?
 4. **선택**: Brunch @해솔 외부 콘텐츠 발행은 CEO 자율 — 회의 결정 외.
 
@@ -280,7 +281,7 @@ PMF plan §11.3 형태 트리거 정의:
 
 - 결정 근거: `docs/strategy/positioning-and-vision-v1.md` §1·§3 (카테고리 정의·차별화 3축), §2 본질 위협 6 시그널
 - 측정 정합: `docs/strategy/pmf-validation-plan.md` §0 G2 메트릭, §11.3 트리거 메커니즘
-- 코딩 rubric: `docs/im1/coding-rubric-v1-2026-05-04.md` §0 자발 언급 가드 + C7 (신규)
+- 코딩 rubric: `docs/im1/coding-rubric-v1-2026-05-04.md` §0 자발 언급 가드 + C10 (2026-05-04 신규)
 - 페르소나 정의: `.claude/agents/cpo.md` 비목표·본질 위협 / `.claude/agents/senior-ux-researcher.md` 멘탈 모델 / `.claude/agents/cso.md` 차별화 3축
 - 직전 회의: `docs/meetings/2026-05-03-all-hands-priority-agenda.md` IM.1 모집 prerequisite 합의
 

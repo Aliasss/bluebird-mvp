@@ -7,13 +7,15 @@ import PageHeader from '@/components/ui/PageHeader';
 
 type Step = 'trigger' | 'thought' | 'pain';
 
-const PAIN_OPTIONS = [
-  { score: 1, emoji: '😐', label: '별로 안 힘들어요' },
-  { score: 2, emoji: '😟', label: '조금 힘들어요' },
-  { score: 3, emoji: '😰', label: '꽤 힘들어요' },
-  { score: 4, emoji: '😱', label: '많이 힘들어요' },
-  { score: 5, emoji: '🤯', label: '매우 힘들어요' },
-];
+// NRS-11 (Hawker et al., 2011) — 0=전혀 없음, 10=참을 수 없는 통증.
+// 5점 척도(1~5)에서 0~10 정수 척도로 전환 (마이그레이션 13).
+function painBandLabel(score: number): string {
+  if (score <= 2) return '거의 없음';
+  if (score <= 4) return '약간';
+  if (score <= 6) return '보통';
+  if (score <= 8) return '심함';
+  return '극심';
+}
 
 export default function LogPage() {
   const router = useRouter();
@@ -221,37 +223,50 @@ export default function LogPage() {
               </button>
             </>
           ) : (
-            // 3단계: 고통 점수
+            // 3단계: 통증 강도 (NRS-11, 0~10)
             <>
               <div className="space-y-2">
                 <h1 className="text-xl font-bold text-text-primary tracking-tight">
-                  지금 얼마나 힘드세요?
+                  지금 통증 강도는 얼마인가요?
                 </h1>
                 <p className="text-sm text-text-secondary">
-                  솔직하게 체크해주세요. 분석에 활용돼요.
+                  0(전혀 없음) ~ 10(참을 수 없는) 사이에서 솔직하게 골라주세요. 재평가 시 차이값(Δpain)으로 사용됩니다.
                 </p>
               </div>
 
-              <div className="space-y-3">
-                {PAIN_OPTIONS.map((option) => (
-                  <button
-                    key={option.score}
-                    onClick={() => setPainScore(option.score)}
-                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all text-left ${
-                      painScore === option.score
-                        ? 'border-primary bg-primary/5'
-                        : 'border-background-tertiary bg-white'
-                    }`}
-                  >
-                    <span className="text-2xl">{option.emoji}</span>
-                    <div>
-                      <p className={`text-sm font-semibold ${painScore === option.score ? 'text-primary' : 'text-text-primary'}`}>
-                        {option.label}
-                      </p>
-                      <p className="text-xs text-text-tertiary">{option.score}점</p>
-                    </div>
-                  </button>
-                ))}
+              <div className="bg-white rounded-2xl border border-background-tertiary p-5 space-y-5">
+                <div className="text-center">
+                  <p className="text-5xl font-extrabold text-primary tabular-nums">
+                    {painScore ?? '–'}
+                  </p>
+                  <p className="mt-1 text-sm text-text-secondary">
+                    {painScore !== null ? painBandLabel(painScore) : '값을 선택하세요'}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-11 gap-1">
+                  {Array.from({ length: 11 }, (_, i) => i).map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setPainScore(n)}
+                      aria-pressed={painScore === n}
+                      aria-label={`통증 ${n}점`}
+                      className={`aspect-square text-sm font-semibold rounded-lg border transition ${
+                        painScore === n
+                          ? 'bg-primary text-white border-primary'
+                          : 'bg-white text-text-primary border-background-tertiary hover:border-primary/50'
+                      }`}
+                    >
+                      {n}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex justify-between text-[11px] text-text-tertiary">
+                  <span>0 · 전혀 없음</span>
+                  <span>10 · 참을 수 없는</span>
+                </div>
               </div>
 
               {error && (

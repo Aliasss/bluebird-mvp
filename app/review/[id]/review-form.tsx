@@ -7,7 +7,8 @@ interface ReviewFormProps {
   logId: string;
 }
 
-const SCORES = [1, 2, 3, 4, 5];
+// NRS-11 (Hawker et al., 2011) — 0~10 정수 척도. Δpain = initial − reevaluated.
+const SCORES = Array.from({ length: 11 }, (_, i) => i);
 
 export function ReviewForm({ logId }: ReviewFormProps) {
   const router = useRouter();
@@ -43,27 +44,37 @@ export function ReviewForm({ logId }: ReviewFormProps) {
   return (
     <section className="rounded-2xl border border-primary/20 bg-primary/5 p-5 space-y-4">
       <div>
-        <h2 className="text-sm font-semibold text-primary">고통 점수 (1 편함 ~ 5 힘듦)</h2>
+        <h2 className="text-sm font-semibold text-primary">통증 강도 재평가 (0 전혀 없음 ~ 10 참을 수 없는)</h2>
         <p className="mt-1 text-xs text-text-secondary">
-          지금 이 문제를 다시 생각하면 얼마나 고통스러운가요?
+          지금 이 문제를 다시 생각하면 통증 강도는 얼마인가요? 처음 기록한 값과의 차이가 Δpain입니다.
         </p>
       </div>
-      <div className="grid grid-cols-5 gap-2">
+      <div className="text-center">
+        <span className="text-3xl font-extrabold text-primary tabular-nums">
+          {selected ?? '–'}
+        </span>
+      </div>
+      <div className="grid grid-cols-11 gap-1">
         {SCORES.map((n) => (
           <button
             key={n}
             type="button"
             onClick={() => setSelected(n)}
-            className={`rounded-xl py-3 text-lg font-semibold border transition ${
+            className={`aspect-square rounded-lg text-sm font-semibold border transition ${
               selected === n
                 ? 'bg-primary text-white border-primary'
                 : 'bg-white text-primary border-primary/20 hover:border-primary/50'
             }`}
             aria-pressed={selected === n}
+            aria-label={`통증 ${n}점`}
           >
             {n}
           </button>
         ))}
+      </div>
+      <div className="flex justify-between text-[11px] text-text-tertiary">
+        <span>0 · 전혀 없음</span>
+        <span>10 · 참을 수 없는</span>
       </div>
       {error && <p className="text-sm text-danger">{error}</p>}
       <button

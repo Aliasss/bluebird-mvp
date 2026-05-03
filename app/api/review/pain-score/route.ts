@@ -5,7 +5,7 @@ import { logServerError } from '@/lib/logging/server-logger';
 
 const schema = z.object({
   logId: z.string().uuid(),
-  painScore: z.number().int().min(1).max(5),
+  painScore: z.number().int().min(0).max(10),
 });
 
 export async function POST(request: Request) {
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       painScore: body.painScore,
     });
     if (!parsed.success) {
-      return NextResponse.json({ error: '유효한 logId와 painScore(1-5)가 필요합니다.' }, { status: 400 });
+      return NextResponse.json({ error: '유효한 logId와 painScore(0-10)가 필요합니다.' }, { status: 400 });
     }
 
     const supabase = await createServerSupabaseClient();

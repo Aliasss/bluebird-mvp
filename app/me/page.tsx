@@ -173,13 +173,18 @@ export default function MePage() {
               { label: '매뉴얼', sub: '서비스 이용 가이드', href: '/manual' },
               { label: '블루버드 철학', sub: '인지 왜곡이 왜 중요한가요?', href: '/our-philosophy' },
               { label: '온보딩 다시 보기', sub: '9 슬라이드 — 왜·무엇·어떻게', href: '/onboarding/1?replay=1' },
+              { label: '운영자에게 문의', sub: '1인 운영자에게 직접 전달 — 새 탭', href: 'https://docs.google.com/forms/d/e/1FAIpQLSevoe42VkRUuv7RVYrVhD0oMy_kYBadsBuIwOXnTKlw2o8ecQ/viewform', external: true },
               { label: '베타 혜택 안내', sub: '인터뷰 완주자 혜택 + 무효 조건', href: '/beta-incentive' },
               { label: '홈 화면에 추가', sub: 'PWA 설치 가이드', href: '/install' },
               { label: '정신건강 자원', sub: '위기 상담·전문기관 안내', href: '/safety/resources' },
-            ].map(({ label, sub, href }) => (
+            ].map(({ label, sub, href, external }) => (
               <button
                 key={href}
-                onClick={() => router.push(href)}
+                onClick={() =>
+                  external
+                    ? window.open(href, '_blank', 'noopener,noreferrer')
+                    : router.push(href)
+                }
                 className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-background-secondary transition-colors touch-manipulation"
               >
                 <div>

@@ -208,10 +208,15 @@ export default function PrivacyPage() {
               <li>
                 <strong className="text-text-primary">즉시 영구 삭제</strong>를 원하시는 경우 회원 탈퇴
                 요청 시 "즉시 삭제" 옵션을 선택하시거나{' '}
-                <a href="mailto:seob6615@gmail.com" className="text-primary underline">
-                  seob6615@gmail.com
+                <a
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSevoe42VkRUuv7RVYrVhD0oMy_kYBadsBuIwOXnTKlw2o8ecQ/viewform"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline"
+                >
+                  개인정보 문의 폼
                 </a>
-                으로 요청해주시면 영업일 기준 7일 이내 처리합니다.
+                을 통해 요청해주시면 영업일 기준 7일 이내 처리합니다.
               </li>
               <li>
                 30일 경과 후 영구 삭제는{' '}
@@ -260,10 +265,15 @@ export default function PrivacyPage() {
             </ul>
             <p className="text-xs text-text-tertiary">
               상기 권리 행사에 어려움이 있으시면{' '}
-              <a href="mailto:seob6615@gmail.com" className="text-primary underline">
-                seob6615@gmail.com
+              <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLSevoe42VkRUuv7RVYrVhD0oMy_kYBadsBuIwOXnTKlw2o8ecQ/viewform"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                개인정보 문의 폼
               </a>
-              으로 문의해주세요.
+              으로 문의해주세요. 영업일 기준 7일 이내 응답합니다.
             </p>
           </div>
         </article>
@@ -289,9 +299,15 @@ export default function PrivacyPage() {
             <li>책임자: Project BlueBird 운영자</li>
             <li>
               연락처:{' '}
-              <a href="mailto:seob6615@gmail.com" className="text-primary underline">
-                seob6615@gmail.com
-              </a>
+              <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLSevoe42VkRUuv7RVYrVhD0oMy_kYBadsBuIwOXnTKlw2o8ecQ/viewform"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                개인정보 문의 폼
+              </a>{' '}
+              <span className="text-text-tertiary">(영업일 7일 이내 응답)</span>
             </li>
           </ul>
           <p className="text-xs text-text-tertiary leading-relaxed">

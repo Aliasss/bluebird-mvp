@@ -197,7 +197,7 @@ export default function DisclaimerPage() {
               패턴이 탐지되어도 그것이 반드시 사실이라는 의미는 아닙니다.
             </li>
             <li>
-              감정과 통증(0~10) 지표는{' '}
+              감정과 고통(0~10) 지표는{' '}
               <strong className="text-text-primary">사용자 본인의 자기보고</strong>입니다. AI가
               계산하거나 객관적으로 측정하지 않습니다. 패턴 리포트 또한 본인이 입력한 데이터를 바탕으로
               한 통계적 요약입니다.

@@ -76,7 +76,7 @@ export default function PrivacyPage() {
               <ul className="list-disc pl-5 space-y-1">
                 <li>
                   <strong className="text-text-primary">자동 사고 기록</strong> (사건, 떠오른 생각,
-                  감정, 통증 0~10) — 인지 왜곡 분석 및 본인의 패턴 리포트 생성에 이용
+                  감정, 고통 0~10) — 인지 왜곡 분석 및 본인의 패턴 리포트 생성에 이용
                 </li>
                 <li>
                   <strong className="text-text-primary">재평가·체크인 기록</strong> — 시간 경과에 따른

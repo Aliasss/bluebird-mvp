@@ -44,9 +44,9 @@ export function ReviewForm({ logId }: ReviewFormProps) {
   return (
     <section className="rounded-2xl border border-primary/20 bg-primary/5 p-5 space-y-4">
       <div>
-        <h2 className="text-sm font-semibold text-primary">통증 강도 재평가 (0 전혀 없음 ~ 10 참을 수 없는)</h2>
+        <h2 className="text-sm font-semibold text-primary">고통 강도 재평가 (0 전혀 없음 ~ 10 참을 수 없는)</h2>
         <p className="mt-1 text-xs text-text-secondary">
-          지금 이 문제를 다시 생각하면 통증 강도는 얼마인가요? 처음 기록한 값과의 차이가 Δpain입니다.
+          지금 이 문제를 다시 생각하면 고통 강도는 얼마인가요? 처음 기록한 값과의 차이가 Δpain입니다.
         </p>
       </div>
       <div className="text-center">
@@ -66,7 +66,7 @@ export function ReviewForm({ logId }: ReviewFormProps) {
                 : 'bg-white text-primary border-primary/20 hover:border-primary/50'
             }`}
             aria-pressed={selected === n}
-            aria-label={`통증 ${n}점`}
+            aria-label={`고통 ${n}점`}
           >
             {n}
           </button>

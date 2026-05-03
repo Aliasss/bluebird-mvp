@@ -108,7 +108,7 @@ export default function OurPhilosophyPage() {
             <span className="text-primary">측정 가능한 인지 시스템의 출력</span>입니다.
           </h1>
           <p className="text-sm sm:text-base text-text-secondary leading-relaxed">
-            BlueBird는 사용자의 자동 사고를 인지 왜곡 분류 체계에 따라 구조화하고, 통증 변화량·완료율·재발 빈도를 시계열로 기록합니다. 본 페이지는 그 설계가 근거하는 다섯 가지 연구 결과를 요약합니다.
+            BlueBird는 사용자의 자동 사고를 인지 왜곡 분류 체계에 따라 구조화하고, 고통 변화량·완료율·재발 빈도를 시계열로 기록합니다. 본 페이지는 그 설계가 근거하는 다섯 가지 연구 결과를 요약합니다.
           </p>
         </div>
       </section>
@@ -163,7 +163,7 @@ export default function OurPhilosophyPage() {
             첫 분석으로 자신의 인지 패턴을 측정해보세요
           </h3>
           <p className="text-sm text-text-secondary leading-relaxed">
-            누적된 분석은 왜곡 빈도·통증 변화량 시계열·완료율로 정리되어 본인의 사고 운영 체계를 객관화하는 자료가 됩니다.
+            누적된 분석은 왜곡 빈도·고통 변화량 시계열·완료율로 정리되어 본인의 사고 운영 체계를 객관화하는 자료가 됩니다.
           </p>
           <div className="space-y-2 pt-2">
             <button

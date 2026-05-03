@@ -422,7 +422,7 @@ function DashboardContent() {
                 </div>
               </div>
               <div className="bg-white rounded-2xl p-4 shadow-card">
-                <p className="text-xs text-text-secondary mb-1">이번 주 통증 변화량 누적</p>
+                <p className="text-xs text-text-secondary mb-1">이번 주 고통 변화량 누적</p>
                 <p className="text-2xl font-extrabold text-primary tracking-tight">
                   {weeklyPositiveDeltaPain}
                   <span className="text-sm text-text-tertiary ml-1">점</span>

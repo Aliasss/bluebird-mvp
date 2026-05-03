@@ -428,7 +428,7 @@ export default function InsightsPage() {
         {/* Δpain 시계열 */}
         <div className="bg-white border border-background-tertiary rounded-xl p-4 sm:p-6">
           <div className="space-y-1 mb-4">
-            <h2 className="text-base font-bold text-text-primary">인지 유연성 변화 (통증 변화량)</h2>
+            <h2 className="text-base font-bold text-text-primary">인지 유연성 변화 (고통 변화량)</h2>
             <p className="text-xs text-text-secondary">양수면 고통 감소, 음수면 증가. 0 기준선은 변화 없음.</p>
           </div>
           {deltaPainSeries.length === 0 ? (
@@ -444,7 +444,7 @@ export default function InsightsPage() {
                   <YAxis domain={[-4, 4]} tick={{ fontSize: 11 }} />
                   <Tooltip />
                   <ReferenceLine y={0} stroke="#9ca3af" strokeDasharray="3 3" />
-                  <Line type="monotone" dataKey="avgDelta" name="평균 통증 변화량" stroke="#2563eb" strokeWidth={2} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="avgDelta" name="평균 고통 변화량" stroke="#2563eb" strokeWidth={2} dot={{ r: 3 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>

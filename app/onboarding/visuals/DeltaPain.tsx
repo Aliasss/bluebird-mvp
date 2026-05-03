@@ -1,4 +1,4 @@
-// act3-2: pain 0~10 graph + 디버깅 직전·24시간 후 점 2개 + 통증 감소 라벨.
+// act3-2: pain 0~10 graph + 디버깅 직전·24시간 후 점 2개 + 고통 감소 라벨.
 
 export default function DeltaPain() {
   return (
@@ -17,19 +17,19 @@ export default function DeltaPain() {
         <text x="80" y="125" textAnchor="middle" className="fill-text-secondary text-[9px]">디버깅 직전</text>
         <text x="220" y="125" textAnchor="middle" className="fill-text-secondary text-[9px]">24h 후</text>
 
-        {/* 직전 통증 점 (pain=8 → y=20+(10-8)*9=38) */}
+        {/* 직전 고통 점 (pain=8 → y=20+(10-8)*9=38) */}
         <circle cx="80" cy="38" r="4" className="fill-primary" />
         <text x="92" y="42" className="fill-text-primary text-[10px] font-semibold">8</text>
 
-        {/* 24h 후 통증 점 (pain=3 → y=20+(10-3)*9=83) */}
+        {/* 24h 후 고통 점 (pain=3 → y=20+(10-3)*9=83) */}
         <circle cx="220" cy="83" r="4" className="fill-primary" />
         <text x="232" y="87" className="fill-text-primary text-[10px] font-semibold">3</text>
 
         {/* 두 점 잇는 점선 */}
         <line x1="80" y1="38" x2="220" y2="83" stroke="currentColor" strokeWidth="0.8" strokeDasharray="3 2" />
 
-        {/* 통증 감소 라벨 */}
-        <text x="150" y="65" textAnchor="middle" className="fill-primary text-[12px] font-bold">통증 5 감소</text>
+        {/* 고통 감소 라벨 */}
+        <text x="150" y="65" textAnchor="middle" className="fill-primary text-[12px] font-bold">고통 5 감소</text>
       </svg>
     </div>
   );

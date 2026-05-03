@@ -223,11 +223,11 @@ export default function LogPage() {
               </button>
             </>
           ) : (
-            // 3단계: 통증 강도 (NRS-11, 0~10)
+            // 3단계: 고통 강도 (NRS-11, 0~10)
             <>
               <div className="space-y-2">
                 <h1 className="text-xl font-bold text-text-primary tracking-tight">
-                  지금 통증 강도는 얼마인가요?
+                  지금 고통 강도는 얼마인가요?
                 </h1>
                 <p className="text-sm text-text-secondary">
                   0(전혀 없음) ~ 10(참을 수 없는) 사이에서 솔직하게 골라주세요. 재평가 시 차이값(Δpain)으로 사용됩니다.
@@ -251,7 +251,7 @@ export default function LogPage() {
                       type="button"
                       onClick={() => setPainScore(n)}
                       aria-pressed={painScore === n}
-                      aria-label={`통증 ${n}점`}
+                      aria-label={`고통 ${n}점`}
                       className={`aspect-square text-sm font-semibold rounded-lg border transition ${
                         painScore === n
                           ? 'bg-primary text-white border-primary'

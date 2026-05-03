@@ -150,7 +150,7 @@
 **작업**:
 1. /log step `trigger` — 트리거 5자 이상 입력 (예: "팀장이 내 보고서에 피드백을 주지 않았다")
 2. "다음" → step `thought` — 자동 사고 10자 이상 입력 (예: "내가 일을 못하니까 무시하는 거겠지. 앞으로도 이럴 거야")
-3. "다음" → step `pain` — 통증 점수 3점 (꽤 힘들어요) 선택
+3. "다음" → step `pain` — 고통 점수 3점 (꽤 힘들어요) 선택
 4. "분석 시작하기" 클릭 → `logs` INSERT → /analyze/<id> 라우팅
 5. /analyze/<id> stage 흐름: `fetch` → `analyze` (loader: "인지 나침반을 정교하게 맞추고 있어요") → `question` (loader: "맞춤 질문을 준비하고 있어요") → `done`
 6. 분석 결과 노출: 이론 기반 해석 6개 박스 + 발견된 생각의 패턴 + 생각을 점검하는 질문 3개
@@ -263,7 +263,7 @@
 
 ---
 
-### Step 5 — 24시간 후 재평가 → 통증 변화량 측정
+### Step 5 — 24시간 후 재평가 → 고통 변화량 측정
 
 **사전 조건**:
 - Step 4 통과 (`intervention` row is_completed=true·completed_at=NOW())
@@ -282,14 +282,14 @@
    (변경 전: completed_at = step4 시점 NOW. 변경 후: step5 시점 NOW - 7h. 결과: pending review FIFO 게이트 통과)
 2. /dashboard 새로고침 → 상단에 ReviewCard 노출 — "지난 기록 재평가하기 — 어제 기록한 「<trigger>」, 지금은 어떠신가요?"
 3. ReviewCard 클릭 → /review/<logId> 라우팅
-4. 재평가 폼에서 통증 점수 1점 (별로 안 힘들어요) 선택 — 초기 3점에서 1점으로 감소
+4. 재평가 폼에서 고통 점수 1점 (별로 안 힘들어요) 선택 — 초기 3점에서 1점으로 감소
 5. POST `/api/review/pain-score` `{logId, painScore:1}` → 200 + `{ok:true, deltaPain:2}`
-6. /dashboard 복귀 → "이번 주 통증 변화량 누적" 카드 0 → 2점
+6. /dashboard 복귀 → "이번 주 고통 변화량 누적" 카드 0 → 2점
 
 **기대 UI**:
 - ReviewCard 카피 정확히 "지난 기록 재평가하기" + "어제 기록한 「<trigger snippet 40자>」, 지금은 어떠신가요?"
 - ReviewCard 우측 ✕ 버튼 (dismiss용)
-- 재평가 후 dashboard "이번 주 통증 변화량 누적" 카드 = 2 (=3-1)
+- 재평가 후 dashboard "이번 주 고통 변화량 누적" 카드 = 2 (=3-1)
 - iPhone SE 폭 ReviewCard fit (단락 잘림 0건)
 
 **기대 DB/API**:
@@ -307,15 +307,15 @@
 - [ ] POST `/api/review/pain-score` 200 — body `{ok:true, deltaPain:2}` 정합 (3-1=2)
 - [ ] `intervention` UPDATE 검증: `SELECT reevaluated_pain_score, reevaluated_at FROM intervention WHERE id=<iv id>;` → 1, NOW
 - [ ] 중복 재평가 시 409 — POST 재호출 시 "이미 재평가한 건입니다" 응답
-- [ ] /dashboard `이번 주 통증 변화량 누적` 카드 = 2점 (sumPositiveDeltaPain 동작 — 양수만 집계)
-- [ ] /insights "인지 유연성 변화 (통증 변화량)" 차트에 1개 점 노출 (오늘 일자, avgDelta=2)
+- [ ] /dashboard `이번 주 고통 변화량 누적` 카드 = 2점 (sumPositiveDeltaPain 동작 — 양수만 집계)
+- [ ] /insights "인지 유연성 변화 (고통 변화량)" 차트에 1개 점 노출 (오늘 일자, avgDelta=2)
 - [ ] PII grep — Vercel 로그에 painScore·logId 평문 노출 0건
 - [ ] RLS 검증: 다른 user의 logId로 painScore POST 시도 → 404 ("로그를 찾을 수 없습니다")
-- [ ] 본질 위협 #4: 재평가 카피에 "치료" "회복" 0건. "통증 변화량" 라벨 회의록 §2.9 정합
+- [ ] 본질 위협 #4: 재평가 카피에 "치료" "회복" 0건. "고통 변화량" 라벨 회의록 §2.9 정합
 
 **실패 분류**:
 - **Critical**: `/api/review/pain-score` 500 / 24h 단축 SQL이 의도 외 row 수정 / `intervention` UPDATE 실패 / RLS 위반 (타 user log painScore 조작 가능)
-- **Major**: ReviewCard 미노출 (findPendingReview 게이트 fail — completed_at window 오류) / dashboard 통증 변화량 카드 반영 안됨 / 중복 재평가 검증 누락 (409 미반환 — 데이터 정합성 손상)
+- **Major**: ReviewCard 미노출 (findPendingReview 게이트 fail — completed_at window 오류) / dashboard 고통 변화량 카드 반영 안됨 / 중복 재평가 검증 누락 (409 미반환 — 데이터 정합성 손상)
 - **Minor**: daysAgo 카피 회귀 ("어제" / "N일 전" 분기 오류)
 
 **관련 파일**:
@@ -378,7 +378,7 @@
 
 ---
 
-### Step 7 — /insights → 자율성 지수 누적·통증 변화량 차트 노출
+### Step 7 — /insights → 자율성 지수 누적·고통 변화량 차트 노출
 
 **사전 조건**:
 - Step 4·5 통과 (`intervention.autonomy_score=25`·`reevaluated_pain_score=1`·`logs.pain_score=3`)
@@ -394,12 +394,12 @@
    - 왜곡 유형 분포 BarChart
    - 자율성 지수 누적 추이 LineChart (1점 = 25점)
    - 왜곡 유형별 평균 강도 RadarChart
-   - 인지 유연성 변화 (통증 변화량) LineChart (1점 = avgDelta=2)
+   - 인지 유연성 변화 (고통 변화량) LineChart (1점 = avgDelta=2)
    - 텍스트 인사이트 ("최근 30일간 가장 자주 나타난 왜곡은 ..." 마이크로카피)
 
 **기대 UI**:
 - 자율성 지수 누적 추이 차트 — y축 25 도달 (1개 점)
-- 통증 변화량 차트 — 0 기준선 + avgDelta=2 점 1개 (양수)
+- 고통 변화량 차트 — 0 기준선 + avgDelta=2 점 1개 (양수)
 - 패턴 리포트 — Step 3 trigger_category(예: 'work') × dominant distortion(예: 'catastrophizing') 1행 + deltaPain=2
 - "Manual" 헤더 링크 → /manual
 
@@ -411,7 +411,7 @@
 **점검 항목**:
 - [ ] 모든 차트 렌더링 (recharts ResponsiveContainer 작동)
 - [ ] 자율성 지수 LineChart — cumulative 25점 도달
-- [ ] 통증 변화량 LineChart — y축 양수 영역 + ReferenceLine y=0 노출 + 1개 점
+- [ ] 고통 변화량 LineChart — y축 양수 영역 + ReferenceLine y=0 노출 + 1개 점
 - [ ] 왜곡 유형 분포 BarChart — Step 3 dominant 1건 막대
 - [ ] PatternReport — patternRows 1건 (category·distortion·deltaPain=2 정합)
 - [ ] 기간 필터 7d/30d/all 전환 시 데이터 재로드 + period state 갱신
@@ -419,11 +419,11 @@
 - [ ] RLS — `logs!inner(user_id=<test>)` 필터로 본인 row만. cross-account 검증 (Supabase에서 anon으로 다른 user 조회 시 0행)
 - [ ] iPhone SE 320px 폭에서 차트 6종 viewport fit (recharts ResponsiveContainer 동작 + 좌측 margin -20 적용)
 - [ ] BottomTabBar "인사이트" 탭 active 상태
-- [ ] 본질 위협 #1·#2: "인지 유연성 변화 (통증 변화량)" 라벨 분석가 톤 유지. "치유"·"회복" 0건
+- [ ] 본질 위협 #1·#2: "인지 유연성 변화 (고통 변화량)" 라벨 분석가 톤 유지. "치유"·"회복" 0건
 - [ ] "주요 왜곡" 라벨 분석가 톤 ("주요 패턴" 등 정서적 변경 회귀 0건)
 
 **실패 분류**:
-- **Critical**: /insights 진입 자체 실패 / 차트 렌더링 0개 / RLS 위반 (타 user 데이터 노출) / 통증 변화량 차트가 음수만 표시 (양수 산식 오류)
+- **Critical**: /insights 진입 자체 실패 / 차트 렌더링 0개 / RLS 위반 (타 user 데이터 노출) / 고통 변화량 차트가 음수만 표시 (양수 산식 오류)
 - **Major**: 자율성 지수 누적 추이 데이터 0 (Step 4 데이터 누락) / PatternReport 0건 (trigger_category null로 필터링) / 기간 필터 토글 회귀
 - **Minor**: 텍스트 인사이트 카피 회귀 / 차트 색상·여백 미세 회귀
 
@@ -716,7 +716,7 @@ senior-qa-engineer 권한 경계 (페르소나 정의 §권한 경계):
 - [ ] POST /api/review/pain-score 200 + deltaPain=2
 - [ ] `intervention` UPDATE 검증
 - [ ] 중복 재평가 409
-- [ ] 통증 변화량 카드 = 2점
+- [ ] 고통 변화량 카드 = 2점
 - [ ] /insights Δpain 차트 1점
 - [ ] PII grep — painScore·logId 평문 0건
 - [ ] RLS — 타 user logId 차단
@@ -736,7 +736,7 @@ senior-qa-engineer 권한 경계 (페르소나 정의 §권한 경계):
 ### Step 7 (12개)
 - [ ] 차트 6종 모두 렌더링
 - [ ] 자율성 지수 LineChart 25점 도달
-- [ ] 통증 변화량 LineChart 양수 + ReferenceLine y=0
+- [ ] 고통 변화량 LineChart 양수 + ReferenceLine y=0
 - [ ] 왜곡 유형 분포 BarChart 1건
 - [ ] PatternReport 1건 (deltaPain=2)
 - [ ] 기간 필터 7d/30d/all 전환 동작

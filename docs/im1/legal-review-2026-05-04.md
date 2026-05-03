@@ -164,7 +164,7 @@ grep -rn "효과 보장\|치료 보장\|진단 보장\|확실한 효과" app/
 
 - 온보딩 act2-3 (L90): "인간은 같은 크기의 이득보다 손실에 약 2.25배 더 민감합니다."
   - 정합: **이론 인용**. *BlueBird 효과* 주장 아님. caption에 Kahneman & Tversky (1979) 명시. ✓
-- 온보딩 act3-2 (L116~122): 통증 변화량 0~10 측정 framing
+- 온보딩 act3-2 (L116~122): 고통 변화량 0~10 측정 framing
   - 정합: **검증** 어휘 사용 ("효과를 주장하는 대신 검증합니다"). 측정 메트릭으로 framing. ✓
 
 ### 3.4 발견 이슈
@@ -534,7 +534,7 @@ app/onboarding/[act]/OnboardingActClient.tsx:131: // slidesForAct는 항상 3개
 | L62~70 | act2-1 Kahneman + caption "Daniel Kahneman, 『생각에 관한 생각』(2011)" | 이론 인용 ✓ |
 | L75~83 | act2-2 Beck + caption "Aaron Beck (1976) — 인지 왜곡 5종" | 이론 인용 ✓ |
 | L88~95 | act2-3 Kahneman & Tversky + Wells + caption | 이론 인용 ✓ |
-| L116~122 | act3-2 통증 변화량 검증 framing — "효과를 주장하는 대신 검증합니다" | 메트릭 framing ✓ |
+| L116~122 | act3-2 고통 변화량 검증 framing — "효과를 주장하는 대신 검증합니다" | 메트릭 framing ✓ |
 | L127~136 | act3-3 카뮈 + "치료하는 것이 아닙니다" | 의료 부정 명제 ✓ |
 
 ---

@@ -41,6 +41,11 @@ export default function PrivacyPage() {
             보호법」(PIPA) 및 관련 법령을 준수하여 이용자의 개인정보를 다음과 같이 처리합니다. 본
             방침에서 "운영자"는 본 서비스를 운영·관리하는 개인을 의미합니다.
           </p>
+          <p className="text-sm text-text-secondary leading-relaxed">
+            본 서비스는 베타 단계에서{' '}
+            <strong className="text-text-primary">비공개 운영</strong>되며, 모집 공고에 응모한 자
+            중 운영자가 선별한 자에게만 이용이 부여됩니다.
+          </p>
           <p className="text-xs text-text-tertiary">최종 수정일: 2026년 4월 28일 / 시행일: 2026년 4월 28일</p>
         </section>
 
@@ -89,7 +94,8 @@ export default function PrivacyPage() {
                   <strong className="text-text-primary">분석 품질 메트릭</strong> (분석 성공·재시도·파싱
                   실패·질문 폴백 발동 등의 이벤트와 user_id) — 운영자가 자체 운영하는 Supabase
                   테이블에 저장되며, 사일런트 실패를 빠르게 감지·수정해 분석 품질을 개선하기 위한
-                  내부 운영 목적으로만 사용됩니다. 외부에 공유되지 않습니다.
+                  내부 운영 목적으로만 사용됩니다. 외부에 공유되지 않습니다. 본 메트릭의 보유 기간은
+                  §3 보유 기간 정책을 동일하게 적용합니다 (탈퇴 후 30일 유예 후 영구 삭제).
                 </li>
               </ul>
             </div>
@@ -152,6 +158,22 @@ export default function PrivacyPage() {
                     전송됩니다. Google은 API 데이터를 기본적으로 모델 학습에 사용하지 않으나, 민감
                     정보(타인 신원, 의료 정보, 금융 정보 등)는 입력하지 않으시길 권합니다.
                   </p>
+                </li>
+              </ul>
+            </div>
+
+            <div className="space-y-2">
+              <p className={TABLE_HEADER}>위탁 기간 및 재위탁</p>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>
+                  <strong className="text-text-primary">위탁 기간</strong>: 회원 가입 기간 동안. 회원
+                  탈퇴 시 §3 보유 기간 정책에 따라 처리.
+                </li>
+                <li>
+                  <strong className="text-text-primary">재위탁</strong>: 위탁사가 자체 인프라 운영
+                  목적으로 일부 사용할 수 있으며, 운영자는 위탁사의 약관(Supabase Privacy
+                  Policy·Vercel Terms·Google API Terms 등)에 따른 데이터 처리 정책을 준수하는
+                  한도에서 동의합니다.
                 </li>
               </ul>
             </div>

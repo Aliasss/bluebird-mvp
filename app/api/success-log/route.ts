@@ -63,10 +63,11 @@ export async function POST(request: Request) {
     }
 
     // intervention 테이블에 완료 상태로 저장
-    // 분석 데이터·소크라테스 답변이 없는 회고형 기록이므로 averageIntensity=0, answerCount=0.
-    // system2Action(최소 10자)이 완료 노트 역할을 하므로 noteBonus를 일관되게 적용한다.
+    // 분석 데이터·소크라테스 답변이 없는 회고형 기록이므로 answerCount=0.
+    // system2Action(최소 10자)이 자기 표현(SDT autonomy 차원) 역할을 하므로
+    // noteBonus만 부여 — autonomy_score v2 (§4.2.2 mvp-overview).
     const autonomyScore =
-      calcAutonomyScore({ averageIntensity: 0, answerCount: 0 }) + AUTONOMY_NOTE_BONUS;
+      calcAutonomyScore({ answerCount: 0 }) + AUTONOMY_NOTE_BONUS;
 
     const { error: interventionError } = await supabase.from('intervention').insert({
       log_id: logData.id,

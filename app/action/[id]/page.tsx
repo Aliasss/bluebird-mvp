@@ -470,7 +470,7 @@ export default function ActionPage() {
 
         <div className="bg-white rounded-2xl p-5 shadow-card">
           <h2 className="text-base md:text-lg font-bold text-text-primary mb-3">
-            <InfoTooltip text="행동을 완료할 때마다 올라가는 누적 점수입니다.">자율성 지수</InfoTooltip>
+            <InfoTooltip text="자기 검증 답변·자기 노트 작성으로 자율성을 행사한 정도. (Deci & Ryan, 2000 자기결정성 이론 autonomy 차원 측정)">자율성 지수</InfoTooltip>
           </h2>
           <p className="text-3xl font-bold text-primary">
             {state.autonomyScore ?? 0}

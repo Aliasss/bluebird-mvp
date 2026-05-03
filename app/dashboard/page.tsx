@@ -406,7 +406,7 @@ function DashboardContent() {
                 </div>
                 <div className="bg-white rounded-2xl p-4 shadow-card">
                   <p className="text-xs text-text-secondary mb-1">
-                    <InfoTooltip text="행동을 완료할 때마다 올라가는 누적 점수입니다.">자율성 지수</InfoTooltip>
+                    <InfoTooltip text="자기 검증 답변·자기 노트 작성으로 자율성을 행사한 정도. (Deci & Ryan, 2000 자기결정성 이론 autonomy 차원 측정)">자율성 지수</InfoTooltip>
                   </p>
                   <p className="text-xl font-extrabold text-warning tracking-tight">{autonomyScore}점</p>
                   <p className="text-[10px] font-semibold text-primary mt-0.5">{rank.title}</p>

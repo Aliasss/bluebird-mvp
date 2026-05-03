@@ -1,32 +1,36 @@
 import { describe, it, expect } from 'vitest';
-import { AUTONOMY_NOTE_BONUS, calcAutonomyScore } from '@/lib/intervention/autonomy-score';
+import {
+  AUTONOMY_NOTE_BONUS,
+  AUTONOMY_ANSWER_UNIT,
+  AUTONOMY_ANSWER_CAP,
+  AUTONOMY_MAX,
+  calcAutonomyScore,
+} from '@/lib/intervention/autonomy-score';
 
-describe('calcAutonomyScore', () => {
-  it('빈 입력(intensity 0, answer 0)에 대해 base 10을 반환한다', () => {
-    expect(calcAutonomyScore({ averageIntensity: 0, answerCount: 0 })).toBe(10);
+describe('calcAutonomyScore (v2 — SDT autonomy)', () => {
+  it('answer 0개일 때 0점을 반환한다', () => {
+    expect(calcAutonomyScore({ answerCount: 0 })).toBe(0);
   });
 
-  it('intensity는 5배 가중되어 반올림된다', () => {
-    expect(calcAutonomyScore({ averageIntensity: 0.4, answerCount: 0 })).toBe(12);
-    expect(calcAutonomyScore({ averageIntensity: 0.5, answerCount: 0 })).toBe(13);
-    expect(calcAutonomyScore({ averageIntensity: 1, answerCount: 0 })).toBe(15);
+  it('answer 1개당 5점이며, 3개까지만 가산된다 (cap 15)', () => {
+    expect(calcAutonomyScore({ answerCount: 1 })).toBe(AUTONOMY_ANSWER_UNIT);
+    expect(calcAutonomyScore({ answerCount: 2 })).toBe(AUTONOMY_ANSWER_UNIT * 2);
+    expect(calcAutonomyScore({ answerCount: 3 })).toBe(AUTONOMY_ANSWER_CAP);
+    expect(calcAutonomyScore({ answerCount: 10 })).toBe(AUTONOMY_ANSWER_CAP);
   });
 
-  it('answerCount는 최대 3까지만 보너스를 준다', () => {
-    expect(calcAutonomyScore({ averageIntensity: 0, answerCount: 1 })).toBe(11);
-    expect(calcAutonomyScore({ averageIntensity: 0, answerCount: 3 })).toBe(13);
-    expect(calcAutonomyScore({ averageIntensity: 0, answerCount: 10 })).toBe(13);
+  it('음수 입력은 0으로 클램프된다', () => {
+    expect(calcAutonomyScore({ answerCount: -3 })).toBe(0);
   });
 
-  it('성공 로그 시나리오(intensity 0, answer 0) + noteBonus = 25', () => {
-    const score =
-      calcAutonomyScore({ averageIntensity: 0, answerCount: 0 }) + AUTONOMY_NOTE_BONUS;
-    expect(score).toBe(25);
+  it('정답+노트 시나리오: AUTONOMY_ANSWER_CAP + AUTONOMY_NOTE_BONUS = AUTONOMY_MAX', () => {
+    const score = calcAutonomyScore({ answerCount: 3 }) + AUTONOMY_NOTE_BONUS;
+    expect(score).toBe(AUTONOMY_MAX);
+    expect(AUTONOMY_MAX).toBe(30);
   });
 
-  it('전형적 분석 완료 시나리오(intensity 0.7, answer 4) + noteBonus = 28', () => {
-    const score =
-      calcAutonomyScore({ averageIntensity: 0.7, answerCount: 4 }) + AUTONOMY_NOTE_BONUS;
-    expect(score).toBe(10 + 4 + 3 + 15);
+  it('노트만 작성 시 (answer 0): noteBonus만 부여 = 15점', () => {
+    const score = calcAutonomyScore({ answerCount: 0 }) + AUTONOMY_NOTE_BONUS;
+    expect(score).toBe(AUTONOMY_NOTE_BONUS);
   });
 });

@@ -105,26 +105,15 @@ export async function POST(request: Request) {
     } = { final_action: effectiveAction };
 
     if (markCompleted) {
-      const { data: analysisRows, error: analysisError } = await supabase
-        .from('analysis')
-        .select('intensity')
-        .eq('log_id', logId);
-
-      if (analysisError) {
-        return NextResponse.json({ error: '분석 데이터 조회에 실패했습니다.' }, { status: 500 });
-      }
-
-      const averageIntensity =
-        (analysisRows?.reduce((sum, row) => sum + Number(row.intensity ?? 0), 0) ?? 0) /
-        Math.max(1, analysisRows?.length ?? 1);
-
+      // autonomy_score v2 — SDT autonomy 차원 측정. averageIntensity는 더 이상 사용하지 않음
+      // (AI 추정값에 가중치를 주던 v1의 결합도를 끊는다).
       const answerCount = Object.keys(intervention?.user_answers ?? {}).filter(
         (key) => Boolean(intervention?.user_answers?.[key])
       ).length;
 
       const noteBonus = completionNote.length > 0 ? AUTONOMY_NOTE_BONUS : 0;
       actionPayload.is_completed = true;
-      actionPayload.autonomy_score = calcAutonomyScore({ averageIntensity, answerCount }) + noteBonus;
+      actionPayload.autonomy_score = calcAutonomyScore({ answerCount }) + noteBonus;
       if (completionNote.length > 0) {
         actionPayload.completion_note = completionNote;
       }

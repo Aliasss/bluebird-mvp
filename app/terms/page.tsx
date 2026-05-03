@@ -51,7 +51,10 @@ export default function TermsPage() {
               의미합니다. 인지 왜곡 분석, 소크라테스 질문 생성, 패턴 리포트 등을 포함합니다.
             </li>
             <li>
-              "이용자"란 본 약관에 동의하고 서비스에 가입하여 이를 이용하는 자를 말합니다.
+              "이용자"란 본 약관에 동의하고 서비스에 가입하여 이를 이용하는 자를 말합니다.{' '}
+              <strong className="text-text-primary">
+                베타 단계에서는 운영자가 모집 응모를 받아 선별한 자에 한해 이용 자격이 부여됩니다.
+              </strong>
             </li>
             <li>
               본 서비스는{' '}
@@ -82,6 +85,11 @@ export default function TermsPage() {
             <li>
               타인의 개인정보를 도용한 가입, 1인이 다수의 계정을 부정 목적으로 운용하는 행위, 자동화된
               수단을 통한 가입은 금지됩니다.
+            </li>
+            <li>
+              <strong className="text-text-primary">베타 단계 가입 절차</strong>: 베타 단계에서는
+              모집 공고에 응모한 자 중 운영자가 선별한 자에게만 가입 링크가 발송됩니다. 본 약관에
+              따른 가입은 운영자의 사전 승인을 전제로 합니다.
             </li>
           </ol>
         </article>
@@ -132,6 +140,11 @@ export default function TermsPage() {
               </strong>
               에 즉시 연락해주세요.
             </li>
+            <li>
+              단, 본 조의 면책은 운영자의 <strong className="text-text-primary">고의 또는
+              중대한 과실</strong>로 인한 손해, 신체의 자유·생명에 관한 손해에는 적용되지 않으며,
+              이 경우 운영자는 관련 법령이 정하는 바에 따라 책임을 부담합니다.
+            </li>
           </ol>
         </article>
 
@@ -156,12 +169,27 @@ export default function TermsPage() {
 
         {/* 6. 이용료 */}
         <article className="bg-white rounded-2xl shadow-card p-6 space-y-3">
-          <h2 className={SECTION_HEADER}>제6조 (이용료)</h2>
-          <p className="text-sm text-text-secondary leading-relaxed">
-            본 베타 단계에서 서비스는 무료로 제공됩니다. 향후 유료 기능이 도입될 경우 별도의 약관과
-            결제 동의 절차를 거쳐 적용되며, 기존 이용자가 이미 사용 중이던 무료 기능에는 소급 적용되지
-            않습니다.
-          </p>
+          <h2 className={SECTION_HEADER}>제6조 (이용료 및 청약철회)</h2>
+          <ol className="text-sm text-text-secondary leading-relaxed list-decimal pl-5 space-y-1.5">
+            <li>
+              본 베타 단계에서 서비스는 무료로 제공됩니다. 향후 유료 기능이 도입될 경우 별도의 약관과
+              결제 동의 절차를 거쳐 적용되며, 기존 이용자가 이미 사용 중이던 무료 기능에는 소급
+              적용되지 않습니다.
+            </li>
+            <li>
+              유료 기능 도입 시{' '}
+              <strong className="text-text-primary">
+                「전자상거래 등에서의 소비자보호에 관한 법률」 제17조에 따른 청약철회 권리는 보장
+              </strong>
+              됩니다. 본 약관 또는 별도 안내(예:{' '}
+              <Link href="/beta-incentive" className="text-primary underline">베타 인터뷰 완주자 혜택</Link>
+              )가 있는 경우 그 약속 조건이 청약철회권에 우선하지 않습니다.
+            </li>
+            <li>
+              베타 단계 핵심 기능(분석·재평가·매뉴얼 열람)은 베타 이용자에게 향후 유료화 후에도 동일한
+              한도로 무료 유지됩니다. 단, 별도 안내한 사전 약속이 있는 경우 그 안내 조건을 따릅니다.
+            </li>
+          </ol>
         </article>
 
         {/* 7. 약관 변경 */}
@@ -173,8 +201,10 @@ export default function TermsPage() {
               최소 7일 전에 서비스 내 공지 또는 가입 이메일로 안내합니다.
             </li>
             <li>
-              이용자에게 불리한 중요 변경의 경우 시행일 최소 30일 전에 안내하며, 별도 동의 절차를 거칠 수
-              있습니다.
+              이용자에게 불리한 중요 변경의 경우 시행일 최소 30일 전에 안내하며,{' '}
+              <strong className="text-text-primary">별도 동의 절차를 거칩니다</strong>. 동의하지
+              않는 이용자는 회원 탈퇴를 통해 이용 계약을 해지할 수 있으며, 동의 없이 변경된 조항이 그
+              이용자에게 적용되지 않습니다.
             </li>
             <li>
               이용자가 변경된 약관에 동의하지 않을 경우 회원 탈퇴를 통해 이용 계약을 해지할 수 있습니다.

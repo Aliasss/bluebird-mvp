@@ -8,6 +8,11 @@ import { z } from 'zod';
 import { detect } from '@/lib/safety/detect';
 import { createSafetyLlmClient } from '@/lib/safety/gemini-adapter';
 
+// Vercel Pro: 본 라우트는 safety detect + main analyze 두 번의 Gemini 호출을 직렬로 수행.
+// 모델 변동·네트워크 지연 시 5~15초 변동, 기본 ~15s 타임아웃 초과 가능. 60s로 명시.
+// 참고: docs/strategy/infrastructure-capacity-2026-05-04.md
+export const maxDuration = 60;
+
 const analyzeRequestSchema = z.object({
   logId: z.string().uuid(),
 });

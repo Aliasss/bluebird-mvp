@@ -6,6 +6,10 @@ import { logServerError } from '@/lib/logging/server-logger';
 import type { DistortionAnalysis } from '@/types';
 import { z } from 'zod';
 
+// Vercel Pro: Gemini 1회 호출. 기본 ~15s 타임아웃 초과 가능성 회피용 60s 명시.
+// 참고: docs/strategy/infrastructure-capacity-2026-05-04.md
+export const maxDuration = 60;
+
 const generateQuestionsRequestSchema = z.object({
   logId: z.string().uuid(),
 });

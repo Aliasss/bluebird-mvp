@@ -238,4 +238,4 @@ export const MANUAL_SECTIONS: ManualPageSection[] = [
 
 // 기존 컴포넌트 호환용 (prospect value chart 섹션에서 사용)
 export const PROSPECT_THEORY_CHART_NOTE =
-  'Prospect Theory Value Function (S-Curve Simulation)';
+  '전망 이론 가치 함수 — S-curve 시뮬레이션 (Prospect Theory Value Function)';

@@ -102,7 +102,9 @@ GEMINI_API_KEY=
   2. [Step] → verify: [check]
   ```
 - BlueBird-specific 회귀 표준 3종: `tsc --noEmit` (lint 역할) · `vitest run` (127/127) · `npm run lint:copy` (카피 가드). 코드 변경 시 *이 3종 모두* `→ verify:` 라인에 명시.
-- *카피 자산 PR 추가 게이트*: 머지 전 `rg '\*\*|^>|개정 사유|본 절은' lib/content/ app/manual/` **0건** 확인 필수.
+- *카피 자산 PR 추가 게이트*: 머지 전 다음 두 grep 모두 **0건** 확인 필수.
+  1. `rg '\*\*|^>|개정 사유|본 절은' lib/content/ app/manual/` — 별표·메타노트·changelog
+  2. `rg 'min\(|max\(|INTEGER|score =|컬럼|route\.ts|migrations/|\.sql|lib/|app/' lib/content/technical-manual.ts` — 산식·코드 경로·DB 메타 (매뉴얼 본문 한정)
 
 ---
 

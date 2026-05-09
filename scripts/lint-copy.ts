@@ -38,6 +38,11 @@ const COMFORT_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
   { pattern: /함께\s*(?:해|들여다|가봐|시작)/g, label: '동반체 "함께"' },
   { pattern: /친구처럼/g, label: '친구체 "친구처럼"' },
   { pattern: /마음을\s*안아/g, label: '위로 "마음을 안아"' },
+  // 푸시 알림 카피 톤 가드 — push-infra-review-2026-05-09.md §2.4
+  { pattern: /오늘\s*하루도/g, label: '응원체 "오늘 하루도"' },
+  { pattern: /소중(?:한|해)/g, label: '정서 어휘 "소중"' },
+  { pattern: /❤️/g, label: '정서 이모지 "❤️"' },
+  { pattern: /🌟/g, label: '정서 이모지 "🌟"' },
 ];
 
 const NAUTICAL_PATTERNS: Array<{ pattern: RegExp; label: string }> = [

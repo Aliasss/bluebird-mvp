@@ -9,7 +9,9 @@
 
 ## 0. 한 줄 요약
 
-**21:00 KST에 오늘 체크인을 하지 않은 사용자에게만 Web Push로 한 번 리마인더를 보낸다.** 권한 요청은 첫 체크인 완료 직후 컨텍스트 카드(P2)로, 거부·미응답자는 대시보드 배너(P3)로 회복 경로 제공. 채널은 Web Push 단독, 시간대는 KST 단일.
+**21:00 KST에 오늘 evening 체크인을 하지 않은 사용자에게만 Web Push로 한 번 리마인더를 보낸다.** 권한 요청은 첫 체크인 완료 직후 컨텍스트 카드(P2)로, 거부·미응답자는 대시보드 배너(P3)로 회복 경로 제공. 채널은 Web Push 단독, 시간대는 KST 단일.
+
+> **Implementation note (2026-05-09 codebase 발견):** `checkins` 테이블은 `type ∈ {morning, evening}` 두 종류. 21:00은 자연스럽게 evening 시간대이므로 본 스펙의 "오늘 체크인 미생성"은 **"오늘 evening 체크인 미생성"**으로 정의함. morning만 체크인한 사용자도 알림 대상에 포함 (저녁 체크인 유도). 결정잠금 §5.4의 "21:00 KST 고정 + 미체크인 조건"은 이 정의로 해석.
 
 ---
 
@@ -190,7 +192,7 @@ worker/
   └─ index.js                     # next-pwa custom worker (push/notificationclick)
 
 supabase/migrations/
-  └─ 13_push_subscriptions.sql    # 마이그레이션 (이전 06~12 다음)
+  └─ 14_push_subscriptions.sql    # 마이그레이션 (이전 13_pain_score_range_0_10 다음)
 
 vercel.json                       # 신규 (cron schedule 1슬롯) — 현재 파일 부재 확인됨
 docs/qa/push-ios-checklist.md     # iOS PWA 검증 체크리스트
@@ -205,7 +207,7 @@ docs/qa/push-ios-checklist.md     # iOS PWA 검증 체크리스트
 - `package.json` — `web-push@^3.6.7` 의존성 1개 추가
 - `scripts/lint-copy.ts` — 알림 금지/권장 단어 룰 추가
 
-### 3.3 DB Schema (Migration 13)
+### 3.3 DB Schema (Migration 14)
 
 ```sql
 create table push_subscriptions (
@@ -384,7 +386,7 @@ M1 ──► M2 ──► M3 ──┐
 | ID | 단위 | 의존 | 추정 (1인 집중) | 산출물 |
 |---|---|---|---|---|
 | M1 | 인프라 준비 | — | 1h | VAPID 키 생성, `web-push` 설치, Vercel env 5종 등록 |
-| M2 | 데이터 레이어 | M1 | 2~3h | Migration 13 + RLS + index + RPC, 로컬·production Supabase 적용 |
+| M2 | 데이터 레이어 | M1 | 2~3h | Migration 14 + RLS + index + RPC, 로컬·production Supabase 적용 |
 | M3 | 서버 레이어 | M2 | 4~6h | `/api/push/{subscribe,unsubscribe}`, `/api/cron/checkin-reminder`, `lib/notifications/{copy,vapid,send}.ts`, `vercel.json` |
 | M4 | 클라이언트·SW 레이어 | M1 | 6~8h | `worker/index.js`, `next.config.ts` customWorker, `EnablePushCard`/`EnablePushBanner`, `/me` 토글, `/checkin`·`/dashboard` 마운트 |
 | M5 | 카피 가드 | — | 1~2h | `copy.ts` 단일 출처, `scripts/lint-copy.ts` 룰 확장 |
@@ -397,7 +399,7 @@ M1 ──► M2 ──► M3 ──┐
 
 | 작업 | Must / Should / Nice |
 |---|---|
-| Migration 13 + RLS + RPC | Must — 없으면 발송 자체 불가능 |
+| Migration 14 + RLS + RPC | Must — 없으면 발송 자체 불가능 |
 | `/api/cron/checkin-reminder` + 인증 | Must — 본 기능의 본체 |
 | Service worker push handler | Must — 수신 자체가 안 됨 |
 | EnablePushCard (P2) | Must — 권한 풀이 0이면 모든 후속 무의미 |
@@ -412,7 +414,7 @@ M1 ──► M2 ──► M3 ──┐
 
 - M3 / M4 / M5는 서로 독립 — 같은 작업자라도 컨텍스트 분리해 batch 가능
 - subagent 활용 후보 (executing-plans 단계):
-  - "Migration 13 작성·적용" 단일 subagent
+  - "Migration 14 작성·적용" 단일 subagent
   - "lib/notifications/copy.ts + lint-copy 룰 확장" 단일 subagent
   - "worker/index.js + next.config.ts 통합" 단일 subagent
   - 모두 무상태·격리 가능 → `dispatching-parallel-agents` 패턴 적합

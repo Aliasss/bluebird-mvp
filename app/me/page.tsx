@@ -6,6 +6,7 @@ import { BookOpen, CheckCircle, Star, ChevronRight } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import BottomTabBar from '@/components/ui/BottomTabBar';
 import InfoTooltip from '@/components/ui/InfoTooltip';
+import PushToggle from '@/components/notifications/PushToggle';
 import { getRankResult, RANKS } from '@/lib/utils/rank';
 import type { User } from '@supabase/supabase-js';
 
@@ -194,6 +195,16 @@ export default function MePage() {
                 <ChevronRight size={16} className="text-text-tertiary flex-shrink-0" />
               </button>
             ))}
+          </div>
+        </div>
+
+        {/* 알림 설정 */}
+        <div>
+          <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wide mb-2 px-1">
+            알림
+          </p>
+          <div className="bg-white rounded-2xl border border-background-tertiary px-4">
+            <PushToggle />
           </div>
         </div>
 

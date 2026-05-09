@@ -7,6 +7,8 @@ import { BookOpen, SunMedium, Moon } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { formatDate } from '@/lib/utils';
 import StreakBanner from '@/components/ui/StreakBanner';
+import EnablePushCard from '@/components/notifications/EnablePushCard';
+import EnablePushBanner from '@/components/notifications/EnablePushBanner';
 import ArchetypeCard from '@/components/ui/ArchetypeCard';
 import BottomTabBar from '@/components/ui/BottomTabBar';
 import InfoTooltip from '@/components/ui/InfoTooltip';
@@ -47,6 +49,8 @@ function DashboardContent() {
   const [weeklyPositiveDeltaPain, setWeeklyPositiveDeltaPain] = useState(0);
   const [successToast, setSuccessToast] = useState(false);
   const [checkinToast, setCheckinToast] = useState(false);
+  // 방금 체크인 완료한 직후 진입 시 P2 카드 노출 트리거 (component가 permission/dismiss 자체 게이팅)
+  const [justCheckedIn, setJustCheckedIn] = useState(false);
   const [todayCheckin, setTodayCheckin] = useState<{ morning: boolean; evening: boolean }>({ morning: false, evening: false });
   const [showManualNudge, setShowManualNudge] = useState(false);
 
@@ -66,6 +70,7 @@ function DashboardContent() {
     if (sessionStorage.getItem('justCheckedIn') === '1') {
       sessionStorage.removeItem('justCheckedIn');
       setCheckinToast(true);
+      setJustCheckedIn(true);
       const timer = setTimeout(() => setCheckinToast(false), 3000);
       return () => clearTimeout(timer);
     }
@@ -390,6 +395,14 @@ function DashboardContent() {
             </div>
           </div>
         </div>
+
+        {/*
+          푸시 알림 자산 — 사용자 permission이 default일 때만 컴포넌트 내부에서 렌더.
+          - 방금 체크인 완료 직후: P2 카드 (1회 한정, dismiss 영구)
+          - 그 외 기본 상태: P3 배너 (7일 silence, dismiss 시 침묵)
+          상호배타로 렌더해 같은 화면 중복 노출 방지.
+        */}
+        {justCheckedIn ? <EnablePushCard /> : <EnablePushBanner />}
 
         {/* 스트릭 + 자율성 지수 + 이번 주 줄어든 고통 */}
         {(() => {

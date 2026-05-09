@@ -45,6 +45,10 @@ const withPWA = withPWAInit({
   dest: 'public',
   register: true,
   disable: process.env.NODE_ENV === 'development',
+  // 푸시 알림 핸들러를 위한 custom worker — worker/index.js를 자동 생성 SW에 append.
+  // Plan: docs/superpowers/plans/2026-05-09-push-infra.md (Task 11)
+  customWorkerSrc: 'worker',
+  customWorkerDest: 'public',
   workboxOptions: {
     runtimeCaching,
     skipWaiting: true,

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/service';
 import { sendCheckinReminder } from '@/lib/notifications/send';
+import { recordServerEvent } from '@/lib/notifications/events';
 import { logServerError } from '@/lib/logging/server-logger';
 
 interface RpcRow {
@@ -41,6 +42,21 @@ export async function POST(request: Request) {
 
     const sent = results.filter((r) => r.status === 'fulfilled').length;
     const failed = results.length - sent;
+
+    // 측정 이벤트 적재 — 발송 결과별로 분기. 실패해도 cron 자체 응답엔 영향 없음.
+    await Promise.allSettled(
+      results.map((r, i) => {
+        const userId = targets[i].user_id;
+        if (r.status === 'fulfilled') {
+          const eventType =
+            r.value.status === 'gone' ? 'push_gone' : 'push_sent';
+          return recordServerEvent(supabase, userId, eventType);
+        }
+        return recordServerEvent(supabase, userId, 'push_failed', {
+          error: String(r.reason),
+        });
+      }),
+    );
 
     if (failed > 0) {
       const sample = results

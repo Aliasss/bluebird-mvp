@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import PageHeader from '@/components/ui/PageHeader';
 import { supabase } from '@/lib/supabase/client';
+import { recordClientEvent } from '@/lib/notifications/events';
 
 const MOOD_OPTIONS = [
   { word: '집중', emoji: '🎯' },
@@ -41,6 +42,14 @@ export default function CheckinPage() {
   const [alreadyDone, setAlreadyDone] = useState(false);
 
   useEffect(() => {
+    // 푸시 알림에서 진입한 경우 push_clicked 이벤트 기록 (`?src=push` 트릭)
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('src') === 'push') {
+        void recordClientEvent('push_clicked');
+      }
+    }
+
     const currentType = getCheckinType();
     setType(currentType);
 

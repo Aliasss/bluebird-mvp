@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePushPermission } from './usePushPermission';
 import { ENABLE_PUSH_BANNER } from '@/lib/notifications/copy';
+import { recordClientEvent } from '@/lib/notifications/events';
 
 const STORAGE_KEY = 'bluebird:p3_dismissed_at_v1';
 const SILENCE_DAYS = 7;
@@ -15,6 +16,7 @@ const SILENCE_DAYS = 7;
 export default function EnablePushBanner() {
   const { state, enable, loading } = usePushPermission();
   const [hidden, setHidden] = useState(true);
+  const shownLogged = useRef(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -23,17 +25,26 @@ export default function EnablePushBanner() {
     setHidden(fresh);
   }, []);
 
-  if (state === 'unsupported' || state === 'granted' || state === 'denied') {
-    return null;
-  }
-  if (hidden) return null;
+  const visible =
+    state !== 'unsupported' && state !== 'granted' && state !== 'denied' && !hidden;
+
+  useEffect(() => {
+    if (visible && !shownLogged.current) {
+      shownLogged.current = true;
+      void recordClientEvent('p3_shown');
+    }
+  }, [visible]);
+
+  if (!visible) return null;
 
   const handleEnable = async () => {
+    void recordClientEvent('p3_clicked_enable');
     const r = await enable();
     if (r.ok) setHidden(true);
   };
 
   const handleDismiss = () => {
+    void recordClientEvent('p3_dismissed');
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, String(Date.now()));
     }

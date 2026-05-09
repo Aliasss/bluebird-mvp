@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { urlBase64ToUint8Array } from '@/lib/notifications/vapid';
+import { recordClientEvent } from '@/lib/notifications/events';
 
 type PermissionState = 'default' | 'granted' | 'denied' | 'unsupported';
 
@@ -39,6 +40,11 @@ export function usePushPermission(): PushPermissionApi {
     try {
       const perm = await Notification.requestPermission();
       setState(perm as PermissionState);
+      if (perm === 'granted') {
+        void recordClientEvent('permission_granted');
+      } else if (perm === 'denied') {
+        void recordClientEvent('permission_denied');
+      }
       if (perm !== 'granted') return { ok: false, reason: perm as PermissionState };
 
       const reg = await navigator.serviceWorker.ready;
@@ -47,7 +53,9 @@ export function usePushPermission(): PushPermissionApi {
 
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey),
+        // .buffer 캐스팅: TS lib.dom의 BufferSource는 ArrayBuffer 기반을 요구
+        applicationServerKey: urlBase64ToUint8Array(publicKey)
+          .buffer as ArrayBuffer,
       });
 
       const { endpoint, keys } = sub.toJSON() as {
@@ -66,6 +74,7 @@ export function usePushPermission(): PushPermissionApi {
         return { ok: false, reason: 'denied' as const };
       }
 
+      void recordClientEvent('subscribed');
       return { ok: true };
     } finally {
       setLoading(false);
@@ -87,6 +96,7 @@ export function usePushPermission(): PushPermissionApi {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ endpoint }),
       });
+      void recordClientEvent('unsubscribed');
       return { ok: true };
     } finally {
       setLoading(false);

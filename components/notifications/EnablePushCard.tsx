@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePushPermission } from './usePushPermission';
 import { ENABLE_PUSH_CARD } from '@/lib/notifications/copy';
+import { recordClientEvent } from '@/lib/notifications/events';
 
 const STORAGE_KEY = 'bluebird:p2_dismissed_v1';
 
@@ -25,10 +26,19 @@ export default function EnablePushCard({
     return localStorage.getItem(STORAGE_KEY) === '1';
   });
   const [toast, setToast] = useState<string | null>(null);
+  const shownLogged = useRef(false);
 
-  if (state === 'unsupported') return null;
-  if (state !== 'default') return null;
-  if (dismissed && !forceShow) return null;
+  const visible =
+    state !== 'unsupported' && state === 'default' && (!dismissed || forceShow);
+
+  useEffect(() => {
+    if (visible && !shownLogged.current) {
+      shownLogged.current = true;
+      void recordClientEvent('p2_shown');
+    }
+  }, [visible]);
+
+  if (!visible) return null;
 
   const persistDismiss = () => {
     setDismissed(true);
@@ -38,6 +48,7 @@ export default function EnablePushCard({
   };
 
   const handleEnable = async () => {
+    void recordClientEvent('p2_clicked_enable');
     const result = await enable();
     if (result.ok) {
       setToast(ENABLE_PUSH_CARD.toastGranted);
@@ -49,6 +60,7 @@ export default function EnablePushCard({
   };
 
   const handleLater = () => {
+    void recordClientEvent('p2_clicked_later');
     persistDismiss();
   };
 

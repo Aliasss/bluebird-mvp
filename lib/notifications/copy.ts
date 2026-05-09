@@ -10,7 +10,8 @@
 export const CHECKIN_REMINDER_PUSH = {
   title: '오늘 체크인 안 됐어요',
   body: '1분이면 한 줄 남길 수 있어요. 지난 7일과 비교 데이터가 쌓입니다.',
-  url: '/checkin',
+  // ?src=push: /checkin 진입 시 push_clicked 이벤트 기록 트리거
+  url: '/checkin?src=push',
   tag: 'checkin-reminder',
 } as const;
 

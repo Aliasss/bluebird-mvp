@@ -1,8 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const mockRpc = vi.fn();
+const mockInsert = vi.fn().mockResolvedValue({ error: null });
 vi.mock('@/lib/supabase/service', () => ({
-  createServiceRoleClient: () => ({ rpc: mockRpc }),
+  createServiceRoleClient: () => ({
+    rpc: mockRpc,
+    from: () => ({ insert: mockInsert }),
+  }),
 }));
 
 const mockSend = vi.fn();

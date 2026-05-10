@@ -1002,4 +1002,15 @@ BlueBird 자동 미팅 routine 시스템 운영 중. spec [`docs/superpowers/spe
 - Phase 3·4는 사용자 직접 수행 (cloud UI). Phase 1·2는 Claude Code가 자동.
 - prompt 수정 시 cloud routine 재등록 필요 (cloud는 등록 시점 snapshot 보존).
 - 첫 1주 운영 후 토요일 retrospect로 cadence·비용·attendance 평가 — 격하 검토.
+
+## Dry-run 결함 후속 (Task 5 결과 반영)
+
+**적용 완료** (daily-standup-prompt.md 인라인 fix):
+- 결함 #1: Phase 1.6 모드 결정 표 boundary 명확화 (commit 0건/1~3건/4+건 quantitative)
+- 결함 #4: 회의록 §0.1 ⚠️ 본질 위협 surface 요약 섹션 추가
+
+**미해결 (첫 production run에서 모니터링·후속 spec 보강):**
+- 결함 #2: 일요일·공휴일 수동 trigger 시 §0 "비표준 실행 요일" 표기 절차 — real cron은 월~목만이라 정상 운영 시 미발생, 발생 시 prompt 자체는 정상 작동
+- 결함 #3: §3.4 매핑 표의 `docs/strategy/` 변경 시 "변경 영역 임원" implicit — 파일별 매핑 또는 strategy-manager 판단 위임 필요. dry-run에서는 strategy-manager가 판단으로 잘 처리
+- 결함 #5: Phase 2.2 산하 "본인 영역" 정의 — `§3.4 매핑 path` vs `페르소나 책임 영역` 양쪽 모두 cover하면 토큰 cost ↑. 1주 운영 후 retrospect에서 격하 검토
 - spec v1.1 본 plan과 동기화 — spec 변경 시 본 plan도 갱신 필요.

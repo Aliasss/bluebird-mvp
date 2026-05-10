@@ -46,6 +46,7 @@ yarn-error.log*
 # Documentation (private)
 docs/private/
 docs/superpowers/**/*.md
+# Allow tracked md files only in direct children of specs/, plans/, routines/ — subdirs intentionally ignored
 !docs/superpowers/specs/*.md
 !docs/superpowers/plans/*.md
 !docs/superpowers/routines/*.md

@@ -13,10 +13,10 @@
 ## Phase 1 — 주간 input 흡수
 
 ```bash
-# 0. 날짜 (KST)
-TZ=Asia/Seoul date "+%Y-%m-%d"   # KST 직접 (primary)
-# fallback (GNU/Linux): date -u -d '+9 hours' "+%Y-%m-%d"
-# fallback (macOS):     date -u -v+9H "+%Y-%m-%d"
+# 0. 날짜 (KST) — 회의록 filename·commit message에 사용
+TODAY=$(TZ=Asia/Seoul date "+%Y-%m-%d")   # KST 직접 (primary)
+# fallback (GNU/Linux): TODAY=$(date -u -d '+9 hours' "+%Y-%m-%d")
+# fallback (macOS):     TODAY=$(date -u -v+9H "+%Y-%m-%d")
 
 # 7일 git log
 git log --since="7 days ago" --pretty=format:'%h %s' --stat > /tmp/git-7d.txt
@@ -170,9 +170,17 @@ if [ "$BEHIND_COUNT" -gt 0 ]; then
   exit 1
 fi
 
-# Step 2: Behind 0 확인 후 commit
-git add docs/meetings/{YYYY-MM-DD}-weekly-allhands.md docs/meetings/_actions.md docs/meetings/_heartbeat.log
-git commit -m "docs(meetings): weekly-allhands YYYY-MM-DD"
+# Step 2: Behind 0 확인 후 filename collision check + commit
+N=0
+FILE="docs/meetings/${TODAY}-weekly-allhands.md"
+while [ -e "$FILE" ] && [ "$FILE" != "$WROTE_FILE" ]; do
+  N=$((N+1))
+  FILE="docs/meetings/${TODAY}-weekly-allhands-${N}.md"
+done
+# 이후 $FILE 사용 (Phase 5.1에서 회의록 작성 시 동일 path)
+
+git add "$FILE" docs/meetings/_actions.md docs/meetings/_heartbeat.log
+git commit -m "docs(meetings): weekly-allhands ${TODAY}"
 
 # Step 3: push 직전 race re-check
 git fetch origin main

@@ -27,10 +27,18 @@ grep "⚠️ 3주 미완" docs/meetings/_actions.md
 # 1.4 본질 위협 ⚠️ 빈도 (지난 7일 minutes에서 ⚠️ 출현 횟수)
 grep -c "⚠️" docs/meetings/2026-*-standup.md docs/meetings/2026-*-weekly-allhands.md
 
-# 1.5 날짜 (KST)
-TZ=Asia/Seoul date "+%Y-%m-%d"   # KST 직접 (primary)
-# fallback (GNU/Linux): date -u -d '+9 hours' "+%Y-%m-%d"
-# fallback (macOS):     date -u -v+9H "+%Y-%m-%d"
+# 1.5 날짜 (KST) — 회의록 filename·commit message에 사용
+TODAY=$(TZ=Asia/Seoul date "+%Y-%m-%d")   # KST 직접 (primary)
+# fallback (GNU/Linux): TODAY=$(date -u -d '+9 hours' "+%Y-%m-%d")
+# fallback (macOS):     TODAY=$(date -u -v+9H "+%Y-%m-%d")
+
+# 1.6 주차 계산 (4주 한정 retrospect)
+START_DATE="2026-05-17"  # 첫 토요일 retrospect 실행일 (사용자 등록 시점에 갱신)
+TODAY_TS=$(TZ=Asia/Seoul date -j -f "%Y-%m-%d" "$TODAY" "+%s" 2>/dev/null || date -d "$TODAY" "+%s")
+START_TS=$(TZ=Asia/Seoul date -j -f "%Y-%m-%d" "$START_DATE" "+%s" 2>/dev/null || date -d "$START_DATE" "+%s")
+WEEK_N=$(( (TODAY_TS - START_TS) / 604800 + 1 ))
+
+# 4주차 초과 시 routine은 cadence 재평가 결과로 결정 (사용자 cron 삭제·격하)
 ```
 
 ## Phase 2 — 토큰 사용량 (사용자 직접 확인 안내)
@@ -66,7 +74,7 @@ routine은 *추정치*만 보고:
 ```markdown
 # Saturday Retrospect — YYYY-MM-DD
 
-**Routine 운영 1주차/2주차/3주차/4주차** (4주차 후 cadence 재평가)
+**Routine 운영 ${WEEK_N}주차/4주차** (4주차 후 cadence 재평가)
 
 ## Routine 작동 통계 (지난 7일)
 - Standup: N회 OK / M회 FAIL
@@ -86,7 +94,10 @@ routine은 *추정치*만 보고:
 ## 권고
 - [Phase 3 조건별 권고]
 
-## Cadence 재평가 (4주차에만 작성)
+## Cadence 재평가 (WEEK_N == 4 일 때만 작성)
+
+(WEEK_N != 4 이면 본 섹션 생략)
+
 - 이대로 유지 vs weekly 격주 vs attendance B→C
 ```
 
@@ -102,9 +113,17 @@ if [ "$BEHIND_COUNT" -gt 0 ]; then
   exit 1
 fi
 
-# Step 2: Behind 0 확인 후 commit
-git add docs/meetings/_retrospect/{YYYY-MM-DD}.md docs/meetings/_heartbeat.log
-git commit -m "docs(meetings): retrospect YYYY-MM-DD"
+# Step 2: Behind 0 확인 후 filename collision check + commit
+N=0
+FILE="docs/meetings/_retrospect/${TODAY}.md"
+while [ -e "$FILE" ] && [ "$FILE" != "$WROTE_FILE" ]; do
+  N=$((N+1))
+  FILE="docs/meetings/_retrospect/${TODAY}-${N}.md"
+done
+# 이후 $FILE 사용 (Phase 4 산출물 작성 시 동일 path)
+
+git add "$FILE" docs/meetings/_heartbeat.log
+git commit -m "docs(meetings): retrospect ${TODAY}"
 
 # Step 3: race re-check + push
 git fetch origin main
@@ -125,7 +144,7 @@ git push origin main
 
 heartbeat 형식:
 ```
-[YYYY-MM-DD HH:MM:SS KST] retrospect OK — week N/4, M actions open, K push blocks, push OK
+[$(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M:%S KST')] retrospect OK — week ${WEEK_N}/4, M actions open, K push blocks, push OK
 ```
 
 ## 출력 검증 체크리스트

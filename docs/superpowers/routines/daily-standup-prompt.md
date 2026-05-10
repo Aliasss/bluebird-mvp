@@ -18,9 +18,10 @@
 # 1.1 24시간 git 변화
 git log --since="24 hours ago" --pretty=format:'%h %s%n%b' --name-only > /tmp/git-24h.txt
 
-# 1.2 날짜 (KST)
-TZ=Asia/Seoul date "+%Y-%m-%d"   # KST 직접 (primary)
-# fallback: date -u "+%Y-%m-%d -d '+9 hours'" (UTC+9 보정)
+# 1.2 날짜 (KST) — 회의록 filename·commit message에 사용
+TODAY=$(TZ=Asia/Seoul date "+%Y-%m-%d")   # KST 직접 (primary)
+# fallback (GNU/Linux): TODAY=$(date -u -d '+9 hours' "+%Y-%m-%d")
+# fallback (macOS):     TODAY=$(date -u -v+9H "+%Y-%m-%d")
 
 # 1.3 agenda 흡수 (해당 일자 ≤ 오늘 인 모든 파일)
 ls docs/meetings/_pending/agenda*.md 2>/dev/null
@@ -206,11 +207,19 @@ if [ "$BEHIND_COUNT" -gt 0 ]; then
   exit 1
 fi
 
-# Step 2: Behind 0 확인 후 commit 진행
-git add docs/meetings/{YYYY-MM-DD}-standup.md docs/meetings/_actions.md docs/meetings/_heartbeat.log
+# Step 2: Behind 0 확인 후 filename collision check + commit 진행
+N=0
+FILE="docs/meetings/${TODAY}-standup.md"
+while [ -e "$FILE" ] && [ "$FILE" != "$WROTE_FILE" ]; do
+  N=$((N+1))
+  FILE="docs/meetings/${TODAY}-standup-${N}.md"
+done
+# 이후 $FILE 사용 (Phase 5.1에서 회의록 작성 시 동일 path)
+
+git add "$FILE" docs/meetings/_actions.md docs/meetings/_heartbeat.log
 # agenda 처리한 경우 git rm도 add 됨 (git rm은 자동 stage)
 
-git commit -m "docs(meetings): standup YYYY-MM-DD"
+git commit -m "docs(meetings): standup ${TODAY}"
 
 # Step 3: push 직전 한 번 더 fetch (commit 동안 race condition 가능성)
 git fetch origin main

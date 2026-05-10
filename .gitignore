@@ -30,6 +30,7 @@ build
 .idea
 .vscode
 *.log
+# Meeting routine heartbeat log (allow despite *.log rule)
 !docs/meetings/_heartbeat.log
 
 # Debug

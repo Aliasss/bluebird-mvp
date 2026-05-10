@@ -30,6 +30,7 @@ build
 .idea
 .vscode
 *.log
+!docs/meetings/_heartbeat.log
 
 # Debug
 npm-debug.log*

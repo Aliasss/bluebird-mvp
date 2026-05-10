@@ -64,6 +64,11 @@ const MEDICAL_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
   { pattern: /교정(?!\s*(?:효능|치료))/g, label: '의료기기 표현 "교정"' },
   { pattern: /진단(?!명|서)/g, label: '의료기기 표현 "진단"' },
   { pattern: /(?<!인지행동)치료(?!학|법)/g, label: '의료기기 표현 "치료"' },
+  // /our-philosophy 콘텐츠 가독성 개선 spec(2026-05-10)에서 추가.
+  // negation exempt: "병리적이지 않습니다" / "발병하지 않습니다" 등은 통과.
+  { pattern: /병리적/g, label: '의료기기 표현 "병리적"' },
+  { pattern: /정신병리/g, label: '의료기기 표현 "정신병리"' },
+  { pattern: /발병/g, label: '의료기기 표현 "발병"' },
 ];
 
 // 의료 어휘 라인 내 부정 명제 식별자 (예: "치료가 아닙니다" "진단을 대체하지 않습니다")

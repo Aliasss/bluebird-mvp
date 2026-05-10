@@ -116,9 +116,36 @@ Synthesizer 역할(orchestrator 자신)이 §2 발언들에서:
 
 ## Phase 4 — Action items + 다음 주 우선순위
 
-- 합의된 actions → `_actions.md`에 추가 (owner=페르소나, due=다음 주 금)
+### 4.1 Action 분해·_actions.md 갱신 (SHALL — 강제)
+
+회의록 §5 Action items 표의 *모든 row*를 `_actions.md` Open 섹션에 1:1 추가. 누락 0건 강제.
+
+각 entry 형식: `- [ ] [owner] [due-YYYY-MM-DD] action 내용 (출처: YYYY-MM-DD weekly-allhands §5 #ID)`
+
+ID는 회의록 표의 #(예: A-1, B-3, C-2)와 일치시켜 추적 가능 상태 유지.
+
+추가 작업:
 - carry-over Open ≥3주 → ⚠️ "장기 미완 — 재할당/취소" 마킹
 - 중복 actions 통합 (같은 owner·내용)
+
+### 4.2 Pre-commit Verify 가드 (BLOCK if mismatch)
+
+§Phase 5 진입 *前* 다음 검증 강제:
+
+```bash
+# 회의록 §5 Action items 표의 row count
+ACTIONS_IN_MEETING=$(awk '/^## 5\. Action [Ii]tems/,/^## 6\./' "$FILE" | grep -cE '^\| [A-Z]-[0-9]+ \|')
+
+# _actions.md Open 섹션의 신규 추가 count (이번 routine 출처 = 'YYYY-MM-DD weekly-allhands')
+ACTIONS_IN_TRACKER=$(grep -cE "출처: ${TODAY} weekly-allhands" docs/meetings/_actions.md)
+
+if [ "$ACTIONS_IN_MEETING" -ne "$ACTIONS_IN_TRACKER" ]; then
+  echo "[$(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M:%S KST')] BLOCKED — Phase 4 미완: 회의록 §5 ${ACTIONS_IN_MEETING}개 vs _actions.md ${ACTIONS_IN_TRACKER}개 불일치" >> docs/meetings/_heartbeat.log
+  exit 1
+fi
+```
+
+mismatch 발견 시 routine 즉시 중단, commit·push 안 함. 작업물 working tree 보존, 사용자(또는 다음 routine)가 resolve.
 
 ## Phase 5 — 산출물 작성·Commit·Push
 

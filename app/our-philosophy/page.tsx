@@ -28,7 +28,11 @@ const SECTIONS: Section[] = [
     subtitle: '유전과 학습의 분포',
     body:
       '불안의 유전적 기여도는 30~60%로 보고됩니다. 나머지 40~70%는 인지적 반응 방식에 해당하며, 이 영역은 훈련 가능한 변수입니다. BlueBird는 후자에 개입합니다.',
-    stat: { value: '30–60%', label: '불안 장애의 유전적 기여도', source: 'NIH (PMC7237282), 2025' },
+    stat: {
+      value: '30–60%',
+      label: '불안 장애의 유전적 기여도',
+      source: 'Smoller et al., NIH PMC7237282 (2019); 표준 합의 30~60% 정합',
+    },
   },
   {
     number: '02',
@@ -36,41 +40,128 @@ const SECTIONS: Section[] = [
     subtitle: '비대칭 가중치',
     body:
       '인간의 의사결정 시스템은 동일한 크기의 손실을 동일한 크기의 이익보다 약 2.25배 더 무겁게 평가합니다. 부정적 사건이 과대 표상되는 이유는 의지의 결함이 아니라 진화적 가중치 함수의 결과입니다.',
-    stat: { value: '약 2.25배', label: '손실 가중치 (이득 대비)', source: 'Kahneman & Tversky, 1979' },
+    stat: {
+      value: '약 2.25배',
+      label: '손실 가중치 (이득 대비)',
+      source: 'Tversky & Kahneman (1992) Cumulative Prospect Theory (λ=2.25 산출); 개념 origin Kahneman & Tversky 1979',
+    },
   },
   {
     number: '03',
     title: '이중 프로세스의 시간차',
     subtitle: '직관과 분석의 처리 속도',
     body:
-      '편도체 기반 정서 반응은 약 10ms에 작동하지만, 전전두 피질 기반 분석적 평가는 최소 3초 이상의 의도적 주의를 필요로 합니다. 이 시간 격차가 왜곡 발생의 구조적 원인입니다.',
-    stat: { value: '10ms → 3s', label: '시스템 1 → 시스템 2 처리 시간', source: 'Kahneman (2011), LeDoux (1996)' },
+      '편도체 기반 정서 반응은 분석적 평가보다 수십~수백 배 빠릅니다. 시스템 1과 시스템 2의 처리 속도 차이는 인지 디버깅의 출발점입니다.',
+    stat: {
+      value: 'fast → slow',
+      label: '정서 반응 → 분석 사고',
+      source: 'LeDoux (1996), Kahneman (2011)',
+    },
   },
   {
     number: '04',
     title: '인지 왜곡의 설명력',
     subtitle: '사회적 불안의 분산 분해',
     body:
-      '사회적 불안의 분산 중 약 46%가 인지 왜곡으로 설명됩니다. 특히 파국화·독심술·과잉일반화가 주요 기여 인자로 보고됩니다. 환경 변수보다 개인 내부의 추론 규칙이 더 큰 비중을 차지합니다.',
+      '학생 표본 연구에서 사회적 상호작용 불안의 분산 중 약 46%가 인지 왜곡으로 설명되었습니다. 특히 파국화·독심술·과잉일반화가 주요 기여 인자로 보고됩니다. 환경 변수보다 개인 내부의 추론 규칙이 더 큰 비중을 차지합니다.',
     stat: { value: 'R² = .46', label: '인지 왜곡의 사회적 불안 설명 비율', source: 'Khan et al. (2021), JPPS' },
   },
   {
     number: '05',
-    title: '인지 재구성의 효과 크기',
-    subtitle: '임상적 증상 완화율',
+    title: '정서조절 전략 분류',
+    subtitle: '측정 가능한 출력',
     body:
-      '메타분석에서 인지 재구성 기반 개입의 임상적 증상 완화율은 약 75%로 보고됩니다. BlueBird는 성격 변화를 목표로 하지 않으며, 측정 가능한 사고 패턴의 변화를 단일 출력으로 정의합니다.',
-    stat: { value: '약 75%', label: '인지 재구성 훈련의 증상 완화율', source: 'Frontiers in Psychology, 2024' },
+      '부적응적 정서조절 전략(회피·억제·반추)은 다양한 정신병리에서 일관된 효과크기로 보고됩니다. BlueBird는 이 전략들을 측정 가능한 출력으로 분류합니다.',
+    stat: {
+      value: '회피·억제·반추',
+      label: '측정 가능한 정서조절 전략',
+      source: 'Aldao, Nolen-Hoeksema, & Schweizer (2010), Clinical Psychology Review',
+    },
+  },
+  {
+    number: '06',
+    title: '위험 회피 ≠ 손실 회피',
+    subtitle: '개입 표적의 재정의',
+    body:
+      '병리적 불안군의 회피적 의사결정에서 가장 강력한 설명 변수는 손실 자체에 대한 민감도가 아니라 결과 불확실성에 대한 민감도입니다. 개입 표적은 손실 둔감화가 아니라 불확실성 인내력 향상으로 정의됩니다.',
+    stat: {
+      value: '위험 회피 ≠ 손실 회피',
+      label: '개입 표적의 재정의',
+      source: 'Charpentier, Aylward, Roiser, & Robinson (2017), Biological Psychiatry, 81(12)',
+    },
+  },
+  {
+    number: '07',
+    title: '환경 모델 보정',
+    subtitle: '학습률 추정 편향',
+    body:
+      '특성 불안이 높을수록 안정적 환경에서도 결과 변동성을 과대 추정합니다. 인지 시스템이 실제 환경보다 더 예측 불가능한 모델을 보유합니다.',
+    stat: {
+      value: '환경 모델 ≠ 실제 환경',
+      label: '학습률 추정 편향',
+      source: "Browning, Behrens, Jocham, O'Reilly, & Bishop (2015), Nature Neuroscience",
+    },
+  },
+  {
+    number: '08',
+    title: '회피의 9년 누적 곡선',
+    subtitle: '회피의 누적 효과',
+    body:
+      '회피 대처 양식은 9년 종단 추적에서 불안의 발병뿐 아니라 만성 경과를 예측합니다. 단기적 불안 감소가 장기적으로 학습·성장 차단으로 누적됩니다 (예: 승진·발표·창의성·관계·장기 경력 회피).',
+    stat: {
+      value: '9년 종단',
+      label: '회피의 누적 효과',
+      source: 'Struijs, Lamers, Vroling, Roelofs, Spinhoven, & Penninx (2017), Psychiatry Research',
+    },
   },
 ];
 
 const CITATIONS = [
-  { category: '유전적 기질', data: '불안 장애의 유전적 기여도 (30–60%)', source: 'NIH (PMC7237282), "A Major Role for Common Genetic Variation in Anxiety Disorders" (2025)' },
-  { category: '손실 회피', data: '손실 가중치 약 2.25배', source: 'Kahneman & Tversky (1979), "Prospect Theory: An Analysis of Decision under Risk"' },
-  { category: '이중 프로세스', data: '시스템 1(10ms)과 시스템 2(3s)의 처리 속도', source: 'Daniel Kahneman (2011), "Thinking, Fast and Slow" / LeDoux (1996)' },
-  { category: '사회적 불안', data: '인지 왜곡의 설명력 (R² = .46)', source: 'Khan, S., et al. (2021), "Cognitive Distortions and Social Interaction Anxiety", JPPS' },
-  { category: '주의 증후군', data: 'CAS와 반추의 상관관계', source: 'Adrian Wells (2009), "Metacognitive Therapy for Anxiety and Depression"' },
-  { category: '재구성 효과', data: '인지 재구성의 증상 완화율 (약 75%)', source: 'Frontiers in Psychology (2024), Clinical Efficacy Meta-Analysis of CBT' },
+  {
+    category: '유전적 기질',
+    data: '불안 장애의 유전적 기여도 (30–60%)',
+    source: 'Smoller et al., NIH PMC7237282 (2019), "A Major Role for Common Genetic Variation in Anxiety Disorders"',
+  },
+  {
+    category: '손실 회피',
+    data: '손실 가중치 약 2.25배 (λ = 2.25)',
+    source: 'Tversky & Kahneman (1992), "Advances in Prospect Theory: Cumulative Representation of Uncertainty"; 개념 origin Kahneman & Tversky (1979)',
+  },
+  {
+    category: '이중 프로세스',
+    data: '시스템 1(정서 반응)과 시스템 2(분석 사고)의 처리 속도 차이',
+    source: 'LeDoux (1996), "The Emotional Brain" / Daniel Kahneman (2011), "Thinking, Fast and Slow"',
+  },
+  {
+    category: '사회적 불안',
+    data: '학생 표본에서 사회적 상호작용 불안의 인지 왜곡 설명력 (R² = .46)',
+    source: 'Khan, S., et al. (2021), "Cognitive Distortions and Social Interaction Anxiety", JPPS',
+  },
+  {
+    category: '주의 증후군',
+    data: 'CAS와 반추의 상관관계',
+    source: 'Adrian Wells (2009), "Metacognitive Therapy for Anxiety and Depression"',
+  },
+  {
+    category: '정서조절 전략',
+    data: '부적응적 정서조절 전략(회피·억제·반추)의 일관된 효과크기',
+    source: 'Aldao, Nolen-Hoeksema, & Schweizer (2010), "Emotion-regulation strategies across psychopathology", Clinical Psychology Review',
+  },
+  {
+    category: '위험 회피 ≠ 손실 회피',
+    data: '병리적 불안군의 회피적 의사결정 — 결과 불확실성 민감도',
+    source: 'Charpentier, Aylward, Roiser, & Robinson (2017), Biological Psychiatry, 81(12)',
+  },
+  {
+    category: '환경 모델 보정',
+    data: '특성 불안과 학습률 추정 편향',
+    source: "Browning, Behrens, Jocham, O'Reilly, & Bishop (2015), \"Anxious individuals have difficulty learning the causal statistics of aversive environments\", Nature Neuroscience",
+  },
+  {
+    category: '회피의 9년 곡선',
+    data: '회피 대처 양식의 만성 경과 예측 (9년 종단)',
+    source: 'Struijs, Lamers, Vroling, Roelofs, Spinhoven, & Penninx (2017), Psychiatry Research',
+  },
 ];
 
 export default function OurPhilosophyPage() {
@@ -108,7 +199,7 @@ export default function OurPhilosophyPage() {
             <span className="text-primary">측정 가능한 인지 시스템의 출력</span>입니다.
           </h1>
           <p className="text-sm sm:text-base text-text-secondary leading-relaxed">
-            BlueBird는 사용자의 자동 사고를 인지 왜곡 분류 체계에 따라 구조화하고, 고통 변화량·완료율·재발 빈도를 시계열로 기록합니다. 본 페이지는 그 설계가 근거하는 다섯 가지 연구 결과를 요약합니다.
+            BlueBird는 사용자의 자동 사고를 인지 왜곡 분류 체계에 따라 구조화하고, 고통 변화량·완료율·재발 빈도를 시계열로 기록합니다. 본 페이지는 그 설계가 근거하는 여덟 가지 연구 결과를 요약합니다.
           </p>
         </div>
       </section>
@@ -199,7 +290,7 @@ export default function OurPhilosophyPage() {
         <section className="rounded-2xl border border-background-tertiary bg-background-secondary p-6 space-y-3">
           <h2 className="text-sm font-semibold text-text-primary">BlueBird 이용 안내</h2>
           <ul className="text-xs text-text-secondary space-y-2 list-disc pl-4">
-            <li>BlueBird는 의료·치료 서비스가 아닙니다. 진단·처방을 대체하지 않습니다.</li>
+            <li>BlueBird는 의료·치료 서비스가 아니며, 본 페이지의 연구 인용은 학술적 배경 정보일 뿐 본 서비스의 효과 보장 또는 임상적 효능 주장이 아닙니다. 진단·처방·치료를 대체하지 않습니다.</li>
             <li>지속적·심각한 어려움이 있으시면 전문가(정신건강의학과, 심리상담)의 도움을 받으시길 권해드립니다.</li>
             <li>위기 상황에서는 자살예방상담전화 1393, 정신건강위기상담 1577-0199로 연락하실 수 있습니다.</li>
             <li>작성하시는 자동 사고·감정 데이터는 AI 분석을 위해 Google Gemini로 전송됩니다. 민감 정보 입력 시 이 점을 고려해주세요.</li>

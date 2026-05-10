@@ -9,7 +9,7 @@ import { ME_TOGGLE_LABEL } from '@/lib/notifications/copy';
  * Plan: docs/superpowers/plans/2026-05-09-push-infra.md (Task 15)
  */
 export default function PushToggle() {
-  const { state, loading, enable, disable } = usePushPermission();
+  const { state, subscribed, loading, enable, disable } = usePushPermission();
 
   if (state === 'unsupported') {
     return (
@@ -22,7 +22,9 @@ export default function PushToggle() {
     );
   }
 
-  const enabled = state === 'granted';
+  // 토글 ON/OFF는 실제 subscription 존재 여부 기준 — permission만으론 불충분
+  // (permission='granted'여도 unsubscribe된 상태가 있을 수 있음)
+  const enabled = subscribed;
   const handleClick = async () => {
     if (loading) return;
     if (enabled) {
@@ -33,6 +35,8 @@ export default function PushToggle() {
         '알림이 차단되었습니다. 브라우저 설정에서 푸시를 허용해야 다시 켤 수 있습니다.',
       );
     } else {
+      // state가 'default'이거나 'granted'(권한은 있으나 미구독)인 경우 모두 enable() 진입
+      // permission이 이미 granted면 native dialog 없이 바로 subscribe됨
       await enable();
     }
   };

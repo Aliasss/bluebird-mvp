@@ -122,11 +122,22 @@ Synthesizer 역할(orchestrator 자신)이 §2 발언들에서:
 
 ## Phase 5 — 산출물 작성·Commit·Push
 
+### 5.0 회의록 path 결정 (collision check FIRST)
+
+작성 전에 path 확정. Phase 5.1·5.5 모두 동일 `$FILE` 변수 사용.
+
+```bash
+N=0
+FILE="docs/meetings/${TODAY}-weekly-allhands.md"
+while [ -e "$FILE" ]; do
+  N=$((N+1))
+  FILE="docs/meetings/${TODAY}-weekly-allhands-${N}.md"
+done
+```
+
 ### 5.1 회의록 작성 (기존 2026-05-03 포맷 준용)
 
-저장 위치: `docs/meetings/{YYYY-MM-DD}-weekly-allhands.md`
-
-**Filename 충돌 처리**: `docs/meetings/{YYYY-MM-DD}-weekly-allhands.md` 이미 존재 시 (재실행 등) → `{YYYY-MM-DD}-weekly-allhands-1.md`, `-2.md` 순차 suffix.
+저장 위치: `$FILE` (Phase 5.0에서 결정. 기본 `docs/meetings/{YYYY-MM-DD}-weekly-allhands.md`, 충돌 시 `-1.md`, `-2.md` 순차 suffix)
 
 ```markdown
 # BlueBird 주간 All-Hands — YYYY-MM-DD
@@ -191,15 +202,7 @@ if [ "$BEHIND_COUNT" -gt 0 ]; then
   exit 1
 fi
 
-# Step 2: Behind 0 확인 후 filename collision check + commit
-N=0
-FILE="docs/meetings/${TODAY}-weekly-allhands.md"
-while [ -e "$FILE" ] && [ "$FILE" != "$WROTE_FILE" ]; do
-  N=$((N+1))
-  FILE="docs/meetings/${TODAY}-weekly-allhands-${N}.md"
-done
-# 이후 $FILE 사용 (Phase 5.1에서 회의록 작성 시 동일 path)
-
+# Step 2: Behind 0 확인 후 commit (path 는 Phase 5.0 에서 이미 $FILE 로 결정됨)
 git add "$FILE" docs/meetings/_actions.md docs/meetings/_heartbeat.log
 git commit -m "docs(meetings): weekly-allhands ${TODAY}"
 

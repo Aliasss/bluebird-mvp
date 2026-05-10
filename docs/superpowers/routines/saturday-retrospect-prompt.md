@@ -33,7 +33,7 @@ TODAY=$(TZ=Asia/Seoul date "+%Y-%m-%d")   # KST 직접 (primary)
 # fallback (macOS):     TODAY=$(date -u -v+9H "+%Y-%m-%d")
 
 # 1.6 주차 계산 (4주 한정 retrospect)
-START_DATE="2026-05-17"  # 첫 토요일 retrospect 실행일 (사용자 등록 시점에 갱신)
+START_DATE="2026-05-10"  # 첫 retrospect 실행일 (b8e906c 통합) — 4주차 = 2026-05-31
 TODAY_TS=$(TZ=Asia/Seoul date -j -f "%Y-%m-%d" "$TODAY" "+%s" 2>/dev/null || date -d "$TODAY" "+%s")
 START_TS=$(TZ=Asia/Seoul date -j -f "%Y-%m-%d" "$START_DATE" "+%s" 2>/dev/null || date -d "$START_DATE" "+%s")
 WEEK_N=$(( (TODAY_TS - START_TS) / 604800 + 1 ))
@@ -67,9 +67,22 @@ routine은 *추정치*만 보고:
 
 ## Phase 4 — 산출물 작성
 
-저장 위치: `docs/meetings/_retrospect/{YYYY-MM-DD}.md`
+### 4.0 회의록 path 결정 (collision check FIRST)
 
-**Filename 충돌 처리**: `docs/meetings/_retrospect/{YYYY-MM-DD}.md` 이미 존재 시 → `-1.md`, `-2.md` 순차 suffix.
+작성 전에 path 확정. Phase 4 본문·Phase 5 commit 모두 동일 `$FILE` 사용.
+
+```bash
+N=0
+FILE="docs/meetings/_retrospect/${TODAY}.md"
+while [ -e "$FILE" ]; do
+  N=$((N+1))
+  FILE="docs/meetings/_retrospect/${TODAY}-${N}.md"
+done
+```
+
+### 4.1 회의록 작성
+
+저장 위치: `$FILE` (Phase 4.0에서 결정. 기본 `docs/meetings/_retrospect/{YYYY-MM-DD}.md`, 충돌 시 `-1.md`, `-2.md` 순차 suffix)
 
 ```markdown
 # Saturday Retrospect — YYYY-MM-DD
@@ -113,15 +126,7 @@ if [ "$BEHIND_COUNT" -gt 0 ]; then
   exit 1
 fi
 
-# Step 2: Behind 0 확인 후 filename collision check + commit
-N=0
-FILE="docs/meetings/_retrospect/${TODAY}.md"
-while [ -e "$FILE" ] && [ "$FILE" != "$WROTE_FILE" ]; do
-  N=$((N+1))
-  FILE="docs/meetings/_retrospect/${TODAY}-${N}.md"
-done
-# 이후 $FILE 사용 (Phase 4 산출물 작성 시 동일 path)
-
+# Step 2: Behind 0 확인 후 commit (path 는 Phase 4.0 에서 이미 $FILE 로 결정됨)
 git add "$FILE" docs/meetings/_heartbeat.log
 git commit -m "docs(meetings): retrospect ${TODAY}"
 

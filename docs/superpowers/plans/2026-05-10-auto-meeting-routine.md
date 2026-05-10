@@ -1027,4 +1027,25 @@ BlueBird 자동 미팅 routine 시스템 운영 중. spec [`docs/superpowers/spe
 **미해결 (첫 production run에서 모니터링):**
 - 결함 #4: 축약 dry-run instruction prompt 본문 부재 — 필요 시 사용자가 dispatch instruction에 명시 (heartbeat 형식은 이미 `{N} personas dispatched (full=14)` placeholder 지원)
 - 결함 #5: parallel dispatch test mode sequential 시뮬레이션 명시 — cloud routine은 강제 parallel, dry-run은 사용자 instruction으로 처리 가능
+
+### 첫 Production Trigger 결과 (2026-05-10) — Cloud Routine 운영 발견사항
+
+**3 routine 모두 정상 작동 + main 통합 완료** (commits: b8e906c · ffa7f6c · 2a7cc04 · 3ad30fe):
+- saturday-retrospect: 14:00:41 KST, week 1/4 정상
+- daily-standup: 14:09:10 KST, 10 personas, 4 actions
+- weekly-allhands: 14:26:10 KST, 14/14 personas, 23 actions, 4 conflicts, ⚠️ CEO 결정 4건
+
+**해결 완료 (CTO·senior-fullstack·senior-qa 협업)**:
+- `$WROTE_FILE` 미정의 dead code → 3 prompt 모두 Phase 5.0(또는 4.0) collision check 작성 *前* 이동으로 fix
+- `.gitignore`의 `!docs/meetings/_heartbeat.log` allow rule 통합 (line 32 *.log 인접)
+- routine이 feature branch에 push한 결과물 cherry-pick 패턴으로 main 통합
+
+**⚠️ 미해결 (cloud routine 운영 패턴 — 사용자 결정 대기)**:
+1. **Cloud feature branch 패턴**: cloud는 prompt의 `git push origin main`을 무시하고 자동 `claude/<random>` branch에 push. 매 routine마다 수동 통합 작업 필요. 옵션: (B-1) `claude.ai/code/routines` UI에 direct-push 설정 검색 / (B-2) prompt에 `git checkout main` 강제 + 우회 시도 / (B-3) follow-up 통합 routine 신설. CTO 권고: B-1 1순위.
+2. **weekly-allhands `_actions.md` 갱신 누락**: 23 actions 회의록 본문에만 존재, _actions.md에는 carry-over 표지 entry만 추가 (수동). prompt §Phase 4 명시화 강화 후속 필요.
+3. **Task tool 14 parallel dispatch 검증 미실시**: heartbeat은 14/14 보고하나 실제 14 sub-agent spawn 보증 없음 (spec §9 #2). 다음 운영에서 routine 실행 log 분석 필요.
+
+**다음 routine 운영 시 cadence**:
+- 매일·매주 cron 정시 실행 → cloud feature branch 생성 → 사용자(또는 CTO·senior-fullstack)가 정기 통합 (일 1~2회) 권장
+- 통합 패턴: `git show origin/claude/<branch>:<file> > <file>` + heartbeat 라인 추가 + _actions 갱신 + commit + push + branch 삭제
 - spec v1.1 본 plan과 동기화 — spec 변경 시 본 plan도 갱신 필요.

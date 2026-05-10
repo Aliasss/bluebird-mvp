@@ -85,7 +85,7 @@ bluebird-daily-standup: 0 9 * * 1-4  (KST)
 | Step | Action |
 |---|---|
 | 1.1 | `git log --since="24 hours ago" --pretty=format:'%h %s' --name-only` — 24시간 커밋·diff 영역 |
-| 1.2 | `docs/meetings/_pending/agenda.md` 존재 시 읽기 → 1번 의제로 흡수 |
+| 1.2 | `docs/meetings/_pending/agenda.md` 또는 `agenda-YYYY-MM-DD.md` (date ≤ today) 존재 시 읽기 → 1번 의제로 흡수 (사용법 §6.3) |
 | 1.3 | `docs/meetings/_actions.md` 미완 actions 로드 (carry-over) |
 | 1.4 | 변화 영역 매핑 (§3.4 표 참조) → 호출할 산하 페르소나 결정 |
 
@@ -176,7 +176,7 @@ bluebird-weekly-allhands: 0 18 * * 5  (KST)
   - `pmf-validation-plan.md` 게이트 진척
   - `development-backlog.md` Tier 분류·결제 가설 A
   - `cmo-stage-guide-v1.md` Stage 위치
-- `docs/meetings/_pending/agenda.md` 흡수
+- `docs/meetings/_pending/agenda.md` 또는 `agenda-YYYY-MM-DD.md` (date ≤ today) 흡수 (§6.3)
 
 ### 4.4 Phase 2 — 발언 라운드 (parallel dispatch)
 
@@ -281,10 +281,13 @@ docs/meetings/
 ├── YYYY-MM-DD-weekly-allhands.md      # 주간 all-hands (금, 1/주)
 ├── _actions.md                        # live action tracker (single source of truth)
 ├── _pending/
-│   └── agenda.md                      # CEO 사전 메모 (회의 후 git rm)
+│   ├── .gitkeep                       # 빈 dir 유지용
+│   ├── agenda.md                      # 다음 routine이 처리 (default)
+│   └── agenda-YYYY-MM-DD.md           # 명시 일자 ≤ 오늘인 routine이 처리 (미래 예약)
 ├── _heartbeat.log                     # routine 작동·실패·skip 1줄 로그
 ├── _retrospect/
 │   └── YYYY-MM-DD.md                  # 토요일 회고 (4주 운영, 1~3KB)
+├── README.md                          # 사용자 운영 가이드 (agenda 작성법·작동 확인)
 └── (기존 2026-05-03·05-04 회의록은 archive 그대로)
 ```
 
@@ -304,7 +307,87 @@ docs/meetings/
 [3주 이상 closed 항목 자동 이동]
 ```
 
-### 6.2 `_heartbeat.log` 형식
+### 6.3 `_pending/agenda.md` 사용법 (CEO 인풋 인터페이스)
+
+CEO가 회의 직전 우려 사항을 routine에 전달하는 유일한 인풋 채널.
+
+#### 파일 명명 규칙
+
+| 파일명 | 처리 시점 |
+|---|---|
+| `_pending/agenda.md` | *다음* routine이 읽음 (standup·all-hands·retrospect 무관) |
+| `_pending/agenda-YYYY-MM-DD.md` | 명시 일자 ≤ 오늘 인 routine이 읽음 (미래 예약 가능) |
+
+미래 예약 예: 5/9(금)에 `agenda-2026-05-12.md` 작성 → 5/12(월) standup이 처리.
+복수 미래 agenda 동시 보관 OK (`agenda-2026-05-12.md` + `agenda-2026-05-13.md`).
+
+#### 마감 (commit + push 기준)
+
+| 다음 회의 | Cron 시점 | 마감 (안전 마진 30분) |
+|---|---|---|
+| 월~목 standup | 09:00 KST | **08:30 KST까지 commit + push** |
+| 금 all-hands | 18:00 KST | **17:30 KST까지 commit + push** |
+| 토 retrospect | 09:00 KST | **08:30 KST까지 commit + push** |
+
+⚠️ routine은 Anthropic cloud에서 repo clone하므로 **로컬 저장만으론 미인식** — 반드시 push까지 완료.
+
+#### 형식 — 자유 Markdown, 3가지 권장 패턴
+
+**한 줄 우려** (가장 자주):
+```markdown
+어제 push 인프라 deploy 후 iPhone Safari에서 알림 권한 버튼 안 보임
+```
+
+**구조화 (페르소나 호명)**:
+```markdown
+# 2026-05-12 agenda
+
+## 우려 사항
+베타 모집 직전인데 E2E 검증이 아직 미진행.
+
+## 호명
+- senior-qa-engineer: 오늘 안에 prerequisite ALL pass 가능한가?
+- product-owner: 미진행 상태에서 모집 시작 위험·대응 매트릭스
+```
+
+**결정 요청**:
+```markdown
+# 2026-05-15 agenda
+
+## CEO 결정 필요
+디스턴싱 가격 인상(99k → 110k) 시그널 보고. 우리 가격 가설(월 1.9~3.9만원) 변경 트리거? CSO·CMO 의견 정렬 필요.
+```
+
+#### 처리 흐름
+
+```
+사용자 agenda 작성 → commit + push
+   ↓
+routine 시점에 _pending/agenda*.md 읽음 (해당 일자 조건 충족 시)
+   ↓
+회의록 §1 CEO 개회에 인용
+   ↓
+1번 의제로 페르소나들이 응답
+   ↓
+회의 종료 시 처리 결과 기록
+   ↓
+git rm 처리한 agenda 파일 (자동 비움 — 사용자 액션 불필요)
+```
+
+#### 자주 묻는 케이스
+
+| 케이스 | 동작 |
+|---|---|
+| agenda 없음 | Quiet day 처리 (§3.8) — routine 정상 진행, 경량 회의록 |
+| 한 파일에 여러 우려 | 자유 구조로 나열. 페르소나가 분리하여 응답 |
+| Standup만 / all-hands만 분리 의도 | v1은 모든 agenda를 *다음 routine*이 처리. 본문에 "이건 weekly에서 논의"라 적으면 페르소나가 의도 존중 |
+| `agenda-2026-05-12.md`이 5/12 standup에서 처리되지 않음 | routine push 실패(heartbeat의 PUSH BLOCKED) 가능성 — `_heartbeat.log` 확인 |
+
+#### v1 비포함 (개선 후보)
+
+- `agenda-standup.md` / `agenda-weekly.md` 분리 — 첫 4주 운영 후 demand 시 격상
+
+### 6.4 `_heartbeat.log` 형식
 
 ```
 [2026-05-12 09:00:23 KST] standup OK — 5 personas spoke, 2 actions added, push OK
@@ -368,3 +451,4 @@ docs/meetings/
 | 버전 | 일자 | 변경 |
 |---|---|---|
 | v1 | 2026-05-10 | 초안 — 14 페르소나 자동 미팅 routine 3개(daily standup·weekly all-hands·saturday retrospect) 설계, 파일 레이아웃, auto-push 검증, 비용 가드 |
+| v1.1 | 2026-05-10 | §6.3 `_pending/agenda.md` 사용법 명시 (파일명·마감·형식·처리 흐름·FAQ). 미래 일자 예약(`agenda-YYYY-MM-DD.md`) 지원 추가. README.md 사용자 가이드 분리. |

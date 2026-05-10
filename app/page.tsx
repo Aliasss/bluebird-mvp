@@ -3,7 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { track } from '@vercel/analytics';
 import { ExternalLink } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase/client';
 
 const SCENARIOS = [
   '회의에서 한마디 한 뒤 "괜히 말했다, 다음부턴 가만히 있어야지"로 굳어질 때',
@@ -14,6 +15,15 @@ const SCENARIOS = [
 export default function HomePage() {
   const router = useRouter();
   const [showMoreScenarios, setShowMoreScenarios] = useState(false);
+
+  // 인증 사용자가 PWA 진입 시 /dashboard 자동 redirect.
+  // 미인증 사용자는 기존 마케팅 랜딩(무가입 funnel) 그대로 노출 — 회귀 0.
+  // proxy.ts·manifest.json 비변경 (CTO 권고 회귀 가드).
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) router.replace('/dashboard');
+    });
+  }, [router]);
 
   const handleSampleStart = () => {
     track('sample_funnel_start');

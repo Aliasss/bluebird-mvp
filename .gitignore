@@ -48,6 +48,7 @@ docs/private/
 docs/superpowers/**/*.md
 !docs/superpowers/specs/*.md
 !docs/superpowers/plans/*.md
+!docs/superpowers/routines/*.md
 
 # Superpowers brainstorm sessions
 .superpowers/brainstorm/

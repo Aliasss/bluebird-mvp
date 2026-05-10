@@ -38,6 +38,11 @@ cat docs/meetings/_actions.md
 ls docs/meetings/_pending/agenda*.md
 ```
 
+**첫 주·휴면 fallback** (4 입력 모두 비어있을 시 — standup 0건 + _actions 0건 + agenda 0건 + 7d git 변화 0건):
+- §0 현황은 strategy 문서 게이트 진척만으로 작성
+- §1 CEO 개회는 "agenda 없음 — routine standing summary로 진행" 명시
+- §2 발언은 14 페르소나 모두 standing items 형식 (carry-over 진척 보고 생략, 새 우려 사항 1~2개에 집중)
+
 ## Phase 2 — 발언 라운드 (Task 도구로 14개 병렬 sub-agent dispatch)
 
 **실행 방법**: 14개 페르소나를 *동시에* Task 도구로 spawn. 순차 실행 금지.
@@ -94,6 +99,21 @@ Synthesizer 역할(orchestrator 자신)이 §2 발언들에서:
 
 합의 가능 항목은 §4. CEO 결정 필요는 ⚠️로.
 
+**Owner 미할당·재할당 issue는 §3 충돌 표가 아니라 §3.5 별도 서브섹션으로 분리** (충돌이 아니므로):
+```markdown
+### §3.5 Owner 재할당 surface
+
+| 영역 | 미할당 항목 | 후보 owner | 결정 |
+|---|---|---|---|
+| (예) 디스턴싱 모니터링 cadence | 미진행 | strategy-manager | 재할당 |
+```
+
+**본질 위협 ⚠️ surface 분기 logic**:
+- (a) **합의 가능·CEO 결정 가능**: §4에 ⚠️로 표기, routine 정상 진행
+- (b) **즉시 stop·escalate 필요** (예: 차별화 3축 무너짐·법규 위반·안전 가드 fail): routine 즉시 중단 + `_heartbeat.log`에 `[ts] BLOCKED — 본질 위협 #N: <요약>` 기록 + commit·push 안 함 (작업물 working tree에 남김 — 사용자 수동 escalate)
+
+분기 판단 기준: §의사결정 우선순위 1·2(Falsifiability·차별화 정합성) 위배 또는 risk-manager가 *법규 위반 명시* 시 → (b). 그 외는 (a).
+
 ## Phase 4 — Action items + 다음 주 우선순위
 
 - 합의된 actions → `_actions.md`에 추가 (owner=페르소나, due=다음 주 금)
@@ -112,6 +132,7 @@ Synthesizer 역할(orchestrator 자신)이 §2 발언들에서:
 # BlueBird 주간 All-Hands — YYYY-MM-DD
 
 **일시**: YYYY-MM-DD 18:00 KST
+**주차**: ${ISO_WEEK} (예: 2026-W19, 5월 2주차) — `date "+%Y-W%V"` 또는 회의록 #N으로 추적
 **참여자**: 14 페르소나 (parallel dispatch, Opus × 14)
 **기록**: senior-qa-engineer (회의록 정합성 독립 검증)
 **목적**: 주 마감 deep 합의 — 향후 1~2주 절박 아젠다·미완 actions·전략 시그널

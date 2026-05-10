@@ -1003,14 +1003,28 @@ BlueBird 자동 미팅 routine 시스템 운영 중. spec [`docs/superpowers/spe
 - prompt 수정 시 cloud routine 재등록 필요 (cloud는 등록 시점 snapshot 보존).
 - 첫 1주 운영 후 토요일 retrospect로 cadence·비용·attendance 평가 — 격하 검토.
 
-## Dry-run 결함 후속 (Task 5 결과 반영)
+## Dry-run 결함 후속 (Task 5·6 결과 반영)
+
+### Task 5 (Daily standup dry-run, 2026-05-10)
 
 **적용 완료** (daily-standup-prompt.md 인라인 fix):
 - 결함 #1: Phase 1.6 모드 결정 표 boundary 명확화 (commit 0건/1~3건/4+건 quantitative)
 - 결함 #4: 회의록 §0.1 ⚠️ 본질 위협 surface 요약 섹션 추가
 
 **미해결 (첫 production run에서 모니터링·후속 spec 보강):**
-- 결함 #2: 일요일·공휴일 수동 trigger 시 §0 "비표준 실행 요일" 표기 절차 — real cron은 월~목만이라 정상 운영 시 미발생, 발생 시 prompt 자체는 정상 작동
-- 결함 #3: §3.4 매핑 표의 `docs/strategy/` 변경 시 "변경 영역 임원" implicit — 파일별 매핑 또는 strategy-manager 판단 위임 필요. dry-run에서는 strategy-manager가 판단으로 잘 처리
-- 결함 #5: Phase 2.2 산하 "본인 영역" 정의 — `§3.4 매핑 path` vs `페르소나 책임 영역` 양쪽 모두 cover하면 토큰 cost ↑. 1주 운영 후 retrospect에서 격하 검토
+- 결함 #2: 일요일·공휴일 수동 trigger 시 §0 "비표준 실행 요일" 표기 절차 — real cron은 월~목만이라 정상 운영 시 미발생
+- 결함 #3: §3.4 매핑 표의 `docs/strategy/` 변경 시 "변경 영역 임원" implicit — strategy-manager 판단 위임으로 dry-run 정상 처리
+- 결함 #5: Phase 2.2 산하 "본인 영역" 정의 — `§3.4 매핑 path` vs `페르소나 책임 영역` 양쪽 cover 시 토큰 cost ↑. 1주 운영 후 retrospect에서 격하 검토
+
+### Task 6 (Weekly all-hands dry-run, 2026-05-10, 4 임원 축약)
+
+**적용 완료** (weekly-allhands-prompt.md 인라인 fix):
+- 결함 #1: Phase 1 첫 주·휴면 fallback (4 입력 모두 비어있을 시) — strategy 게이트 진척만으로 §0 작성, §2는 standing items 형식 명시
+- 결함 #6: Phase 3 본질 위협 ⚠️ surface 분기 logic — (a) 합의·CEO 결정 vs (b) 즉시 stop·escalate. 분기 기준 명시 (Falsifiability·차별화 위배 또는 risk-manager 법규 위반 명시 → b)
+- 결함 #2: §3.5 Owner 재할당 surface 별도 서브섹션 분리 (§3 충돌 표와 schema 충돌 해결)
+- 결함 #3: 회의록 frontmatter에 **주차** (`${ISO_WEEK}`) 추가 — 시계열 추적 가능
+
+**미해결 (첫 production run에서 모니터링):**
+- 결함 #4: 축약 dry-run instruction prompt 본문 부재 — 필요 시 사용자가 dispatch instruction에 명시 (heartbeat 형식은 이미 `{N} personas dispatched (full=14)` placeholder 지원)
+- 결함 #5: parallel dispatch test mode sequential 시뮬레이션 명시 — cloud routine은 강제 parallel, dry-run은 사용자 instruction으로 처리 가능
 - spec v1.1 본 plan과 동기화 — spec 변경 시 본 plan도 갱신 필요.

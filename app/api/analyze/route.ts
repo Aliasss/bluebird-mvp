@@ -7,6 +7,7 @@ import type { AIAnalysisResult, DistortionAnalysis } from '@/types';
 import { z } from 'zod';
 import { detect } from '@/lib/safety/detect';
 import { createSafetyLlmClient } from '@/lib/safety/gemini-adapter';
+import { trackCognitiveFunnel } from '@/lib/analytics/server';
 
 // Vercel Pro: 본 라우트는 safety detect + main analyze 두 번의 Gemini 호출을 직렬로 수행.
 // 모델 변동·네트워크 지연 시 5~15초 변동, 기본 ~15s 타임아웃 초과 가능. 60s로 명시.
@@ -174,6 +175,14 @@ export async function POST(request: Request) {
           segment: String(row.logic_error_segment ?? ''),
           rationale: row.rationale ? String(row.rationale) : undefined,
         }));
+
+        if (cachedDistortions.length > 0) {
+          void trackCognitiveFunnel('distortion_identified', {
+            log_id: logId,
+            distortion_count: cachedDistortions.length,
+            cached: true,
+          });
+        }
 
         return NextResponse.json(
           {
@@ -357,6 +366,14 @@ export async function POST(request: Request) {
         // 마이그레이션 미적용·일시 장애 등 — 분석 결과 자체는 그대로 반환.
         console.warn('user_patterns insert best-effort 실패:', patternsError.message);
       }
+    }
+
+    if (distortions.length > 0) {
+      void trackCognitiveFunnel('distortion_identified', {
+        log_id: logId,
+        distortion_count: distortions.length,
+        cached: false,
+      });
     }
 
     return NextResponse.json({ ...normalized }, { status: 200 });

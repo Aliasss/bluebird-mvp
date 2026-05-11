@@ -5,6 +5,7 @@ import { isAiInputTooLong, MAX_AI_TEXT_LENGTH } from '@/lib/security/ai-guard';
 import { logServerError } from '@/lib/logging/server-logger';
 import type { DistortionAnalysis } from '@/types';
 import { z } from 'zod';
+import { trackCognitiveFunnel } from '@/lib/analytics/server';
 
 // Vercel Pro: Gemini 1회 호출. 기본 ~15s 타임아웃 초과 가능성 회피용 60s 명시.
 // 참고: docs/strategy/infrastructure-capacity-2026-05-04.md
@@ -223,6 +224,11 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: '질문 저장에 실패했습니다.' }, { status: 500 });
       }
     }
+
+    void trackCognitiveFunnel('reframe_attempted', {
+      log_id: logId,
+      question_count: normalizedQuestions.length,
+    });
 
     return NextResponse.json({ questions: normalizedQuestions }, { status: 200 });
   } catch (error) {

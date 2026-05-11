@@ -3,6 +3,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { consumeRateLimit, getClientIp } from '@/lib/security/rate-limit';
 import { AUTONOMY_NOTE_BONUS, calcAutonomyScore } from '@/lib/intervention/autonomy-score';
 import { logServerError } from '@/lib/logging/server-logger';
+import { trackCognitiveFunnel } from '@/lib/analytics/server';
 import { z } from 'zod';
 
 type ActionRequestBody = {
@@ -142,6 +143,14 @@ export async function POST(request: Request) {
       if (insertError) {
         return NextResponse.json({ error: '행동 저장에 실패했습니다.' }, { status: 500 });
       }
+    }
+
+    if (markCompleted) {
+      void trackCognitiveFunnel('action_completed', {
+        log_id: logId,
+        autonomy_score: actionPayload.autonomy_score ?? null,
+        has_note: completionNote.length > 0,
+      });
     }
 
     return NextResponse.json(

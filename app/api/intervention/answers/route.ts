@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { consumeRateLimit, getClientIp } from '@/lib/security/rate-limit';
 import { logServerError } from '@/lib/logging/server-logger';
+import { trackCognitiveFunnel } from '@/lib/analytics/server';
 import { z } from 'zod';
 
 type SaveAnswersRequestBody = {
@@ -94,6 +95,11 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: '답변 저장에 실패했습니다.' }, { status: 500 });
       }
     }
+
+    void trackCognitiveFunnel('reframe_completed', {
+      log_id: logId,
+      answer_count: answers.length,
+    });
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {

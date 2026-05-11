@@ -76,10 +76,30 @@ const MEDICAL_NEGATION_PATTERNS = [
   /아닙니다/, /아니다/, /대체하지/, /대체하지\s*않/,
 ];
 
+// 메타 회피 가드 — 파운더 자기분석 review(2026-05-10) §4.5 도출.
+// CBT 도구를 학습한 사용자가 "나는 ○○를 정확히 인식했다"를 자기 정당화 자료로 쓰는 회피
+// 패턴을 카피 단계에서 차단한다. 패턴은 narrow하게 — 단일 어휘만으론 false positive ↑.
+// 부사+인지동사 조합을 require해 의도된 칭찬형 자기 정당화 어조만 매칭한다.
+const META_AVOIDANCE_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
+  {
+    pattern: /(?:당신은|당신이)\s*(?:정확히|완벽하게|훌륭하게|이미)\s*(?:인식|이해|파악|발견|분석)/g,
+    label: '메타 회피 칭찬 "당신은 정확히 인식"',
+  },
+  {
+    pattern: /훌륭(?:한|하게|히)\s*(?:인식|분석|성찰|통찰|발견)/g,
+    label: '메타 회피 칭찬 "훌륭한 인식"',
+  },
+  {
+    pattern: /완벽(?:한|하게|히)\s*(?:인식|분석|파악|통찰)/g,
+    label: '메타 회피 칭찬 "완벽한 인식"',
+  },
+];
+
 const ALL_PATTERNS = [
   ...COMFORT_PATTERNS.map((p) => ({ ...p, category: 'comfort' as const })),
   ...NAUTICAL_PATTERNS.map((p) => ({ ...p, category: 'nautical' as const })),
   ...MEDICAL_PATTERNS.map((p) => ({ ...p, category: 'medical' as const })),
+  ...META_AVOIDANCE_PATTERNS.map((p) => ({ ...p, category: 'meta_avoidance' as const })),
 ];
 
 const TARGET_DIRS = ['app', 'components', 'lib'];
@@ -103,7 +123,7 @@ type Hit = {
   file: string;
   line: number;
   col: number;
-  category: 'comfort' | 'nautical' | 'medical';
+  category: 'comfort' | 'nautical' | 'medical' | 'meta_avoidance';
   label: string;
   excerpt: string;
 };
@@ -177,17 +197,21 @@ async function main() {
     return;
   }
 
-  const byCategory: Record<string, Hit[]> = { comfort: [], nautical: [], medical: [] };
+  const byCategory: Record<string, Hit[]> = { comfort: [], nautical: [], medical: [], meta_avoidance: [] };
   for (const h of hits) byCategory[h.category].push(h);
 
-  console.log(`[lint-copy] ${hits.length}건 발견 (위로 ${byCategory.comfort.length} · 항해 ${byCategory.nautical.length} · 의료 ${byCategory.medical.length})`);
+  console.log(
+    `[lint-copy] ${hits.length}건 발견 (위로 ${byCategory.comfort.length} · 항해 ${byCategory.nautical.length} · 의료 ${byCategory.medical.length} · 메타회피 ${byCategory.meta_avoidance.length})`,
+  );
   console.log('');
 
-  for (const cat of ['medical', 'comfort', 'nautical'] as const) {
+  for (const cat of ['medical', 'meta_avoidance', 'comfort', 'nautical'] as const) {
     if (byCategory[cat].length === 0) continue;
-    const heading = cat === 'medical' ? '의료기기 표현 (회피 필수)' :
-                    cat === 'comfort' ? '위로 어휘 (BlueBird 톤 위반)' :
-                    '항해 메타포 (B3 인터뷰 검증 대기 — 부분 잔존 허용)';
+    const heading =
+      cat === 'medical' ? '의료기기 표현 (회피 필수)' :
+      cat === 'meta_avoidance' ? '메타 회피 칭찬 (자기 정당화 자료화 회피)' :
+      cat === 'comfort' ? '위로 어휘 (BlueBird 톤 위반)' :
+      '항해 메타포 (B3 인터뷰 검증 대기 — 부분 잔존 허용)';
     console.log(`# ${heading}`);
     for (const h of byCategory[cat]) {
       console.log(`  ${h.file}:${h.line}:${h.col} [${h.label}] ${h.excerpt}`);

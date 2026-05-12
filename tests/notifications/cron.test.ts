@@ -105,3 +105,34 @@ describe('POST /api/cron/checkin-reminder', () => {
     expect(body.failed).toBe(1);
   });
 });
+
+// Vercel Cron이 GET을 보내는데 POST만 export하면 405가 반사돼 핸들러가
+// 호출조차 안 됨 (2026-05-12 production 사고). 회귀 가드.
+describe('GET /api/cron/checkin-reminder (Vercel Cron 실제 호출 메서드)', () => {
+  it('GET 핸들러가 export되어 있어야 한다', async () => {
+    const mod = await import('@/app/api/cron/checkin-reminder/route');
+    expect(typeof mod.GET).toBe('function');
+  });
+
+  it('GET + 유효 Bearer 시 200 + funnel 응답', async () => {
+    mockRpc.mockResolvedValue({ data: [], error: null });
+    const { GET } = await import('@/app/api/cron/checkin-reminder/route');
+    const req = new Request('http://localhost/api/cron/checkin-reminder', {
+      method: 'GET',
+      headers: { authorization: 'Bearer test-secret' },
+    });
+    const res = await GET(req);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual(
+      expect.objectContaining({ sent: 0, total: 0 }),
+    );
+  });
+
+  it('GET + Bearer 누락 시 401', async () => {
+    const { GET } = await import('@/app/api/cron/checkin-reminder/route');
+    const req = new Request('http://localhost/api/cron/checkin-reminder', {
+      method: 'GET',
+    });
+    expect((await GET(req)).status).toBe(401);
+  });
+});

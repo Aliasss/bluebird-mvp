@@ -4,6 +4,17 @@ import { sendCheckinReminder } from '@/lib/notifications/send';
 import { recordServerEvent } from '@/lib/notifications/events';
 import { logServerError } from '@/lib/logging/server-logger';
 
+/**
+ * 21:00 KST 데일리 체크인 리마인더 cron 진입점.
+ *
+ * **Vercel Cron은 GET 요청을 보낸다** — POST만 export하면 405가 반사되어
+ * 핸들러 코드가 한 번도 실행되지 않는다 (2026-05-12 production 사고 원인).
+ * GET·POST 모두 동일 로직으로 분기 (POST는 수동 curl 검증용 보존).
+ *
+ * Bearer 인증: Vercel cron은 Authorization: Bearer $CRON_SECRET 자동 첨부.
+ * 수동 호출도 동일 헤더 필요.
+ */
+
 interface RpcRow {
   user_id: string;
   endpoint: string;
@@ -11,8 +22,7 @@ interface RpcRow {
   auth: string;
 }
 
-export async function POST(request: Request) {
-  // Vercel Cron Bearer 검증 — 외부 임의 호출 차단.
+async function handleCron(request: Request): Promise<Response> {
   const authHeader = request.headers.get('authorization');
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -68,6 +78,10 @@ export async function POST(request: Request) {
       });
     }
 
+    console.log(
+      `[cron/checkin-reminder] method=${request.method} sent=${sent} total=${targets.length} failed=${failed}`,
+    );
+
     return NextResponse.json(
       { sent, total: targets.length, failed },
       { status: 200 },
@@ -76,4 +90,12 @@ export async function POST(request: Request) {
     logServerError('api/cron/checkin-reminder', error);
     return NextResponse.json({ error: 'Cron 처리 실패' }, { status: 500 });
   }
+}
+
+export async function GET(request: Request) {
+  return handleCron(request);
+}
+
+export async function POST(request: Request) {
+  return handleCron(request);
 }

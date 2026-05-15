@@ -4,15 +4,40 @@
 
 ## Open
 
-- [ ] [CEO] [due-2026-05-17] Phase 3 수행: VAPID 키 생성·등록 + Vercel 환경변수 설정 + 크론 활성화 (출처: 2026-05-10 standup, `docs/superpowers/plans/2026-05-09-push-infra-handoff.md`)
-- [ ] [CEO] [due-2026-05-17] IM.1 사용자 모집 시작: 알빈 인적 네트워크 50명 1차 초대 (출처: 2026-05-10 standup, pmf-validation-plan.md §2)
-- [ ] [senior-fullstack-engineer] [due-2026-05-24] `app/privacy/page.tsx` push subscription 데이터 처리 항목 추가 — risk-manager P3 권고 (출처: 2026-05-10 standup §2.3)
+### carry-over (standup 2026-05-10 출처)
+- [ ] [CEO] [due-2026-05-17] Phase 3 수행: VAPID 키 생성·등록 + Vercel 환경변수 설정 + 크론 활성화 — **A-2 처리방침 PR 머지 후 활성화 (F-8과 정합)** (출처: 2026-05-10 standup)
+- [ ] [CEO] [due-2026-05-17] IM.1 사용자 모집 시작: 알빈 인적 네트워크 50명 1차 초대 — **5/19 조건부 GO로 재조정 예정 (F-16과 정합)** (출처: 2026-05-10 standup)
+- [ ] [senior-fullstack-engineer] [due-2026-05-24] `app/privacy/page.tsx` push subscription 데이터 처리 항목 추가 (출처: 2026-05-10 standup §2.3)
 - [ ] [senior-qa-engineer] [due-2026-05-24] iOS 실기기 push 수신 E2E 검증 — Phase 3 완료 후 (출처: 2026-05-10 standup §2.2)
-- [ ] [all-hands] [due-2026-05-17] 23 actions seed (A-1~A-7·B-1~B-5·C-1~C-4·D-1~D-5·E-1·E-2 + carry-over 3건) — 상세는 [`2026-05-10-weekly-allhands.md`](2026-05-10-weekly-allhands.md) §5 참조. 다음 standup/all-hands가 carry-over 처리 (출처: 2026-05-10 weekly all-hands)
+
+### 신규 actions (2026-05-15 weekly-allhands)
+- [ ] [strategy-manager] [due-2026-05-15] A-3 rubric v0.1 surface (출처: 2026-05-15 weekly-allhands §5 #F-1)
+- [ ] [content-marketer] [due-2026-05-15] D-1 brand-voice-lexicon-v1.md draft commit (출처: 2026-05-15 weekly-allhands §5 #F-2)
+- [ ] [performance-marketer] [due-2026-05-15] D-2+D-3 SMTP stagger + UTM + funnel events v0 draft (출처: 2026-05-15 weekly-allhands §5 #F-3)
+- [ ] [strategy-manager] [due-2026-05-15] E-1 디스턴싱·하루콩 스냅샷 v0 CSO 보고 (출처: 2026-05-15 weekly-allhands §5 #F-4)
+- [ ] [risk-manager] [due-2026-05-16] F-5 처리방침·약관 push+notification_events 항목 추가 PR 머지 (출처: 2026-05-15 weekly-allhands §5 #F-5)
+- [ ] [product-designer] [due-2026-05-16] F-6 iPhone SE 320px 실기 테스트 보고서 (출처: 2026-05-15 weekly-allhands §5 #F-6)
+- [ ] [data-analyst] [due-2026-05-16] F-7 PMF 게이트 분모·분자 1-pager draft (출처: 2026-05-15 weekly-allhands §5 #F-7)
+- [ ] [CEO] [due-2026-05-17] F-8 Phase 3 VAPID 키 생성·Vercel 설정 — A-2 PR 머지 후 (출처: 2026-05-15 weekly-allhands §5 #F-8)
+- [ ] [CSO+CPO] [due-2026-05-18] F-9 rubric v1.0 CSO 3축 매핑 + frozen 표기 (출처: 2026-05-15 weekly-allhands §5 #F-9)
+- [ ] [senior-ux-researcher] [due-2026-05-18] F-10 인터뷰 가이드 v1 MVP (10문항 최소판) — 5/18 09:00 KST hard deadline (출처: 2026-05-15 weekly-allhands §5 #F-10)
+- [ ] [PO] [due-2026-05-18] F-11 응모 폼 구축 (Tally, Q1~Q5 정합 + 동의) (출처: 2026-05-15 weekly-allhands §5 #F-11)
+- [ ] [senior-fullstack-engineer] [due-2026-05-18] F-12 cron healthcheck (last_cron_invoked_at + 24h staleness 알림) (출처: 2026-05-15 weekly-allhands §5 #F-12)
+- [ ] [senior-fullstack-engineer] [due-2026-05-19] F-13 B-2 v_push_funnel SECURITY INVOKER Migration 16 (출처: 2026-05-15 weekly-allhands §5 #F-13)
+- [ ] [senior-fullstack-engineer] [due-2026-05-19] F-14 B-4 metadata Zod enum 화이트리스트 키 강제 (출처: 2026-05-15 weekly-allhands §5 #F-14)
+- [ ] [risk-manager] [due-2026-05-18] F-15 B-5 push 카피 lint:copy 룰 ("기분·우울·불안") (출처: 2026-05-15 weekly-allhands §5 #F-15)
+- [ ] [CEO] [due-2026-05-18] F-16 IM.1 모집 GO/NO-GO 최종 결정 — F-5·F-9·F-10 ALL clear 확인 후 (출처: 2026-05-15 weekly-allhands §5 #F-16)
+- [ ] [data-analyst] [due-2026-05-18] F-17 C-3 이벤트 스펙 (e6c0e62 delta-only 방식) → senior-fullstack 전달 (출처: 2026-05-15 weekly-allhands §5 #F-17)
+- [ ] [senior-qa+senior-fullstack] [due-2026-05-19] F-18 C-4 9단계 × 18 event_type 매핑표 재작성 (출처: 2026-05-15 weekly-allhands §5 #F-18)
+- [ ] [senior-qa] [due-2026-05-19] F-19 A-1 E2E 9단계 실행 보고서 + AI anomaly baseline (출처: 2026-05-15 weekly-allhands §5 #F-19)
+- [ ] [PO+senior-fullstack] [due-2026-05-19] F-20 C-2 측정 SOP docs/im1/measurement-sop.md (출처: 2026-05-15 weekly-allhands §5 #F-20)
+- [ ] [senior-fullstack-engineer] [due-2026-05-19] F-21 B-1 service_role 인벤토리 + rls-audit.ts 확장 (출처: 2026-05-15 weekly-allhands §5 #F-21)
+- [ ] [content-marketer] [due-2026-05-17] F-22 D-4 이메일 카피 3종 (선정·미통과·follow-up) (출처: 2026-05-15 weekly-allhands §5 #F-22)
+- [ ] [PO] [due-2026-05-15] F-23 _actions.md 5/10 23 actions 개별화 (출처: 2026-05-15 weekly-allhands §5 #F-23)
 
 ## Closed (this week)
 
-(미존재)
+- [x] [all-hands] 2026-05-10 23 actions bulk seed — 2026-05-15 weekly-allhands에서 F-1~F-23으로 개별 재등록 처리
 
 ## Closed (archive)
 

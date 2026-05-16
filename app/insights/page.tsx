@@ -402,6 +402,11 @@ export default function InsightsPage() {
                 <XAxis dataKey="date" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} />
                 <Tooltip />
+                {/* CMO-4 (2026-05-16) 단계 전이 marker — 누적 score 임계 수평선. 차트 영역 안에 들어오는 단계만 자동 노출 */}
+                <ReferenceLine y={50} stroke="#94A3B8" strokeDasharray="2 4" label={{ value: '분류', position: 'right', fontSize: 10, fill: '#64748B' }} />
+                <ReferenceLine y={150} stroke="#94A3B8" strokeDasharray="2 4" label={{ value: '재구성', position: 'right', fontSize: 10, fill: '#64748B' }} />
+                <ReferenceLine y={300} stroke="#94A3B8" strokeDasharray="2 4" label={{ value: '검증', position: 'right', fontSize: 10, fill: '#64748B' }} />
+                <ReferenceLine y={500} stroke="#94A3B8" strokeDasharray="2 4" label={{ value: '운영', position: 'right', fontSize: 10, fill: '#64748B' }} />
                 <Line type="monotone" dataKey="score" name="자율성 지수" stroke="#06B6D4" strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>

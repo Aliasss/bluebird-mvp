@@ -15,6 +15,8 @@ import InfoTooltip from '@/components/ui/InfoTooltip';
 import { calculateStreak, type StreakResult } from '@/lib/utils/streak';
 import { getArchetypeResultFromRows, type ArchetypeResult } from '@/lib/utils/archetype';
 import { getRankResult } from '@/lib/utils/rank';
+import StageTransitionModal from '@/components/insights/StageTransitionModal';
+import { DistortionTypeKorean } from '@/types';
 import type { User } from '@supabase/supabase-js';
 import type { Log } from '@/types';
 import { findPendingReview, type PendingReviewClient, type PendingReview } from '@/lib/review/pending-review';
@@ -53,6 +55,13 @@ function DashboardContent() {
   const [justCheckedIn, setJustCheckedIn] = useState(false);
   const [todayCheckin, setTodayCheckin] = useState<{ morning: boolean; evening: boolean }>({ morning: false, evening: false });
   const [showManualNudge, setShowManualNudge] = useState(false);
+  // 단계 전이 인터스티셜 (Plan agent 권장안 A, 2026-05-16). localStorage 1회 표시.
+  const [stageTransition, setStageTransition] = useState<{
+    previousTitle: string | null;
+    currentTitle: string;
+    totalLogs: number;
+    topDistortionKorean: string | null;
+  } | null>(null);
 
   useEffect(() => {
     // sessionStorage 기반 — Router Cache가 stale searchParams를 복원해도 토스트 재발사 안 됨.
@@ -156,6 +165,51 @@ function DashboardContent() {
         .not('autonomy_score', 'is', null);
       const totalScore = interventionsData?.reduce((sum, item) => sum + (item.autonomy_score || 0), 0) || 0;
       setAutonomyScore(totalScore);
+
+      // 단계 전이 인터스티셜 — Plan agent 권장안 A (2026-05-16)
+      // localStorage 1회 표시 가드. 본인의 마지막으로 본 단계와 현 단계가 다르면 모달 표시
+      if (typeof window !== 'undefined') {
+        const currentRank = getRankResult(totalScore).rank;
+        const STORAGE_KEY = 'bluebird:last_seen_rank_v1';
+        const previousTitle = window.localStorage.getItem(STORAGE_KEY);
+
+        if (previousTitle !== currentRank.title) {
+          // 첫 진입 (previousTitle === null) 시에는 modal 표시 안 함 (단계 진입 신호가 아니라 첫 가입)
+          if (previousTitle !== null) {
+            // 정량 회고용 데이터 — best-effort 별도 fetch
+            const { data: patternsData } = await supabase
+              .from('user_patterns')
+              .select('distortion_type')
+              .eq('user_id', userId);
+
+            const counts = new Map<string, number>();
+            (patternsData ?? []).forEach((p) => {
+              const t = (p as { distortion_type?: string }).distortion_type;
+              if (t) counts.set(t, (counts.get(t) ?? 0) + 1);
+            });
+            let topType: string | null = null;
+            let topN = 0;
+            counts.forEach((n, t) => {
+              if (n > topN) {
+                topN = n;
+                topType = t;
+              }
+            });
+
+            setStageTransition({
+              previousTitle,
+              currentTitle: currentRank.title,
+              totalLogs: (analysisData ?? []).length,
+              topDistortionKorean:
+                topType && topType in DistortionTypeKorean
+                  ? DistortionTypeKorean[topType as keyof typeof DistortionTypeKorean]
+                  : null,
+            });
+          }
+          // 첫 진입이든 전이든 localStorage 갱신
+          window.localStorage.setItem(STORAGE_KEY, currentRank.title);
+        }
+      }
 
       // 재평가 대기 (Δpain)
       const pendingReviewClient: PendingReviewClient = {
@@ -486,6 +540,17 @@ function DashboardContent() {
       </div>
 
       <BottomTabBar />
+
+      {/* 단계 전이 인터스티셜 — Plan agent 권장안 A (2026-05-16). localStorage 1회 표시 가드 */}
+      {stageTransition && (
+        <StageTransitionModal
+          previousRankTitle={stageTransition.previousTitle}
+          currentRank={getRankResult(autonomyScore).rank}
+          totalLogs={stageTransition.totalLogs}
+          topDistortionKorean={stageTransition.topDistortionKorean}
+          onDismiss={() => setStageTransition(null)}
+        />
+      )}
     </main>
   );
 }

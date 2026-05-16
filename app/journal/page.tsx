@@ -8,6 +8,13 @@ import { formatActionPlanForDisplay } from '@/lib/intervention/action-plan';
 import BottomTabBar from '@/components/ui/BottomTabBar';
 import type { Log, TriggerCategory } from '@/types';
 import { TriggerCategoryKorean } from '@/types';
+import {
+  DATE_FILTERS,
+  DATE_FILTER_LABEL,
+  dateFilterToCutoffMs,
+  isWithinDateFilter,
+  type DateFilter,
+} from '@/lib/journal/date-filter';
 
 type LogWithType = Log & { log_type?: string | null };
 
@@ -39,6 +46,7 @@ export default function JournalPage() {
   const [showAllActions, setShowAllActions] = useState(false);
   const [loading, setLoading] = useState(true);
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>(FILTER_ALL);
+  const [dateFilter, setDateFilter] = useState<DateFilter>('all');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,13 +63,13 @@ export default function JournalPage() {
           .eq('user_id', user.id)
           .or('log_type.eq.distortion,log_type.is.null')
           .order('created_at', { ascending: false })
-          .limit(20),
+          .limit(50),
         supabase
           .from('intervention')
           .select('id, log_id, final_action, is_completed, autonomy_score, created_at, logs!inner(trigger, user_id, log_type, trigger_category)')
           .eq('logs.user_id', user.id)
           .order('created_at', { ascending: false })
-          .limit(20),
+          .limit(50),
       ]);
 
       setLogs((logsData || []) as LogWithType[]);
@@ -75,16 +83,27 @@ export default function JournalPage() {
     fetchData();
   }, [router]);
 
-  // 카테고리 필터 적용 — 클라이언트 사이드. 'all'은 전체 그대로.
+  // 카테고리 + 날짜 필터 동시 적용 — 클라이언트 사이드. 'all'은 해당 필터 미적용 의미.
+  const dateCutoffMs = useMemo(
+    () => dateFilterToCutoffMs(dateFilter, new Date()),
+    [dateFilter],
+  );
+
   const visibleLogs = useMemo(() => {
-    if (categoryFilter === FILTER_ALL) return logs;
-    return logs.filter((l) => l.trigger_category === categoryFilter);
-  }, [logs, categoryFilter]);
+    return logs.filter((l) => {
+      if (categoryFilter !== FILTER_ALL && l.trigger_category !== categoryFilter) return false;
+      if (!isWithinDateFilter(l.created_at, dateCutoffMs)) return false;
+      return true;
+    });
+  }, [logs, categoryFilter, dateCutoffMs]);
 
   const visibleActions = useMemo(() => {
-    if (categoryFilter === FILTER_ALL) return recentActions;
-    return recentActions.filter((a) => a.logs?.trigger_category === categoryFilter);
-  }, [recentActions, categoryFilter]);
+    return recentActions.filter((a) => {
+      if (categoryFilter !== FILTER_ALL && a.logs?.trigger_category !== categoryFilter) return false;
+      if (!isWithinDateFilter(a.created_at, dateCutoffMs)) return false;
+      return true;
+    });
+  }, [recentActions, categoryFilter, dateCutoffMs]);
 
   // 사용자가 실제 데이터에 보유한 카테고리만 칩으로 노출 (12개 전부 X — UI 부담↓)
   const availableCategories = useMemo(() => {
@@ -167,6 +186,25 @@ export default function JournalPage() {
             </div>
           </div>
         )}
+        {/* 날짜 필터 — 기록 1건이라도 있을 때 노출 (전체기간 / 7일 / 30일) */}
+        {(logs.length > 0 || recentActions.length > 0) && (
+          <div className="max-w-lg mx-auto px-4 py-2 border-t border-background-tertiary/60 flex items-center gap-1.5">
+            <span className="text-[10px] text-text-tertiary uppercase tracking-wider flex-shrink-0">기간</span>
+            {DATE_FILTERS.map((df) => (
+              <button
+                key={df}
+                onClick={() => setDateFilter(df)}
+                className={`px-2.5 py-1 text-xs rounded-full transition-colors ${
+                  dateFilter === df
+                    ? 'bg-primary text-white'
+                    : 'bg-background-secondary text-text-secondary hover:bg-background-tertiary'
+                }`}
+              >
+                {DATE_FILTER_LABEL[df]}
+              </button>
+            ))}
+          </div>
+        )}
       </header>
 
       <div className="max-w-lg mx-auto px-4 py-4 pb-28">
@@ -176,14 +214,14 @@ export default function JournalPage() {
               <div className="flex flex-col items-center justify-center py-20 text-center">
                 <p className="text-4xl mb-3">📋</p>
                 <p className="text-sm font-semibold text-text-primary mb-1">
-                  {categoryFilter === FILTER_ALL
+                  {categoryFilter === FILTER_ALL && dateFilter === 'all'
                     ? '아직 기록이 없어요'
-                    : `${TriggerCategoryKorean[categoryFilter]} 카테고리 기록이 없어요`}
+                    : '조건에 맞는 기록이 없어요'}
                 </p>
                 <p className="text-xs text-text-secondary">
-                  {categoryFilter === FILTER_ALL
+                  {categoryFilter === FILTER_ALL && dateFilter === 'all'
                     ? '하단 + 버튼으로 첫 기록을 시작해보세요.'
-                    : '다른 카테고리를 선택하거나 전체 보기로 돌아가세요.'}
+                    : '다른 카테고리·기간을 선택하거나 전체 보기로 돌아가세요.'}
                 </p>
               </div>
             ) : (
@@ -229,14 +267,14 @@ export default function JournalPage() {
               <div className="flex flex-col items-center justify-center py-20 text-center">
                 <p className="text-4xl mb-3">🗺️</p>
                 <p className="text-sm font-semibold text-text-primary mb-1">
-                  {categoryFilter === FILTER_ALL
+                  {categoryFilter === FILTER_ALL && dateFilter === 'all'
                     ? '아직 행동 계획이 없어요'
-                    : `${TriggerCategoryKorean[categoryFilter]} 카테고리 행동 계획이 없어요`}
+                    : '조건에 맞는 행동 계획이 없어요'}
                 </p>
                 <p className="text-xs text-text-secondary">
-                  {categoryFilter === FILTER_ALL
+                  {categoryFilter === FILTER_ALL && dateFilter === 'all'
                     ? '분석 후 행동 설계를 완료해보세요.'
-                    : '다른 카테고리를 선택하거나 전체 보기로 돌아가세요.'}
+                    : '다른 카테고리·기간을 선택하거나 전체 보기로 돌아가세요.'}
                 </p>
               </div>
             ) : (

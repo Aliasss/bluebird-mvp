@@ -11,10 +11,11 @@
 - [ ] [senior-qa-engineer] [due-2026-05-24] iOS 실기기 push 수신 E2E 검증 — Phase 3 완료 후 (출처: 2026-05-10 standup §2.2)
 
 ### 신규 actions (2026-05-15 weekly-allhands)
-- [ ] [strategy-manager] [due-2026-05-15] A-3 rubric v0.1 surface (출처: 2026-05-15 weekly-allhands §5 #F-1)
-- [ ] [content-marketer] [due-2026-05-15] D-1 brand-voice-lexicon-v1.md draft commit (출처: 2026-05-15 weekly-allhands §5 #F-2)
-- [ ] [performance-marketer] [due-2026-05-15] D-2+D-3 SMTP stagger + UTM + funnel events v0 draft (출처: 2026-05-15 weekly-allhands §5 #F-3)
-- [ ] [strategy-manager] [due-2026-05-15] E-1 디스턴싱·하루콩 스냅샷 v0 CSO 보고 (출처: 2026-05-15 weekly-allhands §5 #F-4)
+<!-- F-1·F-2·F-3·F-4 산출 완료 (commit 9c72a7a). 2026-05-16 ad-hoc all-hands §5 #1 결의로 [x] 처리 -->
+- [x] [strategy-manager] [due-2026-05-15] A-3 rubric v0.1 surface — `docs/im1/coding-rubric-v0.1-im1-quickstart.md` (출처: 2026-05-15 weekly-allhands §5 #F-1, closed 2026-05-16)
+- [x] [content-marketer] [due-2026-05-15] D-1 brand-voice-lexicon-v1.md draft commit — `docs/im1/brand-voice-lexicon-v1.md` (출처: 2026-05-15 weekly-allhands §5 #F-2, closed 2026-05-16)
+- [x] [performance-marketer] [due-2026-05-15] D-2+D-3 SMTP stagger + UTM + funnel events v0 draft — `docs/im1/recruitment-ops-v0-2026-05-15.md` (출처: 2026-05-15 weekly-allhands §5 #F-3, closed 2026-05-16)
+- [x] [strategy-manager] [due-2026-05-15] E-1 디스턴싱·하루콩 스냅샷 v0 CSO 보고 — `docs/im1/competitor-snapshot-distancing-harukong-v0-2026-05-15.md` (출처: 2026-05-15 weekly-allhands §5 #F-4, closed 2026-05-16)
 - [ ] [risk-manager] [due-2026-05-16] F-5 처리방침·약관 push+notification_events 항목 추가 PR 머지 (출처: 2026-05-15 weekly-allhands §5 #F-5)
 - [ ] [product-designer] [due-2026-05-16] F-6 iPhone SE 320px 실기 테스트 보고서 (출처: 2026-05-15 weekly-allhands §5 #F-6)
 - [ ] [data-analyst] [due-2026-05-16] F-7 PMF 게이트 분모·분자 1-pager draft (출처: 2026-05-15 weekly-allhands §5 #F-7)
@@ -38,6 +39,7 @@
 ## Closed (this week)
 
 - [x] [all-hands] 2026-05-10 23 actions bulk seed — 2026-05-15 weekly-allhands에서 F-1~F-23으로 개별 재등록 처리
+- [x] [strategy-manager·content-marketer·performance-marketer] F-1·F-2·F-3·F-4 4건 산출 — 2026-05-15 weekly EOD 즉시 액션, commit `9c72a7a`, closed 2026-05-16 ad-hoc all-hands
 
 ## Closed (archive)
 

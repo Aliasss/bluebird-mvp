@@ -463,7 +463,9 @@ function DashboardContent() {
           const { rank, progressPct, pointsToNext } = getRankResult(autonomyScore);
           return (
             <>
-              <div className="grid grid-cols-2 gap-3">
+              {/* CPO 검토(2026-05-16): 자율성 지수 콘텐츠가 더 많아 1:2 비대칭 적용.
+                  연속 기록 1칸 · 자율성 2칸 — 본질 위계(단계 3 surface) 정합 + description 줄바꿈 완화. */}
+              <div className="grid grid-cols-3 gap-3">
                 <div className="bg-white rounded-2xl p-4 shadow-card">
                   <p className="text-xs text-text-secondary mb-1">연속 기록</p>
                   <p className="text-2xl font-extrabold text-primary tracking-tight">{streak.current}일</p>
@@ -471,7 +473,7 @@ function DashboardContent() {
                     {streak.doneToday ? '오늘 기록 완료' : streak.best > 0 ? `최고 ${streak.best}일` : '오늘 시작해보세요'}
                   </p>
                 </div>
-                <div className="bg-white rounded-2xl p-4 shadow-card">
+                <div className="bg-white rounded-2xl p-4 shadow-card col-span-2">
                   <p className="text-xs text-text-secondary mb-1">
                     <InfoTooltip text="자기 검증 답변·자기 노트 작성으로 자율성을 행사한 정도. (Deci & Ryan, 2000 자기결정성 이론 autonomy 차원 측정)">자율성 지수</InfoTooltip>
                   </p>

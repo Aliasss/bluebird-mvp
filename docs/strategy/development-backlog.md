@@ -1,6 +1,6 @@
 # Bluebird Development Backlog
 
-> 마지막 업데이트: 2026-05-10 (파운더 자기분석 review 잔여 12건 아카이브 — P0 3건은 `e6c0e62`로 즉시 구현 완료)
+> 마지막 업데이트: 2026-05-16 (Tier 1.5d 추가 — 분석 결과 깊이 강화: 종단 패턴 카드 + 복합 왜곡 헤드라인. 창업자 자기 인터뷰 진단 P0-1·P0-2)
 > 살아있는 문서. Tier 완료/추가 시 본 파일 직접 수정.
 
 ---
@@ -82,6 +82,25 @@ CBT 앱 사용자가 돈을 내는 이유는 셋 중 하나:
 - body 그라디언트 → 단색, `letter-spacing -0.011em` 글로벌, `font-feature-settings 'ss01' 'tnum'`
 - `docs/design/tokens.md` — 타이포·모서리·그림자·모션·점진 마이그레이션 원칙 명문화
 - 기존 페이지 일괄 마이그레이션 X (회귀 위험), 점진 모델
+
+### 1.5d 분석 결과 깊이 강화 — 종단 패턴 + 복합 왜곡 헤드라인 (2026-05-16)
+**소스**: `docs/research/founder-attrition-self-interview-2026-05-16.html` 진단 결과 (B 결과 효용 약함 +2 1위, B+D 합산 +3). 창업자가 본인 사용 경험으로 "단일 distortion 매핑 = GPT 래퍼 동급" 가설(2026-05-10 파운더 자기분석 review) 직접 검증.
+
+**Q16 사용자 발화 직접 인용:** "매 분석마다 인사이트가 비슷해서 점점 와닿지 않는다."
+
+**P0-1 종단 패턴 카드** — `lib/insights/longitudinal-pattern.ts` 신규 + `app/analyze/[id]/page.tsx` UI 추가
+- 같은 trigger_category × 같은 우세 왜곡의 누적 등장 횟수·평균 강도·마지막 발생일·지난 30일 빈도 산출
+- 신규 DB 쿼리 0 — trigger-revisit이 가져오는 60일 history 재활용
+- 분석 결과 화면 distortions 카드 위에 "이 패턴은 지난 60일 N번째" 카드 (occurrenceCount ≥ 2일 때만)
+- 6 unit tests 통과
+
+**P0-2 복합 왜곡 헤드라인** — `app/analyze/[id]/page.tsx` UI 추가
+- distortions.length > 1 시 "N개 왜곡 동시 작동 · 우세 ○○ + 보조 ●● · ▲▲" 1줄 헤드라인
+- 단순 시각화에 그치던 복합 결과를 명시적 통합 신호로 격상
+
+**검증**: 163/163 tests pass (longitudinal-pattern 6건 신규), 타입체크 clean, lint:copy 의료·메타회피 0건.
+
+**Out-of-scope (다음 검토)**: P0-3 (행동 검증 1주 follow-up, Migration 16 필요) · P2-1 (체크인↔분석 통합 흐름) — IM.1 베타 작동 검증 후 격상.
 
 ---
 

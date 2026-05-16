@@ -27,6 +27,10 @@ import {
   type RevisitDistortion,
   type RevisitLogRow,
 } from '@/lib/insights/trigger-revisit';
+import {
+  computeLongitudinalPattern,
+  type LongitudinalPattern,
+} from '@/lib/insights/longitudinal-pattern';
 
 type Stage = 'fetch' | 'analyze' | 'question' | 'done';
 type InterventionRow = {
@@ -123,6 +127,7 @@ export default function AnalyzePage() {
   });
   const [triggerCategory, setTriggerCategory] = useState<TriggerCategory | null>(null);
   const [revisit, setRevisit] = useState<RevisitCandidate | null>(null);
+  const [longitudinal, setLongitudinal] = useState<LongitudinalPattern | null>(null);
 
   const startAnalysis = useCallback(async () => {
     const logId = params.id;
@@ -357,15 +362,27 @@ export default function AnalyzePage() {
           })),
       }));
 
+      const now = new Date();
       const candidate = findTriggerRevisit({
         currentLogId: params.id,
         currentCategory: triggerCategory,
         currentDominantDistortion: dominant,
         history,
-        now: new Date(),
+        now,
       });
 
-      if (!cancelled) setRevisit(candidate);
+      // 종단 패턴 산출 — 같은 history 재사용. 신규 쿼리 0.
+      const longitudinalResult = computeLongitudinalPattern({
+        currentCategory: triggerCategory,
+        currentDominantDistortion: dominant,
+        history,
+        now,
+      });
+
+      if (!cancelled) {
+        setRevisit(candidate);
+        setLongitudinal(longitudinalResult);
+      }
     })();
 
     return () => {
@@ -687,12 +704,55 @@ export default function AnalyzePage() {
           </div>
         </div>
 
+        {/* 종단 패턴 카드 — 같은 카테고리·우세 왜곡 누적 surface (P0-1) */}
+        {longitudinal && longitudinal.occurrenceCount >= 2 && triggerCategory && (
+          <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 shadow-card">
+            <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-1">
+              누적 패턴
+            </p>
+            <p className="text-sm text-text-primary font-medium">
+              이 패턴은 지난 60일 <span className="font-bold text-primary">{longitudinal.occurrenceCount}번째</span>
+              {' · '}
+              {TriggerCategoryKorean[triggerCategory]} × {DistortionTypeKorean[getDominantDistortion(distortions.map((d) => ({ type: d.type, intensity: d.intensity }))) ?? distortions[0]?.type] ?? ''}
+            </p>
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary">
+              {longitudinal.recentMonthCount > 0 && (
+                <span>지난 30일: <span className="font-medium text-text-primary">{longitudinal.recentMonthCount}회</span></span>
+              )}
+              {longitudinal.lastOccurrenceDaysAgo !== null && (
+                <span>직전 발생: <span className="font-medium text-text-primary">{longitudinal.lastOccurrenceDaysAgo === 0 ? '오늘' : `${longitudinal.lastOccurrenceDaysAgo}일 전`}</span></span>
+              )}
+              {longitudinal.averageIntensity !== null && (
+                <span>평균 강도: <span className="font-medium text-text-primary">{(longitudinal.averageIntensity * 100).toFixed(0)}%</span></span>
+              )}
+              {longitudinal.totalCategoryCount > longitudinal.occurrenceCount && (
+                <span>{TriggerCategoryKorean[triggerCategory]} 전체: <span className="font-medium text-text-primary">{longitudinal.totalCategoryCount}회</span></span>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="bg-white rounded-2xl p-5 shadow-card">
           <h2 className="text-lg font-bold text-text-primary mb-4 tracking-tight">발견된 생각의 패턴</h2>
           {distortions.length === 0 ? (
             <p className="text-text-secondary">이번 기록에서는 뚜렷한 왜곡 패턴이 보이지 않아요.</p>
           ) : (
             <div className="space-y-3">
+              {/* 복합 왜곡 헤드라인 (P0-2) — 2개 이상 동시 작동 시만 노출 */}
+              {distortions.length > 1 && (
+                <div className="bg-background-secondary/60 border-l-2 border-primary rounded-r-md px-3 py-2 mb-1">
+                  <p className="text-xs md:text-sm text-text-primary">
+                    <span className="font-bold text-primary">{distortions.length}개 왜곡이 동시 작동</span> ·
+                    {' '}우세{' '}
+                    <span className="font-medium">{DistortionTypeKorean[distortions[0].type]}</span>
+                    {distortions.length > 1 && (
+                      <span className="text-text-secondary">
+                        {' '}+ 보조 {distortions.slice(1).map((d) => DistortionTypeKorean[d.type]).join(' · ')}
+                      </span>
+                    )}
+                  </p>
+                </div>
+              )}
               {distortions.map((item, index) => (
                 <div key={`${item.type}-${index}`} className="bg-white border border-background-tertiary/80 rounded-xl p-4 shadow-sm">
                   <div className="flex items-center justify-between mb-2">

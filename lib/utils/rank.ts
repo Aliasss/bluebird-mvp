@@ -7,12 +7,14 @@ export type Rank = {
 
 // design-realignment-v1.md §3 결정 ② — 진척 지표는 분석가 어휘로 *대체* (폐기 아님).
 // 등급은 누적 자율성 점수 구간을 *기능 단위*로 라벨링한다.
+// CSO-2 (2026-05-16): description 어휘를 "...구간" → "...할 수 있는 상태"로 격상.
+// 자기상 = "측정 대상" → "운영자" 강화 (차별화 축 #2 정합).
 export const RANKS: Rank[] = [
-  { title: '관찰 단계',     description: '자동 사고를 기록하기 시작한 구간',          min: 0,   max: 49  },
-  { title: '분류 단계',     description: '왜곡 패턴을 식별·분류하는 구간',            min: 50,  max: 149 },
-  { title: '재구성 단계',   description: '대안 사고를 적극적으로 작성하는 구간',      min: 150, max: 299 },
-  { title: '검증 단계',     description: 'Δpain·완료율 데이터로 패턴을 검증하는 구간', min: 300, max: 499 },
-  { title: '운영 단계',     description: '자기 인지 시스템을 일관되게 운영하는 구간',  min: 500, max: null },
+  { title: '관찰 단계',     description: '자동 사고를 기록할 수 있는 상태',                min: 0,   max: 49  },
+  { title: '분류 단계',     description: '왜곡 패턴을 식별·분류할 수 있는 상태',           min: 50,  max: 149 },
+  { title: '재구성 단계',   description: '대안 사고를 직접 작성할 수 있는 상태',           min: 150, max: 299 },
+  { title: '검증 단계',     description: 'Δpain·완료율 데이터로 패턴을 검증할 수 있는 상태', min: 300, max: 499 },
+  { title: '운영 단계',     description: '자기 인지 시스템을 일관되게 운영할 수 있는 상태',  min: 500, max: null },
 ];
 
 export type RankResult = {

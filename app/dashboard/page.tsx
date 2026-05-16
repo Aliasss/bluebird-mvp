@@ -422,7 +422,9 @@ function DashboardContent() {
                     <InfoTooltip text="자기 검증 답변·자기 노트 작성으로 자율성을 행사한 정도. (Deci & Ryan, 2000 자기결정성 이론 autonomy 차원 측정)">자율성 지수</InfoTooltip>
                   </p>
                   <p className="text-xl font-extrabold text-warning tracking-tight">{autonomyScore}점</p>
-                  <p className="text-[10px] font-semibold text-primary mt-0.5">{rank.title}</p>
+                  {/* CPO-2 (2026-05-16): 단계명을 prominent하게 + 역량 description 1줄 추가 */}
+                  <p className="text-xs font-bold text-primary mt-1">{rank.title}</p>
+                  <p className="text-[10px] text-text-secondary mt-0.5 leading-tight line-clamp-2">{rank.description}</p>
                   <div className="mt-2 h-1 bg-background-secondary rounded-full overflow-hidden">
                     <div
                       className="h-full bg-warning rounded-full transition-all duration-500"

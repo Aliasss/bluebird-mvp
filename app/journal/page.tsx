@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { formatDate } from '@/lib/utils';
 import { formatActionPlanForDisplay } from '@/lib/intervention/action-plan';
 import BottomTabBar from '@/components/ui/BottomTabBar';
-import type { Log } from '@/types';
+import type { Log, TriggerCategory } from '@/types';
+import { TriggerCategoryKorean } from '@/types';
 
 type LogWithType = Log & { log_type?: string | null };
 
@@ -17,10 +18,17 @@ type RecentActionItem = {
   is_completed: boolean;
   autonomy_score: number | null;
   created_at: string;
-  logs?: { trigger?: string; log_type?: string | null } | null;
+  logs?: {
+    trigger?: string;
+    log_type?: string | null;
+    trigger_category?: TriggerCategory | null;
+  } | null;
 };
 
 type Tab = 'logs' | 'actions';
+
+const FILTER_ALL = 'all' as const;
+type CategoryFilter = typeof FILTER_ALL | TriggerCategory;
 
 export default function JournalPage() {
   const router = useRouter();
@@ -30,6 +38,7 @@ export default function JournalPage() {
   const [showAllLogs, setShowAllLogs] = useState(false);
   const [showAllActions, setShowAllActions] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>(FILTER_ALL);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,7 +58,7 @@ export default function JournalPage() {
           .limit(20),
         supabase
           .from('intervention')
-          .select('id, log_id, final_action, is_completed, autonomy_score, created_at, logs!inner(trigger, user_id, log_type)')
+          .select('id, log_id, final_action, is_completed, autonomy_score, created_at, logs!inner(trigger, user_id, log_type, trigger_category)')
           .eq('logs.user_id', user.id)
           .order('created_at', { ascending: false })
           .limit(20),
@@ -65,6 +74,30 @@ export default function JournalPage() {
 
     fetchData();
   }, [router]);
+
+  // 카테고리 필터 적용 — 클라이언트 사이드. 'all'은 전체 그대로.
+  const visibleLogs = useMemo(() => {
+    if (categoryFilter === FILTER_ALL) return logs;
+    return logs.filter((l) => l.trigger_category === categoryFilter);
+  }, [logs, categoryFilter]);
+
+  const visibleActions = useMemo(() => {
+    if (categoryFilter === FILTER_ALL) return recentActions;
+    return recentActions.filter((a) => a.logs?.trigger_category === categoryFilter);
+  }, [recentActions, categoryFilter]);
+
+  // 사용자가 실제 데이터에 보유한 카테고리만 칩으로 노출 (12개 전부 X — UI 부담↓)
+  const availableCategories = useMemo(() => {
+    const set = new Set<TriggerCategory>();
+    for (const l of logs) {
+      if (l.trigger_category) set.add(l.trigger_category as TriggerCategory);
+    }
+    for (const a of recentActions) {
+      const c = a.logs?.trigger_category;
+      if (c) set.add(c);
+    }
+    return Array.from(set);
+  }, [logs, recentActions]);
 
   if (loading) {
     return (
@@ -104,40 +137,85 @@ export default function JournalPage() {
             행동 계획
           </button>
         </div>
+        {/* 카테고리 필터 (보유 데이터 있을 때만 노출) */}
+        {availableCategories.length > 0 && (
+          <div className="max-w-lg mx-auto px-4 py-2 border-t border-background-tertiary/60 overflow-x-auto whitespace-nowrap">
+            <div className="flex gap-1.5">
+              <button
+                onClick={() => setCategoryFilter(FILTER_ALL)}
+                className={`px-2.5 py-1 text-xs rounded-full transition-colors flex-shrink-0 ${
+                  categoryFilter === FILTER_ALL
+                    ? 'bg-primary text-white'
+                    : 'bg-background-secondary text-text-secondary hover:bg-background-tertiary'
+                }`}
+              >
+                전체
+              </button>
+              {availableCategories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setCategoryFilter(cat)}
+                  className={`px-2.5 py-1 text-xs rounded-full transition-colors flex-shrink-0 ${
+                    categoryFilter === cat
+                      ? 'bg-primary text-white'
+                      : 'bg-background-secondary text-text-secondary hover:bg-background-tertiary'
+                  }`}
+                >
+                  {TriggerCategoryKorean[cat]}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </header>
 
       <div className="max-w-lg mx-auto px-4 py-4 pb-28">
         {activeTab === 'logs' && (
           <>
-            {logs.length === 0 ? (
+            {visibleLogs.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center">
                 <p className="text-4xl mb-3">📋</p>
-                <p className="text-sm font-semibold text-text-primary mb-1">아직 기록이 없어요</p>
-                <p className="text-xs text-text-secondary">하단 + 버튼으로 첫 기록을 시작해보세요.</p>
+                <p className="text-sm font-semibold text-text-primary mb-1">
+                  {categoryFilter === FILTER_ALL
+                    ? '아직 기록이 없어요'
+                    : `${TriggerCategoryKorean[categoryFilter]} 카테고리 기록이 없어요`}
+                </p>
+                <p className="text-xs text-text-secondary">
+                  {categoryFilter === FILTER_ALL
+                    ? '하단 + 버튼으로 첫 기록을 시작해보세요.'
+                    : '다른 카테고리를 선택하거나 전체 보기로 돌아가세요.'}
+                </p>
               </div>
             ) : (
               <div className="space-y-3">
-                {(showAllLogs ? logs : logs.slice(0, 3)).map((log) => (
+                {(showAllLogs ? visibleLogs : visibleLogs.slice(0, 3)).map((log) => (
                   <div
                     key={log.id}
                     onClick={() => router.push(`/analyze/${log.id}`)}
                     className="bg-white border border-background-tertiary/80 rounded-xl p-4 shadow-sm hover:border-primary hover:shadow-md transition-all cursor-pointer"
                   >
                     <div className="flex items-start justify-between mb-2">
-                      <p className="text-sm font-medium text-text-primary line-clamp-1">{log.trigger}</p>
-                      <span className="text-xs text-text-secondary whitespace-nowrap ml-2">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <p className="text-sm font-medium text-text-primary line-clamp-1">{log.trigger}</p>
+                        {log.trigger_category && (
+                          <span className="text-[10px] text-text-tertiary bg-background-secondary px-1.5 py-0.5 rounded flex-shrink-0">
+                            {TriggerCategoryKorean[log.trigger_category as TriggerCategory]}
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-xs text-text-secondary whitespace-nowrap ml-2 flex-shrink-0">
                         {formatDate(log.created_at)}
                       </span>
                     </div>
                     <p className="text-sm text-text-secondary line-clamp-2">{log.thought}</p>
                   </div>
                 ))}
-                {logs.length > 3 && !showAllLogs && (
+                {visibleLogs.length > 3 && !showAllLogs && (
                   <button
                     onClick={() => setShowAllLogs(true)}
                     className="w-full py-2.5 text-sm text-primary font-semibold border border-primary/30 rounded-xl hover:bg-primary/5 transition-colors"
                   >
-                    더보기 ({logs.length - 3}개 더)
+                    더보기 ({visibleLogs.length - 3}개 더)
                   </button>
                 )}
               </div>
@@ -147,25 +225,40 @@ export default function JournalPage() {
 
         {activeTab === 'actions' && (
           <>
-            {recentActions.length === 0 ? (
+            {visibleActions.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center">
                 <p className="text-4xl mb-3">🗺️</p>
-                <p className="text-sm font-semibold text-text-primary mb-1">아직 행동 계획이 없어요</p>
-                <p className="text-xs text-text-secondary">분석 후 행동 설계를 완료해보세요.</p>
+                <p className="text-sm font-semibold text-text-primary mb-1">
+                  {categoryFilter === FILTER_ALL
+                    ? '아직 행동 계획이 없어요'
+                    : `${TriggerCategoryKorean[categoryFilter]} 카테고리 행동 계획이 없어요`}
+                </p>
+                <p className="text-xs text-text-secondary">
+                  {categoryFilter === FILTER_ALL
+                    ? '분석 후 행동 설계를 완료해보세요.'
+                    : '다른 카테고리를 선택하거나 전체 보기로 돌아가세요.'}
+                </p>
               </div>
             ) : (
               <div className="space-y-3">
-                {(showAllActions ? recentActions : recentActions.slice(0, 3)).map((item) => (
+                {(showAllActions ? visibleActions : visibleActions.slice(0, 3)).map((item) => (
                   <div
                     key={item.id}
                     onClick={() => router.push(`/action/${item.log_id}`)}
                     className="bg-white border border-background-tertiary/80 rounded-xl p-4 shadow-sm hover:border-primary hover:shadow-md transition-all cursor-pointer"
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <p className="text-sm font-medium text-text-primary line-clamp-1">
-                        {item.logs?.trigger || '행동 계획'}
-                      </p>
-                      <span className={`text-xs font-semibold ${item.is_completed ? 'text-success' : 'text-warning'}`}>
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <p className="text-sm font-medium text-text-primary line-clamp-1">
+                          {item.logs?.trigger || '행동 계획'}
+                        </p>
+                        {item.logs?.trigger_category && (
+                          <span className="text-[10px] text-text-tertiary bg-background-secondary px-1.5 py-0.5 rounded flex-shrink-0">
+                            {TriggerCategoryKorean[item.logs.trigger_category]}
+                          </span>
+                        )}
+                      </div>
+                      <span className={`text-xs font-semibold flex-shrink-0 ${item.is_completed ? 'text-success' : 'text-warning'}`}>
                         {item.is_completed ? '완료' : '진행 중'}
                       </span>
                     </div>
@@ -180,12 +273,12 @@ export default function JournalPage() {
                     </div>
                   </div>
                 ))}
-                {recentActions.length > 3 && !showAllActions && (
+                {visibleActions.length > 3 && !showAllActions && (
                   <button
                     onClick={() => setShowAllActions(true)}
                     className="w-full py-2.5 text-sm text-primary font-semibold border border-primary/30 rounded-xl hover:bg-primary/5 transition-colors"
                   >
-                    더보기 ({recentActions.length - 3}개 더)
+                    더보기 ({visibleActions.length - 3}개 더)
                   </button>
                 )}
               </div>

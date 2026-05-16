@@ -46,7 +46,21 @@ const analysisPayloadSchema = z.object({
   system2_question_seed: z.string().optional(),
   decentering_prompt: z.string().optional(),
   trigger_category: z
-    .enum(['work', 'relationship', 'family', 'health', 'self', 'finance', 'study', 'other'])
+    .enum([
+      'work',
+      'relationship',
+      'family',
+      'health',
+      'self',
+      'finance',
+      'study',
+      'other',
+      // 2026-05-16 확장 — 인지 왜곡 자주 겪는 사용자 공통 특성
+      'sleep_rumination',
+      'decision_paralysis',
+      'social_comparison',
+      'avoidance_accumulation',
+    ])
     .optional(),
 });
 

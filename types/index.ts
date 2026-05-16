@@ -10,6 +10,7 @@ export enum DistortionType {
 export type FrameType = 'loss' | 'gain' | 'mixed';
 
 // 트리거 카테고리 — 사용자 트리거의 도메인 분류 (Phase 1.1)
+// 2026-05-16 확장 — sleep_rumination·decision_paralysis·social_comparison·avoidance_accumulation 추가 (Migration 16).
 export type TriggerCategory =
   | 'work'
   | 'relationship'
@@ -18,7 +19,11 @@ export type TriggerCategory =
   | 'self'
   | 'finance'
   | 'study'
-  | 'other';
+  | 'other'
+  | 'sleep_rumination'
+  | 'decision_paralysis'
+  | 'social_comparison'
+  | 'avoidance_accumulation';
 
 export const TRIGGER_CATEGORIES: readonly TriggerCategory[] = [
   'work',
@@ -29,6 +34,10 @@ export const TRIGGER_CATEGORIES: readonly TriggerCategory[] = [
   'finance',
   'study',
   'other',
+  'sleep_rumination',
+  'decision_paralysis',
+  'social_comparison',
+  'avoidance_accumulation',
 ] as const;
 
 export const TriggerCategoryKorean: Record<TriggerCategory, string> = {
@@ -40,6 +49,10 @@ export const TriggerCategoryKorean: Record<TriggerCategory, string> = {
   finance: '금전/미래',
   study: '학업/시험',
   other: '기타',
+  sleep_rumination: '잠/반추',
+  decision_paralysis: '결정 마비',
+  social_comparison: '사회적 비교',
+  avoidance_accumulation: '회피 누적',
 };
 
 export interface CasSignal {

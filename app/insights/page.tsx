@@ -5,13 +5,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line, RadarChart, PolarGrid, PolarAngleAxis, Radar, ReferenceLine,
+  LineChart, Line, AreaChart, Area, RadarChart, PolarGrid, PolarAngleAxis, Radar, ReferenceLine,
 } from 'recharts';
 import { supabase } from '@/lib/supabase/client';
 import { DistortionType, DistortionTypeKorean, type TriggerCategory } from '@/types';
 import ArchetypePanel from '@/components/ui/ArchetypePanel';
 import BottomTabBar from '@/components/ui/BottomTabBar';
 import InfoTooltip from '@/components/ui/InfoTooltip';
+import { AUTONOMY_SCORE_TOOLTIP } from '@/lib/copy/autonomy';
 import PatternReport from '@/components/insights/PatternReport';
 import { getArchetypeResultFromRows, type ArchetypeResult } from '@/lib/utils/archetype';
 import type { PatternRow } from '@/lib/insights/pattern-report';
@@ -390,14 +391,21 @@ export default function InsightsPage() {
         {/* 자율성 지수 추이 */}
         <div className="bg-white border border-background-tertiary rounded-xl p-4 sm:p-6">
           <h2 className="text-base font-bold text-text-primary mb-4">
-            <InfoTooltip text="자기 검증 답변·자기 노트 작성으로 자율성을 행사한 정도. (Deci & Ryan, 2000 자기결정성 이론 autonomy 차원 측정)">자율성 지수</InfoTooltip>
+            <InfoTooltip text={AUTONOMY_SCORE_TOOLTIP}>자율성 지수</InfoTooltip>
             {' '}누적 추이 ({periodLabel})
           </h2>
           {autonomyTrend.length === 0 ? (
             <p className="text-sm text-text-secondary text-center py-8">행동을 완료하면 추이가 표시됩니다.</p>
           ) : (
             <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={autonomyTrend} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+              {/* CPO 검토(2026-05-16): LineChart → AreaChart. 누적 데이터의 본질을 채워진 영역으로 표현. 단계 marker와 시각적 정합 ↑ */}
+              <AreaChart data={autonomyTrend} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="autonomyGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#06B6D4" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="#06B6D4" stopOpacity={0.05} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
                 <XAxis dataKey="date" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} />
@@ -407,8 +415,8 @@ export default function InsightsPage() {
                 <ReferenceLine y={150} stroke="#94A3B8" strokeDasharray="2 4" label={{ value: '재구성', position: 'right', fontSize: 10, fill: '#64748B' }} />
                 <ReferenceLine y={300} stroke="#94A3B8" strokeDasharray="2 4" label={{ value: '검증', position: 'right', fontSize: 10, fill: '#64748B' }} />
                 <ReferenceLine y={500} stroke="#94A3B8" strokeDasharray="2 4" label={{ value: '운영', position: 'right', fontSize: 10, fill: '#64748B' }} />
-                <Line type="monotone" dataKey="score" name="자율성 지수" stroke="#06B6D4" strokeWidth={2} dot={false} />
-              </LineChart>
+                <Area type="monotone" dataKey="score" name="자율성 지수" stroke="#06B6D4" strokeWidth={2} fill="url(#autonomyGradient)" />
+              </AreaChart>
             </ResponsiveContainer>
           )}
         </div>
@@ -430,8 +438,8 @@ export default function InsightsPage() {
           )}
         </div>
 
-        {/* Δpain 시계열 */}
-        <div className="bg-white border border-background-tertiary rounded-xl p-4 sm:p-6">
+        {/* Δpain 시계열 — id="delta-pain" anchor (대시보드 고통 카드 클릭 시 scroll 목표) */}
+        <div id="delta-pain" className="bg-white border border-background-tertiary rounded-xl p-4 sm:p-6 scroll-mt-20">
           <div className="space-y-1 mb-4">
             <h2 className="text-base font-bold text-text-primary">인지 유연성 변화 (고통 변화량)</h2>
             <p className="text-xs text-text-secondary">양수면 고통 감소, 음수면 증가. 0 기준선은 변화 없음.</p>

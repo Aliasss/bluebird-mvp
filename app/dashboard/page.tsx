@@ -17,6 +17,7 @@ import { getArchetypeResultFromRows, type ArchetypeResult } from '@/lib/utils/ar
 import { getRankResult } from '@/lib/utils/rank';
 import StageTransitionModal from '@/components/insights/StageTransitionModal';
 import { DistortionTypeKorean } from '@/types';
+import { AUTONOMY_SCORE_TOOLTIP, DELTA_PAIN_WEEKLY_TOOLTIP } from '@/lib/copy/autonomy';
 import type { User } from '@supabase/supabase-js';
 import type { Log } from '@/types';
 import { findPendingReview, type PendingReviewClient, type PendingReview } from '@/lib/review/pending-review';
@@ -475,7 +476,7 @@ function DashboardContent() {
                 </div>
                 <div className="bg-white rounded-2xl p-4 shadow-card col-span-2">
                   <p className="text-xs text-text-secondary mb-1">
-                    <InfoTooltip text="자기 검증 답변·자기 노트 작성으로 자율성을 행사한 정도. (Deci & Ryan, 2000 자기결정성 이론 autonomy 차원 측정)">자율성 지수</InfoTooltip>
+                    <InfoTooltip text={AUTONOMY_SCORE_TOOLTIP}>자율성 지수</InfoTooltip>
                   </p>
                   <p className="text-xl font-extrabold text-warning tracking-tight">{autonomyScore}점</p>
                   {/* CPO-2 (2026-05-16): 단계명을 prominent하게 + 역량 description 1줄 추가 */}
@@ -492,13 +493,20 @@ function DashboardContent() {
                   </p>
                 </div>
               </div>
-              <div className="bg-white rounded-2xl p-4 shadow-card">
-                <p className="text-xs text-text-secondary mb-1">이번 주 고통 변화량 누적</p>
+              {/* CPO 검토(2026-05-16): 카드 클릭 시 인사이트 페이지 Δpain 섹션으로 이동.
+                  InfoTooltip 추가로 카드 콘텐츠 자체에서 즉시 의미 surface. */}
+              <div
+                onClick={() => router.push('/insights#delta-pain')}
+                className="bg-white rounded-2xl p-4 shadow-card cursor-pointer hover:border-primary hover:shadow-md border border-transparent transition-all"
+              >
+                <p className="text-xs text-text-secondary mb-1">
+                  <InfoTooltip text={DELTA_PAIN_WEEKLY_TOOLTIP}>이번 주 고통 변화량 누적</InfoTooltip>
+                </p>
                 <p className="text-2xl font-extrabold text-primary tracking-tight">
                   {weeklyPositiveDeltaPain}
                   <span className="text-sm text-text-tertiary ml-1">점</span>
                 </p>
-                <p className="text-[10px] text-text-tertiary mt-1">7일 내 재평가 완료 기준</p>
+                <p className="text-[10px] text-text-tertiary mt-1">7일 내 재평가 완료 기준 · 자세히 보기 →</p>
               </div>
             </>
           );

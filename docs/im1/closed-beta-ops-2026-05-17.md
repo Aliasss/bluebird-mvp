@@ -93,7 +93,7 @@ UPDATE evangelist_applications
 **제목 예:** `[BlueBird] MVP 에반젤리스트로 선발되셨습니다 — 가입 안내`
 
 **본문 핵심 요소:**
-- 선발 안내 + 2주간 사용 + 약 30분 분량 서면 리포트 일정
+- 선발 안내 + 2주간 사용 + 서면 리포트 일정
 - 가입 URL: `https://bluebird-mvp.vercel.app/auth/signup`
 - 가입 시 **응모 시 입력하신 이메일과 동일한 이메일**로 가입 필수 (트리거 매칭)
 - 답신 안내: 본 메일 수신 거부·문의는 `mvp.bluebird@gmail.com` 회신

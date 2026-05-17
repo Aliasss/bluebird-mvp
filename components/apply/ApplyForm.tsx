@@ -1,10 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
 
-// 폐쇄 베타 응모 폼 — /apply 페이지용 (비회원 anon INSERT).
-// Migration 18: evangelist_applications.user_id NULL 허용 + anon INSERT 정책.
+// 폐쇄 베타 응모 폼 — /apply 페이지용.
+// Migration 18: evangelist_applications.user_id NULL 허용 + anon INSERT 정책 추가.
+// RLS 정합: 로그인 상태(authenticated)에서는 user_id=auth.uid() 로 INSERT,
+//          비로그인(anon)에서는 user_id=null 로 INSERT.
+// → 양쪽 모두 기존 RLS 정책(insert_own, insert_anon)을 만족.
 
 const AGE_BANDS = [
   { value: 'under_20', label: '20세 미만' },
@@ -31,6 +34,7 @@ export default function ApplyForm() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const [q1, setQ1] = useState('');
   const [q2, setQ2] = useState('');
@@ -42,6 +46,17 @@ export default function ApplyForm() {
   const [consentReport, setConsentReport] = useState(false);
   const [consentAnalysis, setConsentAnalysis] = useState(false);
   const [consentContact, setConsentContact] = useState(false);
+
+  useEffect(() => {
+    // 세션 확인 — 로그인 사용자가 /apply 진입 시 user_id 자동 매핑
+    // (이미 가입한 사용자도 응모 가능. RLS 정책 evangelist_applications_insert_own 통과)
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        setCurrentUserId(user.id);
+        if (user.email) setContactEmail(user.email);
+      }
+    });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +74,9 @@ export default function ApplyForm() {
     setSubmitting(true);
     const utm = readUtmFromUrl();
     const { error } = await supabase.from('evangelist_applications').insert({
-      user_id: null,
+      // 로그인 상태면 user_id=auth.uid() (authenticated RLS 통과),
+      // 비로그인이면 null (anon RLS 통과).
+      user_id: currentUserId,
       q1_handling: q1.trim(),
       q2_self_tool: q2.trim(),
       q3_thinking: q3.trim(),
@@ -239,8 +256,7 @@ export default function ApplyForm() {
               className="mt-1 flex-shrink-0"
             />
             <span>
-              (a) 2주간 BlueBird MVP 사용 + 약 30분 분량의 <strong>서면 리포트 작성</strong>에 참여 의사가
-              있습니다.
+              (a) 2주간 BlueBird MVP 사용 + <strong>서면 리포트 작성</strong>에 참여 의사가 있습니다.
             </span>
           </label>
           <label className="flex items-start gap-2 cursor-pointer text-sm">

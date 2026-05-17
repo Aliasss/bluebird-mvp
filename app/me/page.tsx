@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase/client';
 import BottomTabBar from '@/components/ui/BottomTabBar';
 import InfoTooltip from '@/components/ui/InfoTooltip';
 import PushToggle from '@/components/notifications/PushToggle';
+import EvangelistApplicationForm from '@/components/me/EvangelistApplicationForm';
 import { AUTONOMY_SCORE_TOOLTIP } from '@/lib/copy/autonomy';
 import { getRankResult, RANKS } from '@/lib/utils/rank';
 import type { User } from '@supabase/supabase-js';
@@ -207,6 +208,14 @@ export default function MePage() {
           <div className="bg-white rounded-2xl border border-background-tertiary px-4">
             <PushToggle />
           </div>
+        </div>
+
+        {/* 에반젤리스트 응모 — 2026-05-17 추가, Migration 17 */}
+        <div>
+          <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wide mb-2 px-1">
+            공동 설계자 모집
+          </p>
+          <EvangelistApplicationForm />
         </div>
 
         {/* 로그아웃 / 탈퇴 */}

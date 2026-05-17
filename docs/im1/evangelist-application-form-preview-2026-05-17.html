@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BlueBird 에반젤리스트 응모 — 사전 스크리닝</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f7f8fa;
+      color: #1a1a1a;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+      line-height: 1.6;
+    }
+    h1 { font-size: 24px; margin: 0 0 6px; }
+    .subtitle { font-size: 13px; color: #666; margin-bottom: 18px; }
+    .intro {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 22px;
+      font-size: 14px;
+    }
+    .intro strong { color: #1a1a1a; }
+    .intro p { margin: 6px 0; color: #444; }
+    .question {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin: 12px 0;
+    }
+    .q-num {
+      font-size: 12px;
+      color: #6b7280;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .q-label {
+      font-weight: 600;
+      font-size: 14.5px;
+      color: #111;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    .q-hint {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+    .required {
+      color: #dc2626;
+      margin-left: 3px;
+    }
+    textarea, input[type="text"], input[type="email"] {
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 14px;
+      resize: vertical;
+    }
+    textarea { min-height: 90px; }
+    textarea:focus, input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    }
+    .consent-group { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+    .consent-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 8px 10px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+    .consent-row:hover { background: #f3f4f6; }
+    .consent-row input[type="checkbox"] {
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+    .consent-row span { color: #1a1a1a; }
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: #1a1a1a;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 22px;
+    }
+    .submit-btn:hover { background: #333; }
+    .submit-btn:disabled { background: #aaa; cursor: not-allowed; }
+    .notice {
+      background: #fff7ed;
+      border: 1px solid #fdba74;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-top: 16px;
+      font-size: 13px;
+      color: #7c2d12;
+    }
+    .notice strong { color: #9a3412; }
+    .small {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 8px;
+    }
+    .result {
+      display: none;
+      background: #ecfdf5;
+      border: 2px solid #10b981;
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-top: 20px;
+    }
+    .result.show { display: block; }
+    .result h2 { font-size: 16px; margin: 0 0 8px; color: #065f46; }
+    .result pre {
+      background: #fff;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      border: 1px solid #d1fae5;
+    }
+    .copy-btn {
+      background: #fff;
+      border: 1px solid #10b981;
+      color: #065f46;
+      border-radius: 5px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      margin-top: 8px;
+      font-weight: 500;
+    }
+    .copy-btn:hover { background: #d1fae5; }
+    .meta-banner {
+      background: #eff6ff;
+      border-left: 3px solid #2563eb;
+      padding: 10px 14px;
+      margin: 18px 0;
+      font-size: 12.5px;
+      color: #1e3a8a;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>BlueBird 에반젤리스트 응모</h1>
+  <p class="subtitle">사전 스크리닝 5문항 + 동의 1항 (약 5~8분 소요)</p>
+
+  <div class="meta-banner">
+    <strong>본 응모 폼 작동 방식:</strong> 본 페이지는 응모 폼 미리보기·명세서입니다.
+    정식 응모는 <strong>BlueBird MVP 가입 후 /me 페이지의 "공동 설계자 모집" 영역</strong>에서 가능합니다.
+    Migration 17 evangelist_applications 테이블 사용 — Tally·Google Form 외부 도구 불요.
+  </div>
+
+  <div class="intro">
+    <p><strong>BlueBird는 사고를 디버깅하는 도구입니다.</strong> 명상 앱이나 기록 앱, 챗봇 상담 서비스가 아닙니다.</p>
+    <p><strong>본 응모는 30명 모집의 사전 스크리닝</strong>입니다. 응답을 검토 후 선발 결과를 개별 연락드립니다. 선발되지 않은 분께도 향후 정식 출시 안내가 갑니다.</p>
+    <p>모든 자유 응답에는 <strong>3~5문장</strong>이면 충분합니다. 솔직한 답변이 가장 도움이 됩니다.</p>
+  </div>
+
+  <form id="applicationForm">
+
+    <!-- Q1 — 심리·동기 축 -->
+    <div class="question">
+      <p class="q-num">Q1 · 자유 응답</p>
+      <p class="q-label">최근 본인이 마음에 걸리는 일을 어떻게 다루시는지 자유롭게 적어주세요.<span class="required">*</span></p>
+      <p class="q-hint">3~5문장. 정답은 없습니다. 평소 본인이 하는 방식 그대로 적어주세요.</p>
+      <textarea name="q1" required placeholder="예: 일이 잘 안 풀리면 일단 노트에 상황을 정리해보는 편이에요..."></textarea>
+    </div>
+
+    <!-- Q2 — 인지 스타일 축 -->
+    <div class="question">
+      <p class="q-num">Q2 · 자유 응답</p>
+      <p class="q-label">본인을 알아가는 도구·방법 중 가장 도움이 됐던 것 1개와 이유를 적어주세요. 도구가 없었다면 "없음"이라고 적어주세요.<span class="required">*</span></p>
+      <p class="q-hint">3~5문장. 책·앱·검사·취미 등 무엇이든 가능합니다.</p>
+      <textarea name="q2" required placeholder="예: MBTI 검사 결과를 본 뒤 패턴이 좀 보이기 시작했어요..."></textarea>
+    </div>
+
+    <!-- Q3 — 맥락 축 -->
+    <div class="question">
+      <p class="q-num">Q3 · 자유 응답</p>
+      <p class="q-label">평일에 생각을 많이 쓰는 시간이 하루 몇 시간 정도인지, 그리고 그게 어떤 맥락인지 한 문장으로 적어주세요.<span class="required">*</span></p>
+      <p class="q-hint">예: "하루 6시간 정도 업무 중 의사결정에 씁니다."</p>
+      <textarea name="q3" required placeholder="예: 평일에는 약 5~6시간 정도, 주로 회의 준비나 분석 자료 만들 때 많이 씁니다."></textarea>
+    </div>
+
+    <!-- Q4 — 경쟁 앱 자발 언급 -->
+    <div class="question">
+      <p class="q-num">Q4 · 짧은 응답</p>
+      <p class="q-label">본인의 사고·감정·일상을 다루는 앱을 써본 경험이 있다면, 앱 이름과 지금도 쓰는지 알려주세요.</p>
+      <p class="q-hint">앱 이름 1~3개. "써본 적 없음"도 OK.</p>
+      <textarea name="q4" placeholder="예: 노션, 하루콩(써본 적 있는데 지금은 안 씀), MBTI 검사 가끔"></textarea>
+    </div>
+
+    <!-- Q5 (2026-05-16 deep dive 결정) - 확장 4 카테고리 자발 등장률 측정 -->
+    <div class="question">
+      <p class="q-num">Q5 · 자유 응답 (선택)</p>
+      <p class="q-label">최근 2주 동안 본인이 가장 자주 떠올렸던 어려운 상황 1가지를 짧게 적어주세요.</p>
+      <p class="q-hint">예: "발표 망쳤다", "잠 안 옴", "결정 못 하겠음", "친구와 비교됨" 등. 1~2문장.</p>
+      <textarea name="q5_recurring" placeholder="예: 한 달째 발표 자리만 오면 도망치고 싶어요..."></textarea>
+    </div>
+
+    <!-- 연령대 (2026-05-17 추가) -->
+    <div class="question">
+      <p class="q-num">연령대<span class="required">*</span></p>
+      <p class="q-label">본인의 연령대를 선택해주세요.</p>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;">
+        <label class="consent-row" style="justify-content: center; cursor: pointer;">
+          <input type="radio" name="age_band" value="under_20" required style="margin: 0;">
+          <span>20세 미만</span>
+        </label>
+        <label class="consent-row" style="justify-content: center; cursor: pointer;">
+          <input type="radio" name="age_band" value="20s" required style="margin: 0;">
+          <span>20대</span>
+        </label>
+        <label class="consent-row" style="justify-content: center; cursor: pointer;">
+          <input type="radio" name="age_band" value="30s" required style="margin: 0;">
+          <span>30대</span>
+        </label>
+        <label class="consent-row" style="justify-content: center; cursor: pointer;">
+          <input type="radio" name="age_band" value="40s" required style="margin: 0;">
+          <span>40대</span>
+        </label>
+        <label class="consent-row" style="justify-content: center; cursor: pointer;">
+          <input type="radio" name="age_band" value="50s" required style="margin: 0;">
+          <span>50대</span>
+        </label>
+        <label class="consent-row" style="justify-content: center; cursor: pointer;">
+          <input type="radio" name="age_band" value="60_plus" required style="margin: 0;">
+          <span>60대 이상</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- 동의 항목 (서면 리포트로 변경, 2026-05-17) -->
+    <div class="question">
+      <p class="q-num">동의 항목<span class="required">*</span></p>
+      <p class="q-label">아래 항목 3개에 모두 동의하셔야 응모 대상이 됩니다.</p>
+
+      <div class="consent-group">
+        <label class="consent-row">
+          <input type="checkbox" name="consent_a" required>
+          <span>(a) 2주간 BlueBird MVP 사용 + 약 30분 분량의 <strong>서면 리포트 작성</strong>에 참여 의사가 있습니다.</span>
+        </label>
+        <label class="consent-row">
+          <input type="checkbox" name="consent_b" required>
+          <span>(b) 응모 답변과 서면 리포트의 <strong>분석 사용에 동의</strong>합니다. (분석 외 사용 금지, 30일 후 원본 데이터 폐기, 코딩 결과만 보존)</span>
+        </label>
+        <label class="consent-row">
+          <input type="checkbox" name="consent_c" required>
+          <span>(c) 아래 이메일로 <strong>운영자의 연락</strong>을 받는 것에 동의합니다.</span>
+        </label>
+      </div>
+
+      <div style="margin-top: 14px;">
+        <p class="q-label" style="font-size: 13px;">연락받을 이메일<span class="required">*</span></p>
+        <input type="email" name="email" required placeholder="example@email.com">
+      </div>
+
+      <p class="small" style="margin-top: 14px;">
+        ※ 본 응모에서 <strong>직무·소속·연봉·진단명은 수집하지 않습니다.</strong> 약관·개인정보 처리 방침은 별도 안내.
+      </p>
+    </div>
+
+    <button type="submit" class="submit-btn">결과 미리보기 → 이메일로 보낼 본문 생성</button>
+
+  </form>
+
+  <div id="result" class="result">
+    <h2>응모 본문 (이메일로 보내실 본문)</h2>
+    <p style="font-size: 13px; color: #065f46; margin-bottom: 8px;">
+      아래 본문을 복사해 <strong>seob6615@gmail.com</strong>으로 보내주세요. (또는 정식 응모 폼 안내가 오면 그 폼에 옮겨주세요.)
+    </p>
+    <pre id="resultText"></pre>
+    <button class="copy-btn" id="copyBtn">본문 복사</button>
+  </div>
+
+  <div class="notice">
+    <strong>안내:</strong> BlueBird는 의료 서비스가 아닙니다. 정신건강 문제가 의심되는 경우 반드시 의료 전문가의 도움을 받으시기 바랍니다.<br>
+    위기 상황 시 즉시 연락 가능한 자원 — 자살예방상담전화 <strong>1393</strong> (24시간) / 정신건강위기상담 <strong>1577-0199</strong>
+  </div>
+
+  <script>
+    // UTM 파라미터 캡처 — 모집 운영 v0 (recruitment-ops-v0-2026-05-15.md §2) 정합
+    function captureUtm() {
+      const p = new URLSearchParams(window.location.search);
+      return {
+        utm_source: p.get('utm_source') || '',
+        utm_medium: p.get('utm_medium') || '',
+        utm_campaign: p.get('utm_campaign') || '',
+        utm_content: p.get('utm_content') || '',
+        utm_term: p.get('utm_term') || '',
+      };
+    }
+
+    document.getElementById('applicationForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const fd = new FormData(this);
+      const utm = captureUtm();
+      const now = new Date();
+      const submitted = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+      const ageMap = {
+        under_20: '20세 미만',
+        '20s': '20대',
+        '30s': '30대',
+        '40s': '40대',
+        '50s': '50대',
+        '60_plus': '60대 이상',
+      };
+      const ageLabel = ageMap[fd.get('age_band')] || '(미응답)';
+
+      const body = `# BlueBird 에반젤리스트 응모
+
+응모 일시: ${submitted}
+연령대: ${ageLabel}
+이메일: ${fd.get('email')}
+
+---
+
+## Q1. 마음에 걸리는 일을 다루는 방식
+
+${fd.get('q1')}
+
+## Q2. 본인을 알아가는 데 도움이 됐던 도구·방법
+
+${fd.get('q2')}
+
+## Q3. 평일 생각을 많이 쓰는 시간·맥락
+
+${fd.get('q3')}
+
+## Q4. 사고·감정·일상을 다루는 앱 경험
+
+${fd.get('q4') || '(미응답)'}
+
+## Q5. 최근 2주 자주 떠올린 어려운 상황
+
+${fd.get('q5_recurring') || '(미응답)'}
+
+---
+
+## 동의 항목 (서면 리포트 메커니즘)
+
+(a) 2주간 사용 + 서면 리포트 작성: ${fd.get('consent_a') ? '✓ 동의' : '✗ 거부'}
+(b) 응답·리포트 분석 사용: ${fd.get('consent_b') ? '✓ 동의' : '✗ 거부'}
+(c) 이메일 연락 동의: ${fd.get('consent_c') ? '✓ 동의' : '✗ 거부'}
+
+---
+
+## 응모 트래킹 (자동 수집)
+
+utm_source: ${utm.utm_source || '(없음)'}
+utm_medium: ${utm.utm_medium || '(없음)'}
+utm_campaign: ${utm.utm_campaign || '(없음)'}
+utm_content: ${utm.utm_content || '(없음)'}
+utm_term: ${utm.utm_term || '(없음)'}
+`;
+
+      document.getElementById('resultText').textContent = body;
+      document.getElementById('result').classList.add('show');
+      document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      document.getElementById('copyBtn').addEventListener('click', function () {
+        navigator.clipboard.writeText(body).then(() => {
+          this.textContent = '복사됨 ✓';
+          setTimeout(() => { this.textContent = '본문 복사'; }, 2000);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

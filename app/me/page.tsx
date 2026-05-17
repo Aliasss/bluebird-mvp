@@ -8,6 +8,7 @@ import BottomTabBar from '@/components/ui/BottomTabBar';
 import InfoTooltip from '@/components/ui/InfoTooltip';
 import PushToggle from '@/components/notifications/PushToggle';
 import { AUTONOMY_SCORE_TOOLTIP } from '@/lib/copy/autonomy';
+import { SERVICE_CONTACT_EMAIL, buildMailto } from '@/lib/copy/contact';
 import { getRankResult, RANKS } from '@/lib/utils/rank';
 import type { User } from '@supabase/supabase-js';
 
@@ -175,7 +176,7 @@ export default function MePage() {
               { label: '매뉴얼', sub: '서비스 이용 가이드', href: '/manual' },
               { label: '블루버드 철학', sub: '인지 왜곡이 왜 중요한가요?', href: '/our-philosophy' },
               { label: '온보딩 다시 보기', sub: '9 슬라이드 — 왜·무엇·어떻게', href: '/onboarding/1?replay=1' },
-              { label: '운영자에게 문의', sub: '1인 운영자에게 직접 전달 — 새 탭', href: 'https://docs.google.com/forms/d/e/1FAIpQLSevoe42VkRUuv7RVYrVhD0oMy_kYBadsBuIwOXnTKlw2o8ecQ/viewform', external: true },
+              { label: '운영자에게 문의', sub: `${SERVICE_CONTACT_EMAIL} — 메일로 직접 전달`, href: buildMailto('[BlueBird] 문의'), external: true },
               { label: '베타 혜택 안내', sub: '인터뷰 완주자 혜택 + 무효 조건', href: '/beta-incentive' },
               { label: '홈 화면에 추가', sub: 'PWA 설치 가이드', href: '/install' },
               { label: '정신건강 자원', sub: '위기 상담·전문기관 안내', href: '/safety/resources' },

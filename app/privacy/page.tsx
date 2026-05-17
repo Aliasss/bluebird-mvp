@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Lock, Database, Globe, UserMinus, Mail } from 'lucide-react';
+import { SERVICE_CONTACT_EMAIL, buildMailto } from '@/lib/copy/contact';
 
 export const metadata = {
   title: '개인정보 처리방침 | BlueBird',
@@ -209,14 +210,12 @@ export default function PrivacyPage() {
                 <strong className="text-text-primary">즉시 영구 삭제</strong>를 원하시는 경우 회원 탈퇴
                 요청 시 "즉시 삭제" 옵션을 선택하시거나{' '}
                 <a
-                  href="https://docs.google.com/forms/d/e/1FAIpQLSevoe42VkRUuv7RVYrVhD0oMy_kYBadsBuIwOXnTKlw2o8ecQ/viewform"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={buildMailto('[BlueBird] 개인정보 즉시 삭제 요청')}
                   className="text-primary underline"
                 >
-                  개인정보 문의 폼
+                  {SERVICE_CONTACT_EMAIL}
                 </a>
-                을 통해 요청해주시면 영업일 기준 7일 이내 처리합니다.
+                으로 요청해주시면 영업일 기준 7일 이내 처리합니다.
               </li>
               <li>
                 30일 경과 후 영구 삭제는{' '}
@@ -266,12 +265,10 @@ export default function PrivacyPage() {
             <p className="text-xs text-text-tertiary">
               상기 권리 행사에 어려움이 있으시면{' '}
               <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLSevoe42VkRUuv7RVYrVhD0oMy_kYBadsBuIwOXnTKlw2o8ecQ/viewform"
-                target="_blank"
-                rel="noopener noreferrer"
+                href={buildMailto('[BlueBird] 이용자 권리 행사 문의')}
                 className="text-primary underline"
               >
-                개인정보 문의 폼
+                {SERVICE_CONTACT_EMAIL}
               </a>
               으로 문의해주세요. 영업일 기준 7일 이내 응답합니다.
             </p>
@@ -300,12 +297,10 @@ export default function PrivacyPage() {
             <li>
               연락처:{' '}
               <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLSevoe42VkRUuv7RVYrVhD0oMy_kYBadsBuIwOXnTKlw2o8ecQ/viewform"
-                target="_blank"
-                rel="noopener noreferrer"
+                href={buildMailto('[BlueBird] 개인정보 보호책임자 문의')}
                 className="text-primary underline"
               >
-                개인정보 문의 폼
+                {SERVICE_CONTACT_EMAIL}
               </a>{' '}
               <span className="text-text-tertiary">(영업일 7일 이내 응답)</span>
             </li>

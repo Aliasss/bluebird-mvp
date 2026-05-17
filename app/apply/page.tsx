@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import ApplyForm from '@/components/apply/ApplyForm';
+import { SERVICE_CONTACT_EMAIL, buildMailto } from '@/lib/copy/contact';
 
 // 폐쇄 베타 응모 페이지 — 2026-05-17.
 // 사용자 결정: 비선정자는 서비스 진입 자체 차단 → /me 통합 폼 제거 + 외부 접근 가능한 /apply 페이지 신설.
@@ -63,6 +64,15 @@ export default function ApplyPage() {
           <p>
             위기 상황 시: 자살예방상담전화 <strong>1393</strong> · 정신건강위기상담{' '}
             <strong>1577-0199</strong>
+          </p>
+          <p>
+            응모 관련 문의:{' '}
+            <a
+              href={buildMailto('[BlueBird] 에반젤리스트 응모 문의')}
+              className="text-primary underline"
+            >
+              {SERVICE_CONTACT_EMAIL}
+            </a>
           </p>
           <p className="flex flex-wrap gap-x-3 gap-y-1 pt-2">
             <Link href="/terms" className="hover:text-text-secondary underline-offset-2 hover:underline">

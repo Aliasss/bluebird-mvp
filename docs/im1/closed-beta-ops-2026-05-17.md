@@ -89,12 +89,14 @@ UPDATE evangelist_applications
 
 ## 3. 가입 안내 메일 (선발자)
 
+**발신 계정 (공식 SSOT):** `mvp.bluebird@gmail.com` (`lib/copy/contact.ts`)
 **제목 예:** `[BlueBird] MVP 에반젤리스트로 선발되셨습니다 — 가입 안내`
 
 **본문 핵심 요소:**
 - 선발 안내 + 2주간 사용 + 약 30분 분량 서면 리포트 일정
 - 가입 URL: `https://bluebird-mvp.vercel.app/auth/signup`
 - 가입 시 **응모 시 입력하신 이메일과 동일한 이메일**로 가입 필수 (트리거 매칭)
+- 답신 안내: 본 메일 수신 거부·문의는 `mvp.bluebird@gmail.com` 회신
 - 가입 후 별도 후속 단계 (오리엔테이션·서면 리포트 양식) 안내
 
 **SMTP 분산:** 30명 일괄 발송이 아닌 시간차 발송 권장 (메모: SMTP stagger 가이드 별도 surface 예정 — 도메인 미취득 상태에서만 유효).

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { SERVICE_CONTACT_EMAIL, buildMailto } from '@/lib/copy/contact';
 
 /**
  * 베타 인터뷰 완주자 혜택 안내 페이지.
@@ -112,7 +113,13 @@ export default function BetaIncentivePage() {
             을 함께 확인하세요.
           </p>
           <p className="text-xs text-text-secondary leading-relaxed">
-            문의: [TBD — CEO 결정 후 추가]
+            문의:{' '}
+            <a
+              href={buildMailto('[BlueBird] 베타 혜택 문의')}
+              className="text-primary underline"
+            >
+              {SERVICE_CONTACT_EMAIL}
+            </a>
           </p>
         </section>
 

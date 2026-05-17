@@ -213,7 +213,7 @@ export default function MePage() {
         {/* 에반젤리스트 응모 — 2026-05-17 추가, Migration 17 */}
         <div>
           <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wide mb-2 px-1">
-            공동 설계자 모집
+            MVP 체험자 모집
           </p>
           <EvangelistApplicationForm />
         </div>

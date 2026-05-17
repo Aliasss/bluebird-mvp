@@ -182,7 +182,7 @@ export default function EvangelistApplicationForm() {
   if (!expanded) {
     return (
       <div className="bg-white border border-background-tertiary rounded-2xl p-4">
-        <h2 className="text-base font-bold text-text-primary mb-1">에반젤리스트(공동 설계자) 모집 중</h2>
+        <h2 className="text-base font-bold text-text-primary mb-1">에반젤리스트(MVP 체험자) 모집 중</h2>
         <p className="text-sm text-text-secondary mb-3">
           BlueBird MVP를 2주간 사용하고 서면 리포트로 통찰을 공유해주실 30명을 모집합니다.
           단순 베타 테스터가 아니라 서비스 방향을 함께 정의하는 공동 설계자입니다.

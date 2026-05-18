@@ -18,7 +18,6 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [needsEmailVerification, setNeedsEmailVerification] = useState(false);
-  const [closedBetaBlocked, setClosedBetaBlocked] = useState(false);
 
   const allRequiredAgreed = agreeAge && agreeTerms && agreePrivacy;
   const allAgreed = agreeAge && agreeTerms && agreePrivacy && agreeMarketing;
@@ -96,52 +95,11 @@ export default function SignupPage() {
         }
       }
     } catch (err: any) {
-      // Migration 18 폐쇄 베타 트리거: auth.users BEFORE INSERT 에서 RAISE EXCEPTION
-      // → Supabase Auth 가 "Database error saving new user" 로 래핑하거나 원문 'closed_beta:' 노출.
-      const msg = String(err?.message ?? '');
-      if (msg.includes('closed_beta') || msg.toLowerCase().includes('database error')) {
-        setClosedBetaBlocked(true);
-      } else {
-        setError(msg || '회원가입에 실패했습니다.');
-      }
+      setError(err?.message || '회원가입에 실패했습니다.');
     } finally {
       setLoading(false);
     }
   };
-
-  if (closedBetaBlocked) {
-    return (
-      <main className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
-        <div className="max-w-md w-full space-y-6 text-center">
-          <div className="bg-white border border-warning rounded-2xl p-8 space-y-4">
-            <p className="text-xs font-semibold uppercase tracking-widest text-warning">
-              Closed Beta
-            </p>
-            <h2 className="text-xl font-bold text-text-primary">
-              현재 BlueBird MVP는 폐쇄 베타로 운영 중입니다
-            </h2>
-            <p className="text-sm text-text-secondary leading-relaxed">
-              가입은 운영자가 선발한 분께만 안내드립니다.
-              <br />
-              아래 응모 폼을 작성해주시면 검토 후 결과를 이메일로 안내드립니다.
-            </p>
-            <Link
-              href="/apply"
-              className="block w-full px-4 py-3 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition-colors"
-            >
-              에반젤리스트 응모하러 가기 →
-            </Link>
-            <p className="text-xs text-text-tertiary">
-              이미 응모하셨다면, 입력하신 이메일로 결과를 안내드립니다.
-            </p>
-          </div>
-          <Link href="/" className="text-sm text-text-tertiary underline">
-            홈으로
-          </Link>
-        </div>
-      </main>
-    );
-  }
 
   if (success) {
     return (
@@ -161,6 +119,15 @@ export default function SignupPage() {
                 링크를 클릭하면 항해를 시작할 수 있어요.
               </p>
               <p className="text-xs text-text-tertiary">스팸 폴더도 확인해보세요</p>
+              <p className="text-xs text-warning bg-warning/10 border border-warning/30 rounded-lg px-3 py-2 leading-snug text-left">
+                ※ 현재 BlueBird MVP는 <strong>폐쇄 베타</strong>로 운영 중입니다.
+                이메일 인증 완료 후, 가입 승인된 분께만 서비스 이용이 가능합니다.
+                미응모자는{' '}
+                <Link href="/apply" className="underline">
+                  /apply 응모
+                </Link>
+                를 진행해주세요.
+              </p>
             </div>
           ) : (
             <div className="bg-success bg-opacity-10 border border-success rounded-2xl p-8 space-y-4">

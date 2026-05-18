@@ -1,11 +1,20 @@
-# 폐쇄 베타 운영 가이드 — 2026-05-17
+# 폐쇄 베타 운영 가이드 — 2026-05-17 (2026-05-18 v2 갱신)
 
-**전제:** BlueBird MVP는 IM.1 폐쇄 베타로 운영. 비선정자는 서비스 진입 자체 차단.
-**기술 근거:** Migration 18 (`supabase/migrations/18_closed_beta_whitelist.sql`).
+**전제:** BlueBird MVP는 IM.1 폐쇄 베타로 운영. **가입·인증은 누구나 가능 + 서비스 진입은 승인자만**.
+**기술 근거:**
+- Migration 18 (`18_closed_beta_whitelist.sql`) — selected_emails 테이블·트리거 신설 (트리거는 19에서 제거됨)
+- Migration 19 (`19_approval_gate.sql`) — 트리거 제거 + `is_current_user_approved()` RPC + 기존 4명 사전 등록
+- `middleware.ts` (root) — 보호 경로 진입 시 RPC 호출 → 미승인 시 `/waitlist` 리다이렉트
+- `app/waitlist/page.tsx` — 승인 대기 안내 UI
+
+**v1 (트리거 차단) → v2 (게이트 차단) 전환 이유 (CPO/CSO/CTO 합의):**
+- CPO: 트리거의 "Database error" 노출이 사용자 혼란 야기 → 가입 허용 + 게이트 안내가 멘탈모델 명료
+- CSO: 미승인자도 잠재 관심자 → 데이터 보존이 launch 시 lead 풀
+- CTO: middleware = 단일 게이트, 변경 위험 낮음. RPC = SECURITY DEFINER 로 RLS 우회 안전 검사
 
 ---
 
-## 1. 구조 한눈에
+## 1. 구조 한눈에 (v2)
 
 ```
 [비회원] → /apply (anon INSERT, user_id=NULL) → evangelist_applications.status='pending'
@@ -13,13 +22,16 @@
                                                           ▼
 [운영자] 검토 → 선발자 결정 → selected_emails INSERT (service_role)
                                               │
-                                              ├─ 응모자에게 가입 안내 메일 발송
+                                              ├─ 응모자에게 가입 안내 메일 발송 (선택)
                                               │
                                               ▼
-[선발자] /auth/signup → auth.users BEFORE INSERT 트리거 검사
+[누구든] /auth/signup → auth.users 가입 ✅ → 이메일 인증 ✅
+                              │
+                              ▼
+[보호 경로 진입 시] middleware → is_current_user_approved() RPC
                           │
-                          ├─ email IN selected_emails → 통과 + used_at 기록
-                          └─ 화이트리스트 외 → RAISE EXCEPTION (가입 차단)
+                          ├─ email IN selected_emails → 통과 (서비스 정상 이용)
+                          └─ 외 → /waitlist 리다이렉트 (안내 + /apply 링크)
 ```
 
 ---
@@ -155,26 +167,38 @@ ORDER BY age_band;
 
 ---
 
-## 6. 트리거 우회·예외 처리
+## 6. 게이트 우회·예외 처리 (v2)
 
-### 6-1. 운영자(본인) 가입은?
+### 6-1. 운영자(본인) 접근은?
 
-운영자 본인 이메일도 `selected_emails`에 미리 INSERT 해두면 가입 가능. 또는 이미 가입한 4명은 영향 없음 (트리거는 INSERT에만 작동).
+Migration 19 적용 시점에 `auth.users` 기존 4명 (founder seob6615@gmail.com 포함) 전원 사전 등록됨. 이후 운영자가 새 이메일로 가입한다면 `selected_emails` 에 미리 INSERT 해두는 것을 권장.
 
-### 6-2. 트리거 일시 비활성화 (긴급 대응)
+### 6-2. 게이트 임시 해제 (긴급 대응)
+
+`is_current_user_approved()` 가 항상 TRUE 를 반환하도록 일시 변경:
 
 ```sql
-ALTER TABLE auth.users DISABLE TRIGGER trg_enforce_closed_beta_whitelist;
--- ... 작업 ...
-ALTER TABLE auth.users ENABLE TRIGGER trg_enforce_closed_beta_whitelist;
+-- 긴급: 게이트 해제 (운영자 검토용)
+CREATE OR REPLACE FUNCTION public.is_current_user_approved()
+RETURNS BOOLEAN LANGUAGE sql STABLE AS $$ SELECT TRUE $$;
+
+-- 복원: Migration 19 본문 재실행
 ```
 
-### 6-3. 잘못 추가한 화이트리스트 항목 제거
+또는 middleware 분기 short-circuit (코드 변경 + 배포 필요).
+
+### 6-3. 잘못 추가한 화이트리스트 항목 제거 = 즉시 접근 차단
 
 ```sql
 DELETE FROM selected_emails WHERE email = LOWER('<email>');
--- 이미 가입한 경우(used_at IS NOT NULL) auth.users row 는 그대로 남음 → 별도 정리 필요
+-- auth.users row 는 그대로 유지 (사용자 자신의 데이터 통제권 보존)
+-- 해당 사용자는 다음 페이지 로드 시 /waitlist 로 redirect
 ```
+
+### 6-4. 미승인 사용자 데이터 보유 정책 (P2 결정 예정)
+
+가입했으나 미승인 상태로 30일 이상 경과한 auth.users / 관련 데이터의 폐기 주기는 별도 운영 결정.
+PIPA 정합 검토 필요 — privacy 처리방침 §보유 기간에 추가 surface.
 
 ---
 
@@ -193,4 +217,5 @@ UTM 예시:
 
 ## 8. 변경 이력
 
-- 2026-05-17: 폐쇄 베타 전환 — Migration 18 적용, /apply 신설, /me 통합 폼 제거.
+- 2026-05-17: 폐쇄 베타 v1 (트리거 차단) — Migration 18 적용, /apply 신설, /me 통합 폼 제거.
+- 2026-05-18: 폐쇄 베타 v2 (게이트 차단) — Migration 19 트리거 제거 + RPC 신설, root middleware + /waitlist 페이지 신설. signup 의 closedBetaBlocked 분기 제거, 이메일 인증 화면에 승인 안내 추가.

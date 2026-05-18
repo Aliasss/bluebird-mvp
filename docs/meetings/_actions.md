@@ -22,7 +22,7 @@
 - [ ] [CEO] [due-2026-05-17] F-8 Phase 3 VAPID 키 생성·Vercel 설정 — A-2 PR 머지 후 (출처: 2026-05-15 weekly-allhands §5 #F-8)
 - [ ] [CSO+CPO] [due-2026-05-18] F-9 rubric v1.0 CSO 3축 매핑 + frozen 표기 (출처: 2026-05-15 weekly-allhands §5 #F-9)
 - [ ] [senior-ux-researcher] [due-2026-05-18] F-10 인터뷰 가이드 v1 MVP (10문항 최소판) — 5/18 09:00 KST hard deadline (출처: 2026-05-15 weekly-allhands §5 #F-10)
-- [ ] [PO] [due-2026-05-18] F-11 응모 폼 구축 (Tally, Q1~Q5 정합 + 동의) (출처: 2026-05-15 weekly-allhands §5 #F-11)
+- [x] [PO] F-11 응모 폼 구축 (Q1~Q5 정합 + 동의) — closed by `fa7b355` + `d02f6f0` (2026-05-17). ⚠️ Tally → BlueBird 내부 폼으로 메커니즘 변경, pmf-validation-plan.md §3 M30.1 서면 갱신 필요 (출처: 2026-05-15 weekly-allhands §5 #F-11)
 - [ ] [senior-fullstack-engineer] [due-2026-05-18] F-12 cron healthcheck (last_cron_invoked_at + 24h staleness 알림) (출처: 2026-05-15 weekly-allhands §5 #F-12)
 - [ ] [senior-fullstack-engineer] [due-2026-05-19] F-13 B-2 v_push_funnel SECURITY INVOKER Migration 16 (출처: 2026-05-15 weekly-allhands §5 #F-13)
 - [ ] [senior-fullstack-engineer] [due-2026-05-19] F-14 B-4 metadata Zod enum 화이트리스트 키 강제 (출처: 2026-05-15 weekly-allhands §5 #F-14)
@@ -34,10 +34,17 @@
 - [ ] [PO+senior-fullstack] [due-2026-05-19] F-20 C-2 측정 SOP docs/im1/measurement-sop.md (출처: 2026-05-15 weekly-allhands §5 #F-20)
 - [ ] [senior-fullstack-engineer] [due-2026-05-19] F-21 B-1 service_role 인벤토리 + rls-audit.ts 확장 (출처: 2026-05-15 weekly-allhands §5 #F-21)
 - [ ] [content-marketer] [due-2026-05-17] F-22 D-4 이메일 카피 3종 (선정·미통과·follow-up) (출처: 2026-05-15 weekly-allhands §5 #F-22)
-- [ ] [PO] [due-2026-05-15] F-23 _actions.md 5/10 23 actions 개별화 (출처: 2026-05-15 weekly-allhands §5 #F-23)
+- [x] [PO] F-23 _actions.md 5/10 23 actions 개별화 — retrospective close: 2026-05-15 weekly-allhands에서 F-1~F-23으로 개별 등록 완료 (출처: 2026-05-15 weekly-allhands §5 #F-23)
+
+### 신규 actions (2026-05-18 standup)
+- [ ] [CEO] [due-2026-05-19] F-10 대응: 인터뷰 가이드 v1 MVP 신규 deadline 설정 + senior-ux-researcher 재지시 — F-16 GO/NO-GO 언블락 선행 조건 (출처: 2026-05-18 standup)
+- [ ] [senior-qa-engineer] [due-2026-05-20] Migration 18 RLS 독립 검증: selected_emails 테이블 anon 접근 0건 + auth BEFORE INSERT 트리거 E2E 검증 (가입 블락 정상 + 에러 복구) (출처: 2026-05-18 standup)
+- [ ] [risk-manager] [due-2026-05-21] selected_emails 이메일 수집 → 개인정보처리방침 항목 추가 검토 (F-5 연계) + closedBetaBlocked error handling PIPA 정합 확인 (출처: 2026-05-18 standup)
 
 ## Closed (this week)
 
+- [x] [PO] F-11 응모 폼 구축 — closed by `fa7b355`+`d02f6f0` (2026-05-17). Tally→내부 폼 메커니즘 변경
+- [x] [PO] F-23 _actions.md 개별화 — retrospective close (2026-05-15 weekly-allhands 완료)
 - [x] [all-hands] 2026-05-10 23 actions bulk seed — 2026-05-15 weekly-allhands에서 F-1~F-23으로 개별 재등록 처리
 - [x] [strategy-manager·content-marketer·performance-marketer] F-1·F-2·F-3·F-4 4건 산출 — 2026-05-15 weekly EOD 즉시 액션, commit `9c72a7a`, closed 2026-05-16 ad-hoc all-hands
 

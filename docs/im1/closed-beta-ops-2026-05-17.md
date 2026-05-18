@@ -166,6 +166,30 @@ UPDATE evangelist_applications
 
 ---
 
+## 2-6. 서면 리포트 양식 발송 (2주 사용 후)
+
+**참조 양식:** `docs/im1/written-report-template-2026-05-18.md`
+
+본 양식은 운영자 측정 도구로, **외부 도구(Google Doc·Notion·메일 본문)로 복사·배포**합니다. 서비스 내 페이지 미구현 — IM.1 30명 분량에서 적정.
+
+### 발송 시점
+선발 + 가입 안내 메일 발송 → 사용 2주 경과 시점에 양식 발송 (예: D+14).
+
+### 발송 본문 예
+- 제목: `[BlueBird] MVP 사용 2주 회고 — 서면 리포트 양식 안내`
+- 본문: 양식 마크다운 본문 그대로 + 회신 안내 + 마감 (예: D+21)
+
+### 핵심 측정 (B 섹션)
+- **Van Westendorp 4문항** — 정식 출시 가격 결정 1차 데이터 (운영자 후보: 월 19,900원)
+- **유료 도구 지출 cross-check** — willingness baseline 보정
+- **자발적 추천 여부 + 표현** — 진짜 가치 인식 proxy
+- **결제 의향 답변** — said preference (RP 근사값은 베타 종료 후 30일 자연 retention 별도 측정)
+
+### 응답 보관·폐기
+선발자 동의 항목 (b) 정합 — 원본 응답 30일 후 폐기, 코딩 결과만 보존.
+
+---
+
 ## 3. 가입 안내 메일 (선발자)
 
 **발신 계정 (공식 SSOT):** `mvp.bluebird@gmail.com` (`lib/copy/contact.ts`)
@@ -289,3 +313,4 @@ UTM 예시:
 - 2026-05-18 v2.1: `/auth/callback` client page → server route handler (이메일 인증 로딩 무한 회전 회귀 해결).
 - 2026-05-18 v2.2: **어드민 UI 신설** — `/admin/applications` (server component) + 1-click 선발·미선발 + `/api/admin/approve|reject` + 3중 ENV `ADMIN_EMAILS` 게이트.
 - 2026-05-18 v2.3: 어드민 UI 확장 — (a) 가입 대기자 섹션 (응모 X, 가입만 한 사용자) + 직접 승인 버튼 + `/api/admin/approve-user` (b) 선발자에게 `mailto:` 메일 헬퍼 (`lib/copy/admin-email.ts` SSOT, 본인 메일 클라이언트로 prefill 발송) (c) `/apply` 진행 흐름에 "선발 시 본인이 직접 가입 + 응모 이메일과 동일하게" 명시.
+- 2026-05-18 v2.4: **결제 의향 측정 도구 신설** — `docs/im1/written-report-template-2026-05-18.md` (Van Westendorp 가격 sensitivity 4문항 + 유료 도구 지출 cross-check + 자발 추천 여부 + 결제 의향). 운영자 후보 가격: 월 19,900원. 베타 종료 후 30일 자연 retention 별도 측정.

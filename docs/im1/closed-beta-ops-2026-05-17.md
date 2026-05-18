@@ -36,7 +36,57 @@
 
 ---
 
-## 2. 응모 검토 — 운영자 SQL
+## 2. 응모 검토 — 어드민 UI (권장)
+
+**URL:** `https://bluebird-mvp.vercel.app/admin/applications`
+**접근 조건:** env `ADMIN_EMAILS` 에 등록된 이메일로 로그인.
+
+### 2-0. ENV 설정 (필수)
+
+운영자 이메일을 다음 두 곳에 모두 설정해야 어드민 진입 가능:
+
+1. **로컬 개발** — `.env.local` 추가:
+   ```bash
+   ADMIN_EMAILS=mvp.bluebird@gmail.com
+   ```
+2. **Vercel 프로덕션** — Project Settings → Environment Variables 추가:
+   - Key: `ADMIN_EMAILS`
+   - Value: `mvp.bluebird@gmail.com` (또는 콤마 구분 다중 이메일)
+   - Environment: Production (+ Preview 필요시)
+
+설정 후 재배포 필요. 미설정 시 `/admin/*` 모든 경로 자동 차단 (fail-safe).
+
+### 2-1. 화면 구성
+
+- 통계 헤더 (대기·선발·미선발·철회 카운트)
+- 응모 카드 (대기 먼저 노출, 그 다음 최신순)
+- 각 카드: 이메일·연령·동의 3종·UTM·답변 5문항 + `[선발]` `[미선발]` 버튼
+
+### 2-2. 선발 흐름
+
+1. 대기 응모 카드의 `[선발]` 클릭
+2. 확인 다이얼로그 → 확인
+3. API `/api/admin/approve` 호출:
+   - `selected_emails` upsert (email PK, 기존이면 application_id 갱신)
+   - `evangelist_applications.status = 'selected'`
+4. 페이지 자동 새로고침 → 카드가 "선발" 상태로 표시
+5. 선발자에게 가입 안내 메일 별도 발송 (운영자 수동 — §3 참고)
+
+### 2-3. 미선발 흐름
+
+`[미선발]` 클릭 → status='rejected' 만 갱신. selected_emails 변경 없음.
+
+### 2-4. 보안 게이트 (3중)
+
+1. **proxy.ts** 라우트 진입 시 `isAdminEmail(user.email)` 검사 → 비운영자 `/` 로 리다이렉트
+2. **`page.tsx` server component** 본문에서 동일 검사 (이중 안전)
+3. **`/api/admin/*` route handler** 에서 동일 검사 (실제 액션 시점 + service_role 사용)
+
+ENV 미설정 시 admin 집합 = 빈 Set → 본인 포함 누구도 진입 불가.
+
+---
+
+## 2'. 응모 검토 — SQL 직접 (대체 경로, UI 장애 시)
 
 ### 2-1. 대기 중인 응모 목록 조회
 
@@ -219,3 +269,5 @@ UTM 예시:
 
 - 2026-05-17: 폐쇄 베타 v1 (트리거 차단) — Migration 18 적용, /apply 신설, /me 통합 폼 제거.
 - 2026-05-18: 폐쇄 베타 v2 (게이트 차단) — Migration 19 트리거 제거 + RPC 신설, root proxy + /waitlist 페이지 신설. signup 의 closedBetaBlocked 분기 제거, 이메일 인증 화면에 승인 안내 추가.
+- 2026-05-18 v2.1: `/auth/callback` client page → server route handler (이메일 인증 로딩 무한 회전 회귀 해결).
+- 2026-05-18 v2.2: **어드민 UI 신설** — `/admin/applications` (server component) + 1-click 선발·미선발 + `/api/admin/approve|reject` + 3중 ENV `ADMIN_EMAILS` 게이트.

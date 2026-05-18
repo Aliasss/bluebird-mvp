@@ -283,8 +283,15 @@ export default function InsightsPage() {
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-24 space-y-6">
 
-        {/* 아키타입 패널 */}
-        <ArchetypePanel result={archetypeResult} />
+        {/* 아키타입 패널 — 클릭 시 5가지 아키타입 전체 비교 페이지로 */}
+        <ArchetypePanel
+          result={archetypeResult}
+          linkHref={
+            archetypeResult
+              ? `/insights/archetypes?current=${archetypeResult.archetype.id}`
+              : undefined
+          }
+        />
 
         {/* 기간 필터 */}
         <div className="flex gap-2">

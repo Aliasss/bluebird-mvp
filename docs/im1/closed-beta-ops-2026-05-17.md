@@ -4,7 +4,7 @@
 **기술 근거:**
 - Migration 18 (`18_closed_beta_whitelist.sql`) — selected_emails 테이블·트리거 신설 (트리거는 19에서 제거됨)
 - Migration 19 (`19_approval_gate.sql`) — 트리거 제거 + `is_current_user_approved()` RPC + 기존 4명 사전 등록
-- `middleware.ts` (root) — 보호 경로 진입 시 RPC 호출 → 미승인 시 `/waitlist` 리다이렉트
+- `proxy.ts` (root) — 보호 경로 진입 시 RPC 호출 → 미승인 시 `/waitlist` 리다이렉트
 - `app/waitlist/page.tsx` — 승인 대기 안내 UI
 
 **v1 (트리거 차단) → v2 (게이트 차단) 전환 이유 (CPO/CSO/CTO 합의):**
@@ -218,4 +218,4 @@ UTM 예시:
 ## 8. 변경 이력
 
 - 2026-05-17: 폐쇄 베타 v1 (트리거 차단) — Migration 18 적용, /apply 신설, /me 통합 폼 제거.
-- 2026-05-18: 폐쇄 베타 v2 (게이트 차단) — Migration 19 트리거 제거 + RPC 신설, root middleware + /waitlist 페이지 신설. signup 의 closedBetaBlocked 분기 제거, 이메일 인증 화면에 승인 안내 추가.
+- 2026-05-18: 폐쇄 베타 v2 (게이트 차단) — Migration 19 트리거 제거 + RPC 신설, root proxy + /waitlist 페이지 신설. signup 의 closedBetaBlocked 분기 제거, 이메일 인증 화면에 승인 안내 추가.

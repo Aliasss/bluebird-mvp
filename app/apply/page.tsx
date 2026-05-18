@@ -43,12 +43,16 @@ export default function ApplyPage() {
             <li>아래 폼 작성 — 5~8분 (Q1~Q5 + 연령 + 동의 3개)</li>
             <li>운영자 검토 — 선발/미선발 결과를 입력하신 이메일로 안내</li>
             <li>
-              <strong>선발자만</strong> 가입 안내 메일 수신 후 BlueBird 가입 → 2주 사용 + 서면 리포트 작성
+              <strong>선발자</strong>는 안내 메일 수신 후{' '}
+              <strong>본인이 직접 BlueBird 가입</strong> (응모 시 입력한 이메일과{' '}
+              <strong>반드시 동일하게</strong>) → 이메일 인증 → 2주 사용 + 서면 리포트
             </li>
           </ol>
           <p className="text-xs text-text-tertiary leading-snug">
-            ※ 현재 BlueBird MVP는 <strong>폐쇄 베타</strong>로 운영됩니다. 선발 전에는 가입이 차단되며,
-            선발 결과는 응모 시 입력하신 이메일로만 안내드립니다.
+            ※ 현재 BlueBird MVP는 <strong>폐쇄 베타</strong>로 운영됩니다. 응모 결과는 입력하신 이메일로만 안내드리며,
+            선발 안내 메일을 받기 전에는 별도로 가입하셔도 서비스 진입이 차단됩니다.
+            <br />
+            가입 시 응모 이메일과 다른 이메일을 사용하면 화이트리스트 매칭 실패로 진입이 차단되니 유의해주세요.
           </p>
         </section>
 

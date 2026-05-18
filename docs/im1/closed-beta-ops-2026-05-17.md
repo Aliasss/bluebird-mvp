@@ -76,7 +76,24 @@
 
 `[미선발]` 클릭 → status='rejected' 만 갱신. selected_emails 변경 없음.
 
-### 2-4. 보안 게이트 (3중)
+### 2-3'. 선발자에게 안내 메일 발송
+
+선발 처리 후 카드 하단에 `[선발 안내 메일 보내기 ✉]` 버튼 노출. 클릭 시 본인 메일 클라이언트(Gmail 등)로 prefill된 mailto 링크가 열립니다.
+- Subject: `[BlueBird] MVP 에반젤리스트 선발 안내 — 가입 진행 요청`
+- Body: 가입 URL + 동일 이메일 가입 강조 + 다음 단계 (lib/copy/admin-email.ts SSOT)
+- 발송 전 검토·수정 가능. 운영자 본인 메일 계정으로 보내므로 외부 SMTP 인프라 불요.
+
+응모자가 아직 가입 전(`user_id=null`) 인 경우 카드에 ⚠️ 표시 — 메일 안내 필수.
+
+### 2-4. 가입 대기자 검토 (응모 없이 가입만 한 사용자)
+
+페이지 하단 "② 가입 대기자" 섹션. 응모 답변 없는 가입자가 표시됨.
+- `[직접 승인]` — `/api/admin/approve-user` 호출, selected_emails upsert (application_id=null, notes='direct signup approval')
+- `[승인 안내 메일 ✉]` — 환영 + 즉시 로그인 안내 (대시보드 URL)
+
+원칙: **/apply 응모를 거치도록 안내하는 것이 우선**. 직접 승인은 운영자 재량 (예: 사전에 알고 있는 신뢰 가능한 사용자).
+
+### 2-5. 보안 게이트 (3중)
 
 1. **proxy.ts** 라우트 진입 시 `isAdminEmail(user.email)` 검사 → 비운영자 `/` 로 리다이렉트
 2. **`page.tsx` server component** 본문에서 동일 검사 (이중 안전)
@@ -271,3 +288,4 @@ UTM 예시:
 - 2026-05-18: 폐쇄 베타 v2 (게이트 차단) — Migration 19 트리거 제거 + RPC 신설, root proxy + /waitlist 페이지 신설. signup 의 closedBetaBlocked 분기 제거, 이메일 인증 화면에 승인 안내 추가.
 - 2026-05-18 v2.1: `/auth/callback` client page → server route handler (이메일 인증 로딩 무한 회전 회귀 해결).
 - 2026-05-18 v2.2: **어드민 UI 신설** — `/admin/applications` (server component) + 1-click 선발·미선발 + `/api/admin/approve|reject` + 3중 ENV `ADMIN_EMAILS` 게이트.
+- 2026-05-18 v2.3: 어드민 UI 확장 — (a) 가입 대기자 섹션 (응모 X, 가입만 한 사용자) + 직접 승인 버튼 + `/api/admin/approve-user` (b) 선발자에게 `mailto:` 메일 헬퍼 (`lib/copy/admin-email.ts` SSOT, 본인 메일 클라이언트로 prefill 발송) (c) `/apply` 진행 흐름에 "선발 시 본인이 직접 가입 + 응모 이메일과 동일하게" 명시.

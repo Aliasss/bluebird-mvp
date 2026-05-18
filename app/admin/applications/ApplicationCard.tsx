@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { buildSelectionMailto } from '@/lib/copy/admin-email';
 
 export type Application = {
   id: string;
@@ -140,6 +141,26 @@ export default function ApplicationCard({
           >
             {busy ? '처리 중…' : '미선발'}
           </button>
+        </div>
+      )}
+
+      {/* 선발 안내 메일 — 선발된 응모만 노출 */}
+      {app.status === 'selected' && (
+        <div className="pt-2 border-t border-background-tertiary space-y-2">
+          <a
+            href={buildSelectionMailto(app.contact_email)}
+            className="block w-full px-4 py-2 text-sm font-semibold text-center text-primary border border-primary/30 hover:bg-primary/5 rounded-lg transition-colors"
+          >
+            선발 안내 메일 보내기 ✉
+          </a>
+          <p className="text-[11px] text-text-tertiary leading-snug px-1">
+            클릭 시 본인 메일 클라이언트가 열립니다. 본문은 자동 채워지며, 발송 전에 검토·수정할 수 있습니다.
+            {!app.user_id && (
+              <span className="text-warning">
+                {' '}본 응모자는 아직 가입 전입니다 — 메일 안내 필수.
+              </span>
+            )}
+          </p>
         </div>
       )}
 

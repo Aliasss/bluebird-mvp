@@ -4,6 +4,13 @@
 
 ## Open
 
+### 신규 actions (2026-05-19 standup)
+- [ ] [senior-fullstack-engineer] [due-2026-05-19] F-13·F-14·F-21 오늘 due 3건 긴급 처리 — B-2 v_push_funnel SECURITY INVOKER migration, B-4 metadata Zod enum 화이트리스트 키 강제, B-1 service_role 인벤토리+rls-audit.ts 확장 (출처: 2026-05-19 standup)
+- [ ] [senior-qa-engineer] [due-2026-05-20] 승인 게이트 v2 전환 E2E 회귀 검증 보고서 — 비승인자 차단·승인자 진입·기존 보호 경로(dashboard·log·analyze·visualize·action) 3케이스 (출처: 2026-05-19 standup)
+- [ ] [risk-manager] [due-2026-05-20] F-5 처리방침·약관 push+notification_events 항목 추가 — IM.1 에반젤리스트 입주 전 PIPA 정합 필수 (original due 5/16 지연) (출처: 2026-05-19 standup)
+- [ ] [content-marketer] [due-2026-05-21] F-22 미완분 완료 — 미통과·follow-up 이메일 카피 2종 lib/copy/admin-email.ts 추가 (선발·직접승인 2종은 ba46583 기완료) (출처: 2026-05-19 standup)
+- [ ] [CEO] [due-2026-05-19] F-5·F-9·F-10 all-clear 여부 직접 점검 후 F-16 GO/NO-GO 최종 결정 — IM.1 모집 시작 조건 (original due 5/18, 1일 지연) (출처: 2026-05-19 standup)
+
 ### carry-over (standup 2026-05-10 출처)
 - [ ] [CEO] [due-2026-05-17] Phase 3 수행: VAPID 키 생성·등록 + Vercel 환경변수 설정 + 크론 활성화 — **A-2 처리방침 PR 머지 후 활성화 (F-8과 정합)** (출처: 2026-05-10 standup)
 - [ ] [CEO] [due-2026-05-17] IM.1 사용자 모집 시작: 알빈 인적 네트워크 50명 1차 초대 — **5/19 조건부 GO로 재조정 예정 (F-16과 정합)** (출처: 2026-05-10 standup)

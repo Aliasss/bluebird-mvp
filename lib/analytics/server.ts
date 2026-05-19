@@ -26,6 +26,7 @@ export type AnalysisQualityEvent =
  * "분석 시도 vs 실제 행동 변화" 격차 추적용. founder 자기분석 review 2026-05-10 §4.3 도출.
  */
 export type CognitiveFunnelEvent =
+  | 'log_view' // /log 페이지 진입 = 입력 비용 측정 시작점 (2026-05-19 deep-dive 액션 ①)
   | 'distortion_identified' // 분석 결과가 사용자에게 노출 가능 시점
   | 'reframe_attempted' // 소크라테스 질문 생성 = 리프레임 기회 진입
   | 'reframe_completed' // 답변 3건 저장 완료

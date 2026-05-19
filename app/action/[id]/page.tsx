@@ -102,6 +102,14 @@ export default function ActionPage() {
   const [insightInput, setInsightInput] = useState('');
   const [reaction, setReaction] = useState<'improved' | 'same' | 'worse' | null>(null);
 
+  // 자율성 micro-feedback — 행동 완수 직후 즉각 보상 신호 (액션 ② 2026-05-19 deep-dive).
+  // SDT 정합: 외부 보상 어휘(획득·달성·완료!) 회피, "행사한 자율성" 분석가 톤.
+  const [microFeedback, setMicroFeedback] = useState<{
+    delta: number;
+    total: number;
+    hasNote: boolean;
+  } | null>(null);
+
   useEffect(() => {
     const logId = params.id;
     if (!logId) {
@@ -236,6 +244,9 @@ export default function ActionPage() {
 
       if (markCompleted) {
         const score = payload.autonomyScore ?? 10;
+        const total = typeof payload.totalAutonomyScore === 'number'
+          ? payload.totalAutonomyScore
+          : score;
         const hasNote = Boolean(completionNote?.trim());
         setState((prev) => ({
           ...prev,
@@ -244,11 +255,8 @@ export default function ActionPage() {
           existingAction: serialized,
         }));
         setLegacyAction(null);
-        setNotice(
-          hasNote
-            ? `행동이 기록됐습니다. +${score}점 (메모 보너스 포함)`
-            : `행동이 기록됐습니다. +${score}점`
-        );
+        setMicroFeedback({ delta: score, total, hasNote });
+        setNotice(null); // 카드로 대체
       } else {
         setState((prev) => ({
           ...prev,
@@ -421,6 +429,34 @@ export default function ActionPage() {
           {notice && (
             <div className="bg-success bg-opacity-10 border border-success rounded-xl p-3">
               <p className="text-xs md:text-sm text-success">{notice}</p>
+            </div>
+          )}
+
+          {/* 자율성 micro-feedback — 행동 완수 직후 즉각 보상 신호 (액션 ② 2026-05-19 deep-dive).
+              SDT 정합: 외부 보상 어휘 회피, "행사한 자율성" 분석가 톤. 누적 표시로 본인 통제감 강화. */}
+          {microFeedback && (
+            <div className="bg-white border-2 border-warning/40 rounded-2xl p-5 space-y-3">
+              <div className="flex items-baseline gap-2">
+                <p className="text-xs font-semibold text-warning uppercase tracking-widest">
+                  Autonomy
+                </p>
+                <p className="text-xs text-text-tertiary">방금 행사한 자율성</p>
+              </div>
+              <div className="flex items-baseline gap-3">
+                <p className="text-3xl font-bold text-warning">+{microFeedback.delta}</p>
+                <p className="text-sm text-text-secondary">
+                  점{microFeedback.hasNote && <span className="text-text-tertiary"> (메모 보너스 포함)</span>}
+                </p>
+              </div>
+              <div className="pt-3 border-t border-background-tertiary flex items-baseline justify-between">
+                <p className="text-xs text-text-secondary">누적 자율성 지수</p>
+                <p className="text-base font-semibold text-text-primary">
+                  {microFeedback.total}점
+                </p>
+              </div>
+              <p className="text-[11px] text-text-tertiary leading-snug">
+                이 점수는 검토 답변·노트 작성으로 본인이 직접 행사한 자율성의 누적입니다. 분석에서 사고를 한 번 더 검토할 때마다 누적됩니다.
+              </p>
             </div>
           )}
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import PageHeader from '@/components/ui/PageHeader';
@@ -25,6 +25,13 @@ export default function LogPage() {
   const [painScore, setPainScore] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // 입력 비용 측정 — 페이지 진입 시점 기록. 2026-05-19 deep-dive 액션 ①.
+  // log_view → logs.created_at 차이 = 사용자가 입력에 들이는 시간.
+  // best-effort: 실패해도 사용자 흐름 방해 X.
+  useEffect(() => {
+    void fetch('/api/analytics/log-view', { method: 'POST' }).catch(() => {});
+  }, []);
 
   const handleTriggerNext = () => {
     if (trigger.trim().length < 5) {

@@ -153,11 +153,27 @@ export async function POST(request: Request) {
       });
     }
 
+    // 누적 자율성 합계 — micro-feedback 카드 (액션 ② 2026-05-19 deep-dive).
+    // markCompleted 일 때만 계산 (drafted save 시 누적 미변경).
+    let totalAutonomyScore: number | null = null;
+    if (markCompleted) {
+      const { data: aggregate } = await supabase
+        .from('intervention')
+        .select('autonomy_score, logs!inner(user_id)')
+        .eq('logs.user_id', user.id)
+        .not('autonomy_score', 'is', null);
+      totalAutonomyScore = (aggregate ?? []).reduce(
+        (sum, row) => sum + (row.autonomy_score ?? 0),
+        0,
+      );
+    }
+
     return NextResponse.json(
       {
         success: true,
         isCompleted: markCompleted,
         autonomyScore: actionPayload.autonomy_score ?? null,
+        totalAutonomyScore,
       },
       { status: 200 }
     );

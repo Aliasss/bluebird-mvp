@@ -36,6 +36,10 @@
 - [ ] [content-marketer] [due-2026-05-17] F-22 D-4 이메일 카피 3종 (선정·미통과·follow-up) (출처: 2026-05-15 weekly-allhands §5 #F-22)
 - [ ] [PO] [due-2026-05-15] F-23 _actions.md 5/10 23 actions 개별화 (출처: 2026-05-15 weekly-allhands §5 #F-23)
 
+### 신규 actions (2026-05-20 standup)
+- [ ] [CEO] [due-2026-05-21] F-12·F-13·F-14·F-18·F-19·F-21 (due 2026-05-19 overdue 6건) 처리 결정 — senior-fullstack·senior-qa 재할당 또는 즉시 착수 지시 (출처: 2026-05-20 standup)
+- [ ] [data-analyst] [due-2026-05-22] log_view SQL 실행 환경 검증 + F-17 이벤트 스펙 문서 작성 → senior-fullstack 전달 완료 (출처: 2026-05-20 standup)
+
 ## Closed (this week)
 
 - [x] [all-hands] 2026-05-10 23 actions bulk seed — 2026-05-15 weekly-allhands에서 F-1~F-23으로 개별 재등록 처리

@@ -47,6 +47,7 @@ describe('notifications/send', () => {
     expect(mockSendNotification).toHaveBeenCalledWith(
       SUB,
       expect.stringContaining('"title"'),
+      { urgency: 'high' },
     );
   });
 

@@ -78,19 +78,6 @@ export default function ApplyPage() {
               {SERVICE_CONTACT_EMAIL}
             </a>
           </p>
-          <p className="flex flex-wrap gap-x-3 gap-y-1 pt-2">
-            <Link href="/terms" className="hover:text-text-secondary underline-offset-2 hover:underline">
-              이용약관
-            </Link>
-            <span>·</span>
-            <Link href="/privacy" className="hover:text-text-secondary underline-offset-2 hover:underline">
-              개인정보 처리방침
-            </Link>
-            <span>·</span>
-            <Link href="/disclaimer" className="hover:text-text-secondary underline-offset-2 hover:underline">
-              면책 안내
-            </Link>
-          </p>
         </section>
       </div>
     </main>

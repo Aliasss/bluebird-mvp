@@ -201,3 +201,11 @@ v1 격상 시 추가:
 | 측정 인프라 (analytics_events) | `lib/analytics/server.ts` |
 | SMTP stagger 메모리 노트 | user memory: "IM.1 선정 완료 시 SMTP stagger 리마인드" |
 | Tally 폼 (F-11) | 5/15 weekly all-hands §5 #F-11 due 5/18 (PO) |
+
+---
+
+## 8. 실제 launch log
+
+| 일시 (KST) | 채널 | URL | 운영자 메모 |
+|---|---|---|---|
+| 2026-05-21 09:30 | Brunch (`@haesol/184`) | https://brunch.co.kr/@haesol/184 | IM.1 첫 모집 글 공개. 채널 attribution = `utm_source=brunch&utm_medium=post&utm_campaign=im1` (글 안 /apply 링크의 UTM 적용 여부는 별도 확인 필요). |

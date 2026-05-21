@@ -105,6 +105,13 @@ export async function POST(request: Request) {
       completion_reaction?: string;
     } = { final_action: effectiveAction };
 
+    // breakdown — response 에 포함해 UI 산식 투명성 확보 (액션 β 2026-05-21 검토)
+    let scoreBreakdown: {
+      answerCount: number;
+      answerBonus: number;
+      noteBonus: number;
+    } | null = null;
+
     if (markCompleted) {
       // autonomy_score v2 — SDT autonomy 차원 측정. averageIntensity는 더 이상 사용하지 않음
       // (AI 추정값에 가중치를 주던 v1의 결합도를 끊는다).
@@ -112,9 +119,11 @@ export async function POST(request: Request) {
         (key) => Boolean(intervention?.user_answers?.[key])
       ).length;
 
+      const answerBonus = calcAutonomyScore({ answerCount });
       const noteBonus = completionNote.length > 0 ? AUTONOMY_NOTE_BONUS : 0;
       actionPayload.is_completed = true;
-      actionPayload.autonomy_score = calcAutonomyScore({ answerCount }) + noteBonus;
+      actionPayload.autonomy_score = answerBonus + noteBonus;
+      scoreBreakdown = { answerCount, answerBonus, noteBonus };
       if (completionNote.length > 0) {
         actionPayload.completion_note = completionNote;
       }
@@ -174,6 +183,7 @@ export async function POST(request: Request) {
         isCompleted: markCompleted,
         autonomyScore: actionPayload.autonomy_score ?? null,
         totalAutonomyScore,
+        scoreBreakdown,
       },
       { status: 200 }
     );

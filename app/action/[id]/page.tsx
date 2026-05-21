@@ -104,10 +104,14 @@ export default function ActionPage() {
 
   // 자율성 micro-feedback — 행동 완수 직후 즉각 보상 신호 (액션 ② 2026-05-19 deep-dive).
   // SDT 정합: 외부 보상 어휘(획득·달성·완료!) 회피, "행사한 자율성" 분석가 톤.
+  // breakdown — 산식 투명성 강화 (액션 β 2026-05-21 검토 결과).
   const [microFeedback, setMicroFeedback] = useState<{
     delta: number;
     total: number;
     hasNote: boolean;
+    answerCount: number;
+    answerBonus: number;
+    noteBonus: number;
   } | null>(null);
 
   useEffect(() => {
@@ -248,6 +252,11 @@ export default function ActionPage() {
           ? payload.totalAutonomyScore
           : score;
         const hasNote = Boolean(completionNote?.trim());
+        const breakdown = payload.scoreBreakdown ?? {
+          answerCount: 0,
+          answerBonus: 0,
+          noteBonus: hasNote ? 15 : 0,
+        };
         setState((prev) => ({
           ...prev,
           isCompleted: true,
@@ -255,7 +264,14 @@ export default function ActionPage() {
           existingAction: serialized,
         }));
         setLegacyAction(null);
-        setMicroFeedback({ delta: score, total, hasNote });
+        setMicroFeedback({
+          delta: score,
+          total,
+          hasNote,
+          answerCount: breakdown.answerCount,
+          answerBonus: breakdown.answerBonus,
+          noteBonus: breakdown.noteBonus,
+        });
         setNotice(null); // 카드로 대체
       } else {
         setState((prev) => ({
@@ -448,6 +464,10 @@ export default function ActionPage() {
                   점{microFeedback.hasNote && <span className="text-text-tertiary"> (메모 보너스 포함)</span>}
                 </p>
               </div>
+              {/* 산식 1줄 노출 — 액션 β 2026-05-21 검토. SDT 인식 강화: 본인이 어떻게 점수를 만들었는지 직관 부여. */}
+              <p className="text-[11px] font-mono text-text-tertiary bg-background-secondary rounded px-2 py-1.5">
+                답변 {microFeedback.answerCount}개 ×5점{microFeedback.answerCount > 3 && ' (최대 3개)'} = {microFeedback.answerBonus}점 + 노트 보너스 {microFeedback.noteBonus}점 = +{microFeedback.delta}점
+              </p>
               <div className="pt-3 border-t border-background-tertiary flex items-baseline justify-between">
                 <p className="text-xs text-text-secondary">누적 자율성 지수</p>
                 <p className="text-base font-semibold text-text-primary">

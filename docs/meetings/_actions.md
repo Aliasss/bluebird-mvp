@@ -6,7 +6,7 @@
 
 ### carry-over (standup 2026-05-10 출처)
 - [ ] [CEO] [due-2026-05-17] Phase 3 수행: VAPID 키 생성·등록 + Vercel 환경변수 설정 + 크론 활성화 — **A-2 처리방침 PR 머지 후 활성화 (F-8과 정합)** (출처: 2026-05-10 standup)
-- [ ] [CEO] [due-2026-05-17] IM.1 사용자 모집 시작: 알빈 인적 네트워크 50명 1차 초대 — **5/19 조건부 GO로 재조정 예정 (F-16과 정합)** (출처: 2026-05-10 standup)
+- [x] [CEO] [due-2026-05-17] IM.1 사용자 모집 시작: 알빈 인적 네트워크 50명 1차 초대 — closed by c0ae21b Brunch 모집 글 공개 (2026-05-21)
 - [ ] [senior-fullstack-engineer] [due-2026-05-24] `app/privacy/page.tsx` push subscription 데이터 처리 항목 추가 (출처: 2026-05-10 standup §2.3)
 - [ ] [senior-qa-engineer] [due-2026-05-24] iOS 실기기 push 수신 E2E 검증 — Phase 3 완료 후 (출처: 2026-05-10 standup §2.2)
 
@@ -22,19 +22,24 @@
 - [ ] [CEO] [due-2026-05-17] F-8 Phase 3 VAPID 키 생성·Vercel 설정 — A-2 PR 머지 후 (출처: 2026-05-15 weekly-allhands §5 #F-8)
 - [ ] [CSO+CPO] [due-2026-05-18] F-9 rubric v1.0 CSO 3축 매핑 + frozen 표기 (출처: 2026-05-15 weekly-allhands §5 #F-9)
 - [ ] [senior-ux-researcher] [due-2026-05-18] F-10 인터뷰 가이드 v1 MVP (10문항 최소판) — 5/18 09:00 KST hard deadline (출처: 2026-05-15 weekly-allhands §5 #F-10)
-- [ ] [PO] [due-2026-05-18] F-11 응모 폼 구축 (Tally, Q1~Q5 정합 + 동의) (출처: 2026-05-15 weekly-allhands §5 #F-11)
+- [x] [PO] [due-2026-05-18] F-11 응모 폼 구축 — closed by d02f6f0 `/apply` 비회원 응모 + ba46583 admin 선발 UI (2026-05-17~18, in-app 구현, Tally 미사용)
 - [ ] [senior-fullstack-engineer] [due-2026-05-18] F-12 cron healthcheck (last_cron_invoked_at + 24h staleness 알림) (출처: 2026-05-15 weekly-allhands §5 #F-12)
 - [ ] [senior-fullstack-engineer] [due-2026-05-19] F-13 B-2 v_push_funnel SECURITY INVOKER Migration 16 (출처: 2026-05-15 weekly-allhands §5 #F-13)
 - [ ] [senior-fullstack-engineer] [due-2026-05-19] F-14 B-4 metadata Zod enum 화이트리스트 키 강제 (출처: 2026-05-15 weekly-allhands §5 #F-14)
 - [ ] [risk-manager] [due-2026-05-18] F-15 B-5 push 카피 lint:copy 룰 ("기분·우울·불안") (출처: 2026-05-15 weekly-allhands §5 #F-15)
-- [ ] [CEO] [due-2026-05-18] F-16 IM.1 모집 GO/NO-GO 최종 결정 — F-5·F-9·F-10 ALL clear 확인 후 (출처: 2026-05-15 weekly-allhands §5 #F-16)
+- [x] [CEO] [due-2026-05-18] F-16 IM.1 모집 GO/NO-GO 최종 결정 — closed by c0ae21b Brunch 모집 글 공개 = GO 실행 (2026-05-21)
 - [ ] [data-analyst] [due-2026-05-18] F-17 C-3 이벤트 스펙 (e6c0e62 delta-only 방식) → senior-fullstack 전달 (출처: 2026-05-15 weekly-allhands §5 #F-17)
 - [ ] [senior-qa+senior-fullstack] [due-2026-05-19] F-18 C-4 9단계 × 18 event_type 매핑표 재작성 (출처: 2026-05-15 weekly-allhands §5 #F-18)
 - [ ] [senior-qa] [due-2026-05-19] F-19 A-1 E2E 9단계 실행 보고서 + AI anomaly baseline (출처: 2026-05-15 weekly-allhands §5 #F-19)
 - [ ] [PO+senior-fullstack] [due-2026-05-19] F-20 C-2 측정 SOP docs/im1/measurement-sop.md (출처: 2026-05-15 weekly-allhands §5 #F-20)
 - [ ] [senior-fullstack-engineer] [due-2026-05-19] F-21 B-1 service_role 인벤토리 + rls-audit.ts 확장 (출처: 2026-05-15 weekly-allhands §5 #F-21)
 - [ ] [content-marketer] [due-2026-05-17] F-22 D-4 이메일 카피 3종 (선정·미통과·follow-up) (출처: 2026-05-15 weekly-allhands §5 #F-22)
-- [ ] [PO] [due-2026-05-15] F-23 _actions.md 5/10 23 actions 개별화 (출처: 2026-05-15 weekly-allhands §5 #F-23)
+- [x] [PO] [due-2026-05-15] F-23 _actions.md 5/10 23 actions 개별화 — closed by 9c72a7a F-1~F-22 개별 등록 완료 (2026-05-15)
+
+### 신규 actions (2026-05-26 standup)
+- [ ] [CPO] [due-2026-06-02] `1453d26` 자율성 산식 투명성 강화 + 서면 리포트 문항 공식 검토·승인 — 결제 가설 A 정합성 확인 및 자발 언급 코딩 오염 여부 점검 (출처: 2026-05-26 standup)
+- [ ] [CTO] [due-2026-05-28] `ff43f08` v2 게이트·`436662b` RLS 수정·`eada9f2` analytics 이벤트 RLS 감사 및 Crisis Detection 영향 확인 — senior-qa-engineer 협력 (출처: 2026-05-26 standup)
+- [ ] [CMO] [due-2026-05-28] IM.1 Brunch 모집 D7 현황 집계 — 응모자 수·utm attribution·다음 단계 GO/WAIT 판단 자료 CEO 보고 (출처: 2026-05-26 standup)
 
 ## Closed (this week)
 

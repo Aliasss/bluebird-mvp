@@ -16,6 +16,16 @@ const MOOD_OPTIONS = [
   { word: '호기심', emoji: '🤔' },
 ];
 
+// 2026-05-26 Migration 20: 5단계 자기 평가 점수 — line chart 객관적 추이.
+// 단어(mood_word)는 자기 표현, 점수(mood_level)는 객관 수치 — 둘 분리.
+const MOOD_LEVEL_OPTIONS = [
+  { level: 1, emoji: '😞', label: '매우 나쁨' },
+  { level: 2, emoji: '😕', label: '나쁨' },
+  { level: 3, emoji: '😐', label: '보통' },
+  { level: 4, emoji: '🙂', label: '좋음' },
+  { level: 5, emoji: '😄', label: '매우 좋음' },
+];
+
 function getCheckinType(): 'morning' | 'evening' {
   // KST 시각: UTC + 9
   const kstHour = (new Date().getUTCHours() + 9) % 24;
@@ -35,6 +45,7 @@ export default function CheckinPage() {
   const router = useRouter();
   const [type, setType] = useState<'morning' | 'evening'>('morning');
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
+  const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
   const [moment, setMoment] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -76,6 +87,10 @@ export default function CheckinPage() {
       setError('기분을 선택해주세요.');
       return;
     }
+    if (type === 'morning' && selectedLevel === null) {
+      setError('5단계 점수를 선택해주세요.');
+      return;
+    }
     if (type === 'evening' && moment.trim().length < 1) {
       setError('한 줄이라도 적어주세요.');
       return;
@@ -90,6 +105,7 @@ export default function CheckinPage() {
         body: JSON.stringify({
           type,
           moodWord: selectedMood ?? undefined,
+          moodLevel: selectedLevel ?? undefined,
           system2Moment: moment.trim() || undefined,
         }),
       });
@@ -170,23 +186,55 @@ export default function CheckinPage() {
                 </h1>
                 <p className="text-sm text-text-secondary">오늘 하루를 시작하는 마음 태도를 선택하세요.</p>
               </div>
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                {MOOD_OPTIONS.map(({ word, emoji }) => (
-                  <button
-                    key={word}
-                    onClick={() => setSelectedMood(word)}
-                    className={`flex flex-col items-center gap-1 p-4 rounded-2xl border-2 transition-all touch-manipulation active:scale-95 ${
-                      selectedMood === word
-                        ? 'border-primary bg-primary bg-opacity-10'
-                        : 'border-background-tertiary bg-white'
-                    }`}
-                  >
-                    <span className="text-2xl">{emoji}</span>
-                    <span className={`text-xs font-semibold ${selectedMood === word ? 'text-primary' : 'text-text-secondary'}`}>
-                      {word}
-                    </span>
-                  </button>
-                ))}
+
+              {/* 5단계 자기 평가 (2026-05-26 Migration 20) — line chart 객관적 추이용 */}
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wide">
+                  오늘 기분 5단계
+                </p>
+                <div className="grid grid-cols-5 gap-2">
+                  {MOOD_LEVEL_OPTIONS.map(({ level, emoji, label }) => (
+                    <button
+                      key={level}
+                      onClick={() => setSelectedLevel(level)}
+                      aria-label={label}
+                      className={`flex flex-col items-center gap-1 py-3 rounded-2xl border-2 transition-all touch-manipulation active:scale-95 ${
+                        selectedLevel === level
+                          ? 'border-primary bg-primary bg-opacity-10'
+                          : 'border-background-tertiary bg-white'
+                      }`}
+                    >
+                      <span className="text-2xl">{emoji}</span>
+                      <span className={`text-[10px] ${selectedLevel === level ? 'text-primary font-semibold' : 'text-text-tertiary'}`}>
+                        {label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wide">
+                  어떤 마음 태도인가요?
+                </p>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                  {MOOD_OPTIONS.map(({ word, emoji }) => (
+                    <button
+                      key={word}
+                      onClick={() => setSelectedMood(word)}
+                      className={`flex flex-col items-center gap-1 p-4 rounded-2xl border-2 transition-all touch-manipulation active:scale-95 ${
+                        selectedMood === word
+                          ? 'border-primary bg-primary bg-opacity-10'
+                          : 'border-background-tertiary bg-white'
+                      }`}
+                    >
+                      <span className="text-2xl">{emoji}</span>
+                      <span className={`text-xs font-semibold ${selectedMood === word ? 'text-primary' : 'text-text-secondary'}`}>
+                        {word}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </>
           ) : (
@@ -219,7 +267,7 @@ export default function CheckinPage() {
 
           <button
             onClick={handleSubmit}
-            disabled={loading || (type === 'morning' && !selectedMood) || (type === 'evening' && !moment.trim())}
+            disabled={loading || (type === 'morning' && (!selectedMood || selectedLevel === null)) || (type === 'evening' && !moment.trim())}
             className="w-full bg-primary text-white font-semibold py-4 px-6 rounded-2xl touch-manipulation active:scale-95 transition-transform disabled:opacity-50"
           >
             {loading ? '저장 중...' : '체크인 완료'}

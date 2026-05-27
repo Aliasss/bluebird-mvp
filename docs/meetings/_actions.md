@@ -4,6 +4,11 @@
 
 ## Open
 
+### 신규 actions (2026-05-27 standup)
+- [ ] [senior-qa-engineer] [due-2026-05-30] /checkin/history 모닝 탭 E2E 검증 실행 — mood_level line chart 실환경 데이터 로딩·NULL 필터링·평균 산출 방어 확인 (출처: 2026-05-27 standup)
+- [ ] [risk-manager] [due-2026-06-06] G3 처리방침 준비 항목에 mood_level 수집 목적·보유기간·파기 방법 명시 준비 (출처: 2026-05-27 standup)
+- [ ] [CEO] [due-2026-05-29] F-5·F-9·F-10 선행 조건 미완 현황 재확인 — F-16 IM.1 GO/NO-GO 블로킹 해소 계획 수립 (출처: 2026-05-27 standup)
+
 ### carry-over (standup 2026-05-10 출처)
 - [ ] [CEO] [due-2026-05-17] Phase 3 수행: VAPID 키 생성·등록 + Vercel 환경변수 설정 + 크론 활성화 — **A-2 처리방침 PR 머지 후 활성화 (F-8과 정합)** (출처: 2026-05-10 standup)
 - [ ] [CEO] [due-2026-05-17] IM.1 사용자 모집 시작: 알빈 인적 네트워크 50명 1차 초대 — **5/19 조건부 GO로 재조정 예정 (F-16과 정합)** (출처: 2026-05-10 standup)

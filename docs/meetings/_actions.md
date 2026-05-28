@@ -4,9 +4,13 @@
 
 ## Open
 
+### 신규 actions (2026-05-28 standup)
+- [ ] [risk-manager] [due-2026-05-29] `ccbdb94` fix(apply) 푸터 법적 링크 3종 제거 (이용약관·개인정보 처리방침·면책 안내) — /apply 페이지 PIPA 표시 의무 충족 여부 점검 및 고의 제거 의도 확인 (출처: 2026-05-28 standup)
+- [ ] [CPO+CSO] [due-2026-05-30] `1453d26` feat(autonomy) 산식 투명성 강화 + 서면 리포트 점수 인식 문항 검토 — 커밋에 "CPO/CSO 검토 권장 옵션" 명시됨. 자율성 산식 변경이 Falsifiability·차별화 3축에 미치는 영향 surface 필요 (출처: 2026-05-28 standup)
+- [ ] [CEO] [due-2026-05-30] Phase 3 VAPID 설정 완료 여부 직접 확인 — `0a56023` push urgency 코드는 적용됨, Vercel 환경변수 VAPID 키 실제 설정 여부 미확인. F-8 status 업데이트 (출처: 2026-05-28 standup)
+
 ### carry-over (standup 2026-05-10 출처)
 - [ ] [CEO] [due-2026-05-17] Phase 3 수행: VAPID 키 생성·등록 + Vercel 환경변수 설정 + 크론 활성화 — **A-2 처리방침 PR 머지 후 활성화 (F-8과 정합)** (출처: 2026-05-10 standup)
-- [ ] [CEO] [due-2026-05-17] IM.1 사용자 모집 시작: 알빈 인적 네트워크 50명 1차 초대 — **5/19 조건부 GO로 재조정 예정 (F-16과 정합)** (출처: 2026-05-10 standup)
 - [ ] [senior-fullstack-engineer] [due-2026-05-24] `app/privacy/page.tsx` push subscription 데이터 처리 항목 추가 (출처: 2026-05-10 standup §2.3)
 - [ ] [senior-qa-engineer] [due-2026-05-24] iOS 실기기 push 수신 E2E 검증 — Phase 3 완료 후 (출처: 2026-05-10 standup §2.2)
 
@@ -22,22 +26,26 @@
 - [ ] [CEO] [due-2026-05-17] F-8 Phase 3 VAPID 키 생성·Vercel 설정 — A-2 PR 머지 후 (출처: 2026-05-15 weekly-allhands §5 #F-8)
 - [ ] [CSO+CPO] [due-2026-05-18] F-9 rubric v1.0 CSO 3축 매핑 + frozen 표기 (출처: 2026-05-15 weekly-allhands §5 #F-9)
 - [ ] [senior-ux-researcher] [due-2026-05-18] F-10 인터뷰 가이드 v1 MVP (10문항 최소판) — 5/18 09:00 KST hard deadline (출처: 2026-05-15 weekly-allhands §5 #F-10)
-- [ ] [PO] [due-2026-05-18] F-11 응모 폼 구축 (Tally, Q1~Q5 정합 + 동의) (출처: 2026-05-15 weekly-allhands §5 #F-11)
+- [x] [PO] [due-2026-05-18] F-11 응모 폼 구축 (Tally, Q1~Q5 정합 + 동의) — closed by `fa7b355`+`d02f6f0` /me + /apply 응모 폼 구축 (2026-05-17) (출처: 2026-05-15 weekly-allhands §5 #F-11)
 - [ ] [senior-fullstack-engineer] [due-2026-05-18] F-12 cron healthcheck (last_cron_invoked_at + 24h staleness 알림) (출처: 2026-05-15 weekly-allhands §5 #F-12)
 - [ ] [senior-fullstack-engineer] [due-2026-05-19] F-13 B-2 v_push_funnel SECURITY INVOKER Migration 16 (출처: 2026-05-15 weekly-allhands §5 #F-13)
 - [ ] [senior-fullstack-engineer] [due-2026-05-19] F-14 B-4 metadata Zod enum 화이트리스트 키 강제 (출처: 2026-05-15 weekly-allhands §5 #F-14)
 - [ ] [risk-manager] [due-2026-05-18] F-15 B-5 push 카피 lint:copy 룰 ("기분·우울·불안") (출처: 2026-05-15 weekly-allhands §5 #F-15)
-- [ ] [CEO] [due-2026-05-18] F-16 IM.1 모집 GO/NO-GO 최종 결정 — F-5·F-9·F-10 ALL clear 확인 후 (출처: 2026-05-15 weekly-allhands §5 #F-16)
+- [x] [CEO] [due-2026-05-18] F-16 IM.1 모집 GO/NO-GO 최종 결정 — closed by `c0ae21b` Brunch 모집 글 공개 launch log (2026-05-21) (출처: 2026-05-15 weekly-allhands §5 #F-16)
 - [ ] [data-analyst] [due-2026-05-18] F-17 C-3 이벤트 스펙 (e6c0e62 delta-only 방식) → senior-fullstack 전달 (출처: 2026-05-15 weekly-allhands §5 #F-17)
 - [ ] [senior-qa+senior-fullstack] [due-2026-05-19] F-18 C-4 9단계 × 18 event_type 매핑표 재작성 (출처: 2026-05-15 weekly-allhands §5 #F-18)
 - [ ] [senior-qa] [due-2026-05-19] F-19 A-1 E2E 9단계 실행 보고서 + AI anomaly baseline (출처: 2026-05-15 weekly-allhands §5 #F-19)
 - [ ] [PO+senior-fullstack] [due-2026-05-19] F-20 C-2 측정 SOP docs/im1/measurement-sop.md (출처: 2026-05-15 weekly-allhands §5 #F-20)
 - [ ] [senior-fullstack-engineer] [due-2026-05-19] F-21 B-1 service_role 인벤토리 + rls-audit.ts 확장 (출처: 2026-05-15 weekly-allhands §5 #F-21)
 - [ ] [content-marketer] [due-2026-05-17] F-22 D-4 이메일 카피 3종 (선정·미통과·follow-up) (출처: 2026-05-15 weekly-allhands §5 #F-22)
-- [ ] [PO] [due-2026-05-15] F-23 _actions.md 5/10 23 actions 개별화 (출처: 2026-05-15 weekly-allhands §5 #F-23)
+- [x] [PO] [due-2026-05-15] F-23 _actions.md 5/10 23 actions 개별화 — _actions.md F-1~F-23 개별 항목 구조 확인, 완료 (출처: 2026-05-15 weekly-allhands §5 #F-23)
 
 ## Closed (this week)
 
+- [x] [CEO] IM.1 사용자 모집 시작 — closed by `c0ae21b` Brunch 모집 글 공개 (2026-05-21), confirmed 2026-05-28 standup
+- [x] [CEO] F-16 IM.1 GO/NO-GO 최종 결정 — closed by `c0ae21b` (2026-05-21), confirmed 2026-05-28 standup
+- [x] [PO] F-11 응모 폼 구축 — closed by `fa7b355`+`d02f6f0` (2026-05-17), confirmed 2026-05-28 standup
+- [x] [PO] F-23 _actions.md 개별화 — 완료, confirmed 2026-05-28 standup
 - [x] [all-hands] 2026-05-10 23 actions bulk seed — 2026-05-15 weekly-allhands에서 F-1~F-23으로 개별 재등록 처리
 - [x] [strategy-manager·content-marketer·performance-marketer] F-1·F-2·F-3·F-4 4건 산출 — 2026-05-15 weekly EOD 즉시 액션, commit `9c72a7a`, closed 2026-05-16 ad-hoc all-hands
 

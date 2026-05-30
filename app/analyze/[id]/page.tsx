@@ -473,7 +473,7 @@ export default function AnalyzePage() {
   if (loading) {
     const stageMessages: Record<Stage, { title: string; sub: string }> = {
       fetch: { title: '기록을 불러오고 있어요', sub: '' },
-      analyze: { title: '인지 나침반을 정교하게 맞추고 있어요', sub: '보통 10~20초 정도 걸려요. 잠깐만 기다려주세요.' },
+      analyze: { title: '인지 패턴을 분석하고 있어요', sub: '보통 10~20초 정도 걸려요. 잠깐만 기다려주세요.' },
       question: { title: '맞춤 질문을 준비하고 있어요', sub: '분석 결과를 바탕으로 질문을 만들고 있어요.' },
       done: { title: '완료', sub: '' },
     };

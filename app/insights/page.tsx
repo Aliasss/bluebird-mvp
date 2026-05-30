@@ -296,9 +296,9 @@ export default function InsightsPage() {
         {/* 사고 지문 헤드라인 (v2) */}
         <div>
           <p className="text-[13px] font-extrabold tracking-tight text-primary">인사이트</p>
-          <h2 className="text-2xl font-bold tracking-tight text-text-primary">당신의 사고 지문</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-text-primary">반복되는 사고 패턴</h2>
           <p className="mt-1 text-sm text-text-secondary">
-            트리거 도메인과 왜곡 유형을 교차해 반복되는 패턴을 보여드려요.
+            어떤 상황에서 어떤 왜곡이 반복되는지 보여드려요.
           </p>
         </div>
 

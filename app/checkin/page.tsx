@@ -182,7 +182,7 @@ export default function CheckinPage() {
             <>
               <div>
                 <h1 className="text-2xl font-bold tracking-tight text-text-primary mb-1">
-                  오늘 나침반은 어디를 향하나요?
+                  오늘 하루, 어떤 마음으로 시작하나요?
                 </h1>
                 <p className="text-sm text-text-secondary">오늘 하루를 시작하는 마음 태도를 선택하세요.</p>
               </div>
@@ -241,7 +241,7 @@ export default function CheckinPage() {
             <>
               <div>
                 <h1 className="text-2xl font-bold tracking-tight text-text-primary mb-1">
-                  오늘 시스템 2를 켠 순간이 있었나요?
+                  오늘 한 번 더 차분히 생각한 순간이 있었나요?
                 </h1>
                 <p className="text-sm text-text-secondary">이성적으로 생각한 짧은 순간을 기록해보세요. 10초면 됩니다.</p>
               </div>

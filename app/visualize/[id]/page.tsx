@@ -231,7 +231,7 @@ export default function VisualizePage() {
     <main className="min-h-screen bg-background">
       <PageHeader title="시각화" onBack={() => router.push(`/analyze/${params.id}`)} />
       <Top
-        title="전망이론으로 본 지금"
+        title="같은 일인데 왜 더 아플까"
         sub="같은 사건도 '손실'로 볼 때 우리는 실제보다 훨씬 크게 아파요."
       />
       <div className="mx-auto w-full max-w-lg space-y-4 px-5 pb-16">

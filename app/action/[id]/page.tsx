@@ -324,7 +324,7 @@ export default function ActionPage() {
       <PageHeader title="행동 설계" onBack={() => router.push(`/visualize/${params.id}`)} />
       <Top
         title="작은 행동 하나로 확약해볼까요"
-        sub="분석한 생각을 측정 가능한 행동으로 바꾸면, 직접 행사한 자율성이 지수로 쌓여요."
+        sub="분석한 생각을 작은 행동으로 바꾸면, 그만큼 자율성 지수가 쌓여요."
       />
       <div className="mx-auto w-full max-w-lg space-y-4 px-5 pb-16">
 

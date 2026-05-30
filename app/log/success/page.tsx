@@ -165,7 +165,7 @@ export default function SuccessLogPage() {
           <>
             <Top
               title="어떻게 이성적으로 대처했나요?"
-              sub="시스템 2(이성)를 가동해 왜곡을 피한 방법을 적어주세요."
+              sub="이성적으로 판단해 왜곡을 피한 방법을 적어주세요."
             />
             <div className="flex-1 px-5 pb-44">
               <div className="mb-3 flex items-center gap-2">

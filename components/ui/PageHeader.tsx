@@ -1,6 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { ChevronLeft } from 'lucide-react';
+import Stepper from './Stepper';
 
 type Props = {
   title: string;
@@ -19,31 +21,26 @@ export default function PageHeader({ title, backHref, onBack, step, rightElement
     router.back();
   };
 
+  // v2: 텍스트 "뒤로" → chevron 아이콘, 흰 배경+보더 → 무테 bg-background,
+  //     진행 바 → 분절 Stepper. props 시그니처는 그대로 유지(호출부 무손상).
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white border-b border-background-tertiary px-4 sm:px-6 py-3 sm:py-4 flex items-center">
-        <button onClick={handleBack} className="text-primary font-semibold min-w-[44px]">
-          ← 뒤로
+      <header className="sticky top-0 z-40 flex items-center bg-background px-3 sm:px-4 py-3">
+        <button
+          onClick={handleBack}
+          aria-label="뒤로"
+          className="flex min-w-[44px] items-center text-text-primary active:opacity-60 transition-opacity"
+        >
+          <ChevronLeft size={26} strokeWidth={2} />
         </button>
         <div className="flex-1 text-center">
-          {step ? (
-            <p className="text-sm text-text-secondary">{step.current}/{step.total} 단계</p>
-          ) : (
-            <p className="text-sm font-semibold text-text-primary">{title}</p>
-          )}
+          {/* 단계 진행 화면은 중앙 타이틀 없이 Stepper로 진행 표시(v2).
+              그 외 화면은 중앙 타이틀 표시(하위 호환). */}
+          {!step && <p className="text-sm font-semibold text-text-primary">{title}</p>}
         </div>
-        <div className="min-w-[44px] flex justify-end">
-          {rightElement ?? null}
-        </div>
+        <div className="flex min-w-[44px] justify-end">{rightElement ?? null}</div>
       </header>
-      {step && (
-        <div className="bg-background-secondary h-1">
-          <div
-            className="bg-primary h-full transition-all duration-300"
-            style={{ width: `${(step.current / step.total) * 100}%` }}
-          />
-        </div>
-      )}
+      {step && <Stepper current={step.current} total={step.total} />}
     </>
   );
 }

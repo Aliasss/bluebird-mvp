@@ -15,6 +15,8 @@ const config: Config = {
           DEFAULT: '#1E40AF', // Electric Cobalt Blue
           dark: '#1E3A8A',
           light: '#3B82F6',
+          tint: '#1E40AF14', // 8% — 강조 배경 (v2: bg-primary-tint)
+          border: '#1E40AF33', // 20% — 강조 카드 테두리 (v2: border-primary-border)
         },
         // /our-philosophy 페이지의 의도된 액센트.
         // "시스템 2의 가치"를 설명하는 페이지에 그 이름의 색을 일관되게 적용.
@@ -39,6 +41,9 @@ const config: Config = {
           dark: '#B91C1C',
           light: '#F87171',
         },
+        // 전망이론 차트의 사용자 포인트/위험 데이터점 전용 (v2). 다른 용도 금지.
+        distortion: '#E11D48', // Rose
+
         background: {
           DEFAULT: '#F8FAFC',
           secondary: '#F1F5F9',
@@ -81,6 +86,12 @@ const config: Config = {
       boxShadow: {
         card: '0 2px 8px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.06)',
         elev2: '0 8px 24px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.06)',
+      },
+      // v2 반경 위계 — 기존 화면은 rounded-2xl(16)/rounded-xl(12) 유지,
+      // 신규 v2 부품·화면만 아래 토큰 사용 (카드 16→20, 버튼 12→14).
+      borderRadius: {
+        card: '1.25rem', // 20px — 카드/패널 (rounded-card)
+        ctrl: '0.875rem', // 14px — 버튼/입력 (rounded-ctrl)
       },
     },
   },

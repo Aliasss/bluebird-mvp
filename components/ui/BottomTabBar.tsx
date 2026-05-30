@@ -39,13 +39,13 @@ export default function BottomTabBar() {
         <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-3 items-center">
           <button
             onClick={() => { setFabOpen(false); router.push('/log/success'); }}
-            className="bg-success text-white text-sm font-semibold py-3 px-7 rounded-2xl shadow-xl whitespace-nowrap active:scale-95 transition-transform touch-manipulation"
+            className="bg-success text-white text-sm font-semibold py-3 px-7 rounded-2xl shadow-elev2 whitespace-nowrap active:scale-95 transition-transform touch-manipulation"
           >
             성공 순간 기록하기
           </button>
           <button
             onClick={() => { setFabOpen(false); router.push('/log'); }}
-            className="bg-primary text-white text-sm font-semibold py-3 px-7 rounded-2xl shadow-xl whitespace-nowrap active:scale-95 transition-transform touch-manipulation"
+            className="bg-primary text-white text-sm font-semibold py-3 px-7 rounded-2xl shadow-elev2 whitespace-nowrap active:scale-95 transition-transform touch-manipulation"
           >
             왜곡 기록하기
           </button>
@@ -61,7 +61,7 @@ export default function BottomTabBar() {
                 <div key="fab" className="flex-1 flex justify-center">
                   <button
                     onClick={() => setFabOpen(!fabOpen)}
-                    className={`w-14 h-14 -mt-6 rounded-full bg-primary text-white flex items-center justify-center shadow-lg active:scale-95 transition-all touch-manipulation ${fabOpen ? 'rotate-45' : ''}`}
+                    className={`w-14 h-14 -mt-6 rounded-full bg-primary text-white flex items-center justify-center shadow-elev2 active:scale-95 transition-all touch-manipulation ${fabOpen ? 'rotate-45' : ''}`}
                     aria-label="기록하기"
                   >
                     <Plus size={26} strokeWidth={2} />

@@ -1,7 +1,12 @@
 # Spec — v2 디자인 시스템 적용 · Phase 0 (토대)
 
-**문서 버전**: v1 (2026-05-30)
-**상태**: design (사용자 승인 — 롤아웃 전략·범위·FAB 결정 확정, spec 검토 대기)
+**문서 버전**: v1.1 (2026-05-30)
+**상태**: 구현 착수 (스크린샷 9장 반영, 사용자 "디벨롭 + push" 승인 — CPO·CSO·CTO 합동)
+
+> v1.1 갱신: 핸드오프에 `screenshots/01..09-*.png`(9화면 상단 캡처)이 추가되어 전부 검토함.
+> 프리미티브 명세와 일치 확인. 추가 관찰 — `09-me`에서 ListRow들은 **흰 카드 + 1px divider**로
+> 묶여 그룹을 이룬다. 이 카드 래핑·divider는 **화면 레벨 조합**(Phase 2)으로 처리하고,
+> ListRow 프리미티브 자체는 투명 배경 단일 행으로 유지한다(YAGNI — 별도 ListGroup 부품 미생성).
 **디자인 출처**: `docs/design/Project Bluebird Design System.zip` → `design_handoff_bluebird_v2/` (TDS 영향 v2, hifi 9화면)
 **상위 기준점**: [`colors_and_type.css`](../../design/design_handoff_bluebird_v2/colors_and_type.css)(토큰 SSOT)·[`README.md`](../../design/design_handoff_bluebird_v2/README.md)(화면·보이스 명세)
 

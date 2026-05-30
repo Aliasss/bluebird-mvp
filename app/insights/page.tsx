@@ -69,7 +69,7 @@ export default function InsightsPage() {
 
       const { since, prevSince, prevUntil } = getSinceDates(period);
 
-      // 현재 기간 분석 데이터
+      // 현재 기간 분석 데이터 (왜곡 빈도·강도 계산용 — 한 기록에서 왜곡 여러 개면 analysis 행도 여러 개)
       let analysisQuery = supabase
         .from('analysis')
         .select('distortion_type, intensity, created_at, logs!inner(user_id)')
@@ -79,7 +79,17 @@ export default function InsightsPage() {
       const { data: analysisRows } = await analysisQuery;
       const rows = (analysisRows ?? []) as Array<{ distortion_type: string; intensity: number; created_at: string }>;
 
-      setTotalAnalyses(rows.length);
+      // 2026-05-30 CTO 수정: "총 분석 횟수"는 분석을 돌린 횟수(= 기록 수)를 센다.
+      //   기존엔 analysis 행 수(rows.length)를 셌는데, 한 기록에서 왜곡이 2개 탐지되면 행이 2개라
+      //   /me "전체 로그"(logs 행 수)와 어긋났다(11 vs 12). logs 행 수로 통일해 두 페이지 숫자를 일치시킨다.
+      //   탐지된 왜곡 총 건수(rows.length)는 아래 "왜곡 유형 분포" 막대그래프 합계로 그대로 확인 가능.
+      let analysisCountQuery = supabase
+        .from('logs')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id);
+      if (since) analysisCountQuery = analysisCountQuery.gte('created_at', since);
+      const { count: analysisEventCount } = await analysisCountQuery;
+      setTotalAnalyses(analysisEventCount ?? 0);
 
       const freqMap: Record<string, number> = {};
       const intensityMap: Record<string, number[]> = {};

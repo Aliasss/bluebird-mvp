@@ -94,8 +94,8 @@ export default function RecoverPage() {
     <main className="min-h-screen bg-background flex items-center justify-center p-6">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-card p-8 space-y-6">
         <div className="text-center space-y-3">
-          <div className="w-14 h-14 bg-amber-100 rounded-full mx-auto flex items-center justify-center">
-            <Clock className="text-amber-600" size={26} strokeWidth={1.75} />
+          <div className="w-14 h-14 bg-warning/10 rounded-full mx-auto flex items-center justify-center">
+            <Clock className="text-warning" size={26} strokeWidth={1.75} />
           </div>
           <h1 className="text-xl font-bold text-text-primary tracking-tight">
             탈퇴 예약된 계정입니다
@@ -140,7 +140,7 @@ export default function RecoverPage() {
           <button
             onClick={handleDeleteNow}
             disabled={acting !== null}
-            className="w-full bg-white border border-rose-300 text-rose-700 font-medium py-3 px-6 rounded-2xl disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full bg-white border border-danger/30 text-danger font-medium py-3 px-6 rounded-2xl disabled:opacity-50 flex items-center justify-center gap-2"
           >
             <Trash2 size={14} strokeWidth={2} />
             {acting === 'delete' ? '삭제 중...' : '지금 즉시 영구 삭제'}

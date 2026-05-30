@@ -369,7 +369,7 @@ export default function ActionPage() {
           </div>
 
           {legacyAction && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 leading-relaxed">
+            <div className="bg-warning/10 border border-warning/30 rounded-xl p-3 text-xs text-warning-dark leading-relaxed">
               이전에 자유 형식으로 저장하신 계획이 있어요: <strong>{legacyAction}</strong>
               <br />
               아래 3칸으로 다시 정리해 저장하시면 결과 측정이 더 정확해져요.

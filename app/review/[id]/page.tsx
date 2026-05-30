@@ -44,26 +44,26 @@ export default async function ReviewPage({ params }: PageProps) {
   return (
     <main className="mx-auto max-w-2xl px-4 py-8 space-y-6">
       <header className="space-y-1">
-        <p className="text-xs text-gray-500">항로 재점검</p>
-        <h1 className="text-xl font-semibold text-gray-900">
+        <p className="text-xs text-text-tertiary">항로 재점검</p>
+        <h1 className="text-xl font-semibold text-text-primary">
           시간이 조금 지났네요. 이 문제를 지금 돌아보면 어떤가요?
         </h1>
       </header>
 
-      <section className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3">
-        <h2 className="text-sm font-semibold text-gray-800">그때 기록한 것</h2>
+      <section className="rounded-2xl border border-background-tertiary bg-white p-5 space-y-3">
+        <h2 className="text-sm font-semibold text-text-primary">그때 기록한 것</h2>
         <div className="space-y-1">
-          <p className="text-xs text-gray-500">트리거</p>
-          <p className="text-sm text-gray-900">{log.trigger}</p>
+          <p className="text-xs text-text-tertiary">트리거</p>
+          <p className="text-sm text-text-primary">{log.trigger}</p>
         </div>
         <div className="space-y-1">
-          <p className="text-xs text-gray-500">자동 사고</p>
-          <p className="text-sm text-gray-900 whitespace-pre-wrap">{log.thought}</p>
+          <p className="text-xs text-text-tertiary">자동 사고</p>
+          <p className="text-sm text-text-primary whitespace-pre-wrap">{log.thought}</p>
         </div>
         {intervention.final_action && (
           <div className="space-y-1">
-            <p className="text-xs text-gray-500">행동 계획</p>
-            <p className="text-sm text-gray-900">
+            <p className="text-xs text-text-tertiary">행동 계획</p>
+            <p className="text-sm text-text-primary">
               {formatActionPlanForDisplay(intervention.final_action)}
             </p>
           </div>
@@ -71,8 +71,8 @@ export default async function ReviewPage({ params }: PageProps) {
       </section>
 
       {questions.length > 0 && (
-        <section className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3">
-          <h2 className="text-sm font-semibold text-gray-800">내 답변</h2>
+        <section className="rounded-2xl border border-background-tertiary bg-white p-5 space-y-3">
+          <h2 className="text-sm font-semibold text-text-primary">내 답변</h2>
           <ul className="space-y-3">
             {questions.map((q, idx) => {
               const key = `q${idx + 1}`;
@@ -80,8 +80,8 @@ export default async function ReviewPage({ params }: PageProps) {
               if (!a) return null;
               return (
                 <li key={key} className="space-y-1">
-                  <p className="text-xs text-gray-500">{q}</p>
-                  <p className="text-sm text-gray-900 whitespace-pre-wrap">{a}</p>
+                  <p className="text-xs text-text-tertiary">{q}</p>
+                  <p className="text-sm text-text-primary whitespace-pre-wrap">{a}</p>
                 </li>
               );
             })}

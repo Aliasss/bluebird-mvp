@@ -53,8 +53,8 @@ export default function DeleteAccountPage() {
     return (
       <main className="min-h-screen bg-background flex items-center justify-center p-6">
         <div className="max-w-md w-full bg-white rounded-2xl shadow-card p-8 text-center space-y-4">
-          <div className="w-14 h-14 bg-rose-100 rounded-full mx-auto flex items-center justify-center">
-            <Trash2 className="text-rose-600" size={26} strokeWidth={1.75} />
+          <div className="w-14 h-14 bg-danger/10 rounded-full mx-auto flex items-center justify-center">
+            <Trash2 className="text-danger" size={26} strokeWidth={1.75} />
           </div>
           <h1 className="text-xl font-bold text-text-primary tracking-tight">
             {completed.scheduledAt ? '탈퇴 예약이 접수되었습니다' : '계정이 영구 삭제되었습니다'}
@@ -104,12 +104,12 @@ export default function DeleteAccountPage() {
 
       <div className="max-w-lg mx-auto px-4 py-6 pb-24 space-y-5">
         {/* 경고 */}
-        <div className="bg-rose-50 border border-rose-200 rounded-2xl p-5 space-y-2">
+        <div className="bg-danger/10 border border-danger/30 rounded-2xl p-5 space-y-2">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="text-rose-600 flex-shrink-0" size={18} strokeWidth={1.75} />
-            <h2 className="text-sm font-bold text-rose-900">탈퇴 전에 확인해주세요</h2>
+            <AlertTriangle className="text-danger flex-shrink-0" size={18} strokeWidth={1.75} />
+            <h2 className="text-sm font-bold text-danger">탈퇴 전에 확인해주세요</h2>
           </div>
-          <ul className="text-xs text-rose-800 leading-relaxed list-disc pl-5 space-y-1">
+          <ul className="text-xs text-danger leading-relaxed list-disc pl-5 space-y-1">
             <li>지금까지 기록한 자동 사고·재평가·인사이트가 모두 사라집니다.</li>
             <li>패턴 리포트와 누적된 본인의 사용설명서도 함께 삭제됩니다.</li>
             <li>같은 이메일로 재가입은 가능하지만, 이전 데이터는 복구되지 않습니다.</li>
@@ -161,20 +161,20 @@ export default function DeleteAccountPage() {
                 type="button"
                 onClick={() => setMode('immediate')}
                 className={`w-full text-left bg-white rounded-2xl p-5 border-2 transition-colors ${
-                  mode === 'immediate' ? 'border-rose-500' : 'border-background-tertiary'
+                  mode === 'immediate' ? 'border-danger' : 'border-background-tertiary'
                 }`}
               >
                 <div className="flex items-start gap-3">
                   <div
                     className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 flex items-center justify-center ${
-                      mode === 'immediate' ? 'border-rose-500' : 'border-background-tertiary'
+                      mode === 'immediate' ? 'border-danger' : 'border-background-tertiary'
                     }`}
                   >
-                    {mode === 'immediate' && <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />}
+                    {mode === 'immediate' && <div className="w-2.5 h-2.5 rounded-full bg-danger" />}
                   </div>
                   <div className="flex-1 space-y-1.5">
                     <div className="flex items-center gap-2">
-                      <Trash2 size={14} className="text-rose-600" />
+                      <Trash2 size={14} className="text-danger" />
                       <h3 className="text-sm font-bold text-text-primary tracking-tight">
                         지금 즉시 영구 삭제
                       </h3>
@@ -196,7 +196,7 @@ export default function DeleteAccountPage() {
               </button>
               <button
                 onClick={() => setStep(2)}
-                className="flex-1 py-3 text-sm font-semibold text-white bg-rose-600 rounded-2xl active:scale-95 transition-transform"
+                className="flex-1 py-3 text-sm font-semibold text-white bg-danger rounded-2xl active:scale-95 transition-transform"
               >
                 다음
               </button>
@@ -214,7 +214,7 @@ export default function DeleteAccountPage() {
                 {mode === 'immediate' ? (
                   <>
                     지금 이 순간{' '}
-                    <strong className="text-rose-600">모든 데이터가 영구 삭제</strong>됩니다.
+                    <strong className="text-danger">모든 데이터가 영구 삭제</strong>됩니다.
                     되돌릴 수 없습니다.
                   </>
                 ) : (
@@ -236,7 +236,7 @@ export default function DeleteAccountPage() {
                   value={confirmText}
                   onChange={(e) => setConfirmText(e.target.value)}
                   disabled={loading}
-                  className="w-full px-4 py-3 rounded-xl border border-background-tertiary bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-3 rounded-xl border border-background-tertiary bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-danger focus:border-transparent"
                   placeholder="탈퇴"
                   autoComplete="off"
                 />
@@ -264,7 +264,7 @@ export default function DeleteAccountPage() {
               <button
                 onClick={handleConfirm}
                 disabled={loading || confirmText !== '탈퇴'}
-                className="flex-1 py-3 text-sm font-semibold text-white bg-rose-600 rounded-2xl active:scale-95 transition-transform disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex-1 py-3 text-sm font-semibold text-white bg-danger rounded-2xl active:scale-95 transition-transform disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {loading
                   ? '처리 중...'

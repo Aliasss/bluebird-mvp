@@ -83,14 +83,14 @@ export default function DisclaimerPage() {
         </article>
 
         {/* 2. 위기 자원 */}
-        <article className="bg-rose-50 border border-rose-200 rounded-2xl p-6 space-y-4">
+        <article className="bg-danger/10 border border-danger/30 rounded-2xl p-6 space-y-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="text-rose-600 mt-0.5 flex-shrink-0" size={22} strokeWidth={1.75} />
+            <AlertTriangle className="text-danger mt-0.5 flex-shrink-0" size={22} strokeWidth={1.75} />
             <div className="space-y-1">
-              <h2 className="text-lg font-bold text-rose-900 tracking-tight">
+              <h2 className="text-lg font-bold text-danger tracking-tight">
                 위기 상황이라면 BlueBird를 잠시 닫고 전화해주세요
               </h2>
-              <p className="text-sm text-rose-700">
+              <p className="text-sm text-danger">
                 자살·자해 충동, 극심한 공황, 타인을 해치고 싶은 생각이 드신다면
               </p>
             </div>
@@ -103,7 +103,7 @@ export default function DisclaimerPage() {
               </div>
               <a
                 href="tel:1393"
-                className="inline-flex items-center gap-1.5 bg-rose-600 text-white text-sm font-semibold px-4 py-2 rounded-xl"
+                className="inline-flex items-center gap-1.5 bg-danger text-white text-sm font-semibold px-4 py-2 rounded-xl"
               >
                 <Phone size={14} strokeWidth={2.25} />
                 1393
@@ -116,7 +116,7 @@ export default function DisclaimerPage() {
               </div>
               <a
                 href="tel:1577-0199"
-                className="inline-flex items-center gap-1.5 bg-rose-600 text-white text-sm font-semibold px-4 py-2 rounded-xl"
+                className="inline-flex items-center gap-1.5 bg-danger text-white text-sm font-semibold px-4 py-2 rounded-xl"
               >
                 <Phone size={14} strokeWidth={2.25} />
                 1577-0199
@@ -125,7 +125,7 @@ export default function DisclaimerPage() {
           </ul>
           <Link
             href="/safety/resources"
-            className="inline-block text-xs text-rose-700 underline font-medium"
+            className="inline-block text-xs text-danger underline font-medium"
           >
             전체 정신건강 자원 보기 →
           </Link>

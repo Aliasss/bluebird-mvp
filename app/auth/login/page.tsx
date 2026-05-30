@@ -82,9 +82,9 @@ function LoginPageContent() {
 
         {/* 탈퇴 처리 안내 */}
         {deletedFlag === 'expired' && (
-          <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 space-y-1.5">
-            <p className="text-sm font-semibold text-rose-900">계정이 영구 삭제되었습니다</p>
-            <p className="text-xs text-rose-800 leading-relaxed">
+          <div className="bg-danger/10 border border-danger/30 rounded-xl p-4 space-y-1.5">
+            <p className="text-sm font-semibold text-danger">계정이 영구 삭제되었습니다</p>
+            <p className="text-xs text-danger leading-relaxed">
               30일 유예 기간이 경과하여 모든 데이터가 삭제되었습니다. 다시 시작하시려면 회원가입을
               해주세요.
             </p>

@@ -154,7 +154,7 @@ export default function PrivacyPage() {
                   <p className="text-xs text-text-tertiary">
                     위탁 항목: 자동 사고 기록 텍스트의 인지 왜곡 분석
                   </p>
-                  <p className="text-xs text-rose-700">
+                  <p className="text-xs text-danger">
                     ⚠️ 사용자가 입력한 사건·생각·감정 텍스트는 분석을 위해 Google Gemini API로
                     전송됩니다. Google은 API 데이터를 기본적으로 모델 학습에 사용하지 않으나, 민감
                     정보(타인 신원, 의료 정보, 금융 정보 등)는 입력하지 않으시길 권합니다.

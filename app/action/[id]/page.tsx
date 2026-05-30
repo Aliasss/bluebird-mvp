@@ -5,6 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import type { DistortionAnalysis, Log } from '@/types';
 import PageHeader from '@/components/ui/PageHeader';
+import Top from '@/components/ui/Top';
+import Badge from '@/components/ui/Badge';
 import SkeletonCard from '@/components/ui/SkeletonCard';
 import InfoTooltip from '@/components/ui/InfoTooltip';
 import { AUTONOMY_SCORE_TOOLTIP } from '@/lib/copy/autonomy';
@@ -319,41 +321,46 @@ export default function ActionPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <PageHeader title="행동 설계" />
-      <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
-        <div className="bg-white rounded-2xl p-5 shadow-card">
-          <h1 className="text-xl md:text-2xl font-bold text-text-primary mb-2">행동 확약</h1>
-          <p className="text-sm text-text-secondary">
-            분석 결과를 행동으로 전환하면 자율성 지수가 올라갑니다.
-          </p>
+      <PageHeader title="행동 설계" onBack={() => router.push(`/visualize/${params.id}`)} />
+      <Top
+        title="작은 행동 하나로 확약해볼까요"
+        sub="분석한 생각을 측정 가능한 행동으로 바꾸면, 직접 행사한 자율성이 지수로 쌓여요."
+      />
+      <div className="mx-auto w-full max-w-lg space-y-4 px-5 pb-16">
+
+        <div className="rounded-card border border-background-tertiary bg-white p-[18px]">
+          <div className="mb-2.5 flex flex-wrap gap-2">
+            <Badge tone="neutral">트리거</Badge>
+            {state.distortions.length > 0 && (
+              <Badge tone="primary">
+                평균 강도{' '}
+                {(
+                  (state.distortions.reduce((sum, item) => sum + item.intensity, 0) /
+                    state.distortions.length) *
+                  100
+                ).toFixed(0)}
+                %
+              </Badge>
+            )}
+          </div>
+          <p className="text-[15px] font-medium leading-relaxed text-text-primary">{state.log?.trigger}</p>
         </div>
 
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm space-y-3">
-          <h2 className="text-base md:text-lg font-bold text-text-primary">현재 상황 요약</h2>
-          <p className="text-xs md:text-sm text-text-secondary">트리거: {state.log?.trigger}</p>
-          {state.distortions.length > 0 && (
-            <p className="text-xs md:text-sm text-text-secondary">
-              왜곡 평균 강도:{' '}
-              {(
-                (state.distortions.reduce((sum, item) => sum + item.intensity, 0) /
-                  state.distortions.length) *
-                100
-              ).toFixed(0)}
-              %
-            </p>
-          )}
+        <div>
+          <h2 className="pb-2 text-[19px] font-bold tracking-tight text-text-primary">Tiny Habit 제안</h2>
+          <div className="rounded-card bg-primary-tint p-[18px]">
+            <ul className="space-y-2 text-sm leading-relaxed text-text-primary">
+              {suggestions.map((item, index) => (
+                <li key={index} className="flex gap-2">
+                  <span className="font-bold text-primary">·</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm space-y-4">
-          <h2 className="text-base md:text-lg font-bold text-text-primary">Tiny Habit 제안</h2>
-          <ul className="space-y-2 text-xs md:text-sm text-text-secondary">
-            {suggestions.map((item, index) => (
-              <li key={index}>- {item}</li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm space-y-4">
+        <div className="rounded-card border border-background-tertiary bg-white p-5 space-y-4">
           <div>
             <h2 className="text-base md:text-lg font-bold text-text-primary">내 행동 계획</h2>
             <p className="text-xs text-text-tertiary mt-1">
@@ -525,7 +532,7 @@ export default function ActionPage() {
           )}
         </div>
 
-        <div className="bg-white rounded-2xl p-5 shadow-card">
+        <div className="rounded-card border border-background-tertiary bg-white p-5">
           <h2 className="text-base md:text-lg font-bold text-text-primary mb-3">
             <InfoTooltip text={AUTONOMY_SCORE_TOOLTIP}>자율성 지수</InfoTooltip>
           </h2>
@@ -557,7 +564,7 @@ export default function ActionPage() {
       {/* 완료 모달 */}
       {showCompletionModal && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 px-4 pb-6 sm:pb-0">
-          <div className="w-full max-w-sm bg-white rounded-3xl p-6 space-y-5 shadow-2xl">
+          <div className="w-full max-w-sm bg-white rounded-3xl p-6 space-y-5 shadow-elev2">
             <div className="text-center space-y-1">
               <h3 className="text-base font-bold text-text-primary tracking-tight">행동을 완료했어요</h3>
             </div>

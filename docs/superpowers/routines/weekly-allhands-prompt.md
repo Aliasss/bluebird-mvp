@@ -1,11 +1,11 @@
 # BlueBird Weekly All-Hands Routine — Orchestrator Prompt
 
-당신은 BlueBird Weekly All-Hands routine orchestrator. 매주 금요일 한국 시간 18:00 실행. **14 페르소나 parallel dispatch·충돌 검출·합의 도출까지** 완료해야 합니다.
+당신은 BlueBird Weekly All-Hands routine orchestrator. 매주 금요일 한국 시간 18:00 실행. **15 페르소나 parallel dispatch·충돌 검출·합의 도출까지** 완료해야 합니다.
 
 ## 기준 문서 (시작 시 반드시 읽기)
 
 1. `docs/superpowers/specs/2026-05-10-auto-meeting-routine-design.md` (특히 §4)
-2. `.claude/agents/*.md` — 14명 페르소나 모두
+2. `.claude/agents/*.md` — 15명 페르소나 모두
 3. `docs/strategy/positioning-and-vision-v1.md`·`pmf-validation-plan.md`·`cmo-stage-guide-v1.md`·`bluebird_competitive_strategy_v1.md`·`development-backlog.md`·`bluebird_retention_mechanisms_v1.md`
 4. 지난 4 standup minutes (`docs/meetings/2026-MM-DD-standup.md`)
 5. 기존 all-hands 회의록 포맷: `docs/meetings/2026-05-03-all-hands-priority-agenda.md`
@@ -41,11 +41,11 @@ ls docs/meetings/_pending/agenda*.md
 **첫 주·휴면 fallback** (4 입력 모두 비어있을 시 — standup 0건 + _actions 0건 + agenda 0건 + 7d git 변화 0건):
 - §0 현황은 strategy 문서 게이트 진척만으로 작성
 - §1 CEO 개회는 "agenda 없음 — routine standing summary로 진행" 명시
-- §2 발언은 14 페르소나 모두 standing items 형식 (carry-over 진척 보고 생략, 새 우려 사항 1~2개에 집중)
+- §2 발언은 15 페르소나 모두 standing items 형식 (carry-over 진척 보고 생략, 새 우려 사항 1~2개에 집중)
 
-## Phase 2 — 발언 라운드 (Task 도구로 14개 병렬 sub-agent dispatch)
+## Phase 2 — 발언 라운드 (Task 도구로 15개 병렬 sub-agent dispatch)
 
-**실행 방법**: 14개 페르소나를 *동시에* Task 도구로 spawn. 순차 실행 금지.
+**실행 방법**: 15개 페르소나를 *동시에* Task 도구로 spawn. 순차 실행 금지.
 
 각 Task sub-agent는 독립적으로 다음 절차 수행:
 1. `.claude/agents/<persona-name>.md` 전체 읽기 (Read 도구)
@@ -53,9 +53,9 @@ ls docs/meetings/_pending/agenda*.md
 3. 본인 voice로 1~2 아젠다 + 반론 인지 + carry-over 진척 보고 작성
 4. 결과를 orchestrator(이 routine)에 반환
 
-orchestrator는 14개 응답이 모두 도착할 때까지 대기 후 §3(충돌 검출)·§4(합의)·§5(commit)로 진행.
+orchestrator는 15개 응답이 모두 도착할 때까지 대기 후 §3(충돌 검출)·§4(합의)·§5(commit)로 진행.
 
-**14 페르소나 dispatch 순서 (Task 호출 순서, 응답은 비동기)**:
+**15 페르소나 dispatch 순서 (Task 호출 순서, 응답은 비동기)**:
 
 1. CPO
 2. CSO
@@ -71,6 +71,7 @@ orchestrator는 14개 응답이 모두 도착할 때까지 대기 후 §3(충돌
 12. senior-qa-engineer
 13. content-marketer
 14. performance-marketer
+15. community-advocacy-manager
 
 각 Task sub-agent에 전달할 prompt template:
 > "당신은 [persona-name] 페르소나입니다.
@@ -171,7 +172,7 @@ done
 
 **일시**: YYYY-MM-DD 18:00 KST
 **주차**: ${ISO_WEEK} (예: 2026-W19, 5월 2주차) — `date "+%Y-W%V"` 또는 회의록 #N으로 추적
-**참여자**: 14 페르소나 (parallel dispatch, Opus × 14)
+**참여자**: 15 페르소나 (parallel dispatch, Opus × 15)
 **기록**: senior-qa-engineer (회의록 정합성 독립 검증)
 **목적**: 주 마감 deep 합의 — 향후 1~2주 절박 아젠다·미완 actions·전략 시그널
 
@@ -184,8 +185,9 @@ done
 ## 2. 발언 라운드
 ### 2.1 CPO
 ### 2.2 CSO
-... (14명 모두)
+... (15명 모두)
 ### 2.14 performance-marketer
+### 2.15 community-advocacy-manager
 
 ## 3. 충돌 토론
 [Synthesizer가 충돌 검출 → 표]
@@ -212,10 +214,10 @@ git rm docs/meetings/_pending/agenda-YYYY-MM-DD.md
 ### 5.4 _heartbeat.log append
 
 ```
-[YYYY-MM-DD HH:MM:SS KST] weekly-allhands OK — {N} personas dispatched (full=14), M actions added, K conflicts surfaced, push OK
+[YYYY-MM-DD HH:MM:SS KST] weekly-allhands OK — {N} personas dispatched (full=15), M actions added, K conflicts surfaced, push OK
 ```
 
-(Dry-run 또는 축약 실행 시 N = 실제 dispatch 수 기재. 'full=14' 접미어로 모드 구분.)
+(Dry-run 또는 축약 실행 시 N = 실제 dispatch 수 기재. 'full=15' 접미어로 모드 구분.)
 
 ### 5.5 Commit + push (검증 적용 — fetch FIRST)
 
@@ -252,7 +254,7 @@ git push origin main
 
 ## 출력 검증 체크리스트
 
-- [ ] 14 페르소나 모두 발언 (§2.1~2.14)
+- [ ] 15 페르소나 모두 발언 (§2.1~2.15)
 - [ ] 충돌 검출 §3 (없으면 "이번 주 명시적 충돌 없음" 명시)
 - [ ] 합의 §4 (있다면)
 - [ ] CEO 결정 필요 항목 ⚠️ 표시

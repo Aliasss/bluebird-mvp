@@ -1,8 +1,8 @@
-# CMO Stage 가이드 (v1)
+# CMO Stage 가이드 (v1.1)
 
-**문서 버전**: v1 (2026-05-10)
-**대상 독자**: Claude Code, 파운더, CMO·content-marketer·performance-marketer 페르소나
-**목적**: CMO 조직(CMO + content-marketer + performance-marketer)의 *단계별 허용·비허용 작업 범위*를 명문화. CPO 명시적 비목표("외부 마케팅 — G3 통과 후")를 운영 차원에서 침범하지 않도록 한다.
+**문서 버전**: v1.1 (2026-05-30) — community-advocacy-manager 신설 반영 (v1: 2026-05-10)
+**대상 독자**: Claude Code, 파운더, CMO·content-marketer·performance-marketer·community-advocacy-manager 페르소나
+**목적**: CMO 조직(CMO + content-marketer + performance-marketer + community-advocacy-manager)의 *단계별 허용·비허용 작업 범위*를 명문화. CPO 명시적 비목표("외부 마케팅 — G3 통과 후")를 운영 차원에서 침범하지 않도록 한다.
 
 **상위 기준점**: [`positioning-and-vision-v1.md`](./positioning-and-vision-v1.md)·[`bluebird_competitive_strategy_v1.md`](./bluebird_competitive_strategy_v1.md)·[`pmf-validation-plan.md`](./pmf-validation-plan.md). 본 문서는 그 *외부 표현·획득 채널 차원의 운영 가이드*.
 
@@ -38,6 +38,8 @@
 | SMTP deliverability 가드 | performance-marketer | 30명 invite 분산(stagger) — 도메인 미취득 상태에서 유효 |
 | 콘텐츠 자산 *작성* | content-marketer | 블로그·SNS·랜딩 카피 stockpile (발행 X) |
 | 브랜드 voice 가드 | content-marketer + CMO | 분석가 톤 어휘 사전·회피 어휘 사전 |
+| IM.1 30명 1:1 advocate 관계 형성 | community-advocacy-manager | advocate 관계 맵·동의 기반 case-study stockpile (발행 X) |
+| advocate cohort 분리 설계 | community-advocacy-manager + data-analyst | 자발 언급 ≥30% 게이트는 baseline cohort에서만 측정 (오염 방지) |
 
 ### 비허용 (Stage 0 위반 시 즉시 ⚠️)
 
@@ -47,6 +49,7 @@
 - 인플루언서 협업
 - 결제 캠페인·할인 코드
 - "스트레스 관리"·"위로"·"치유" 어휘 (영구 가드 — 본질 위협 #1·#3)
+- **사용자 발화 *요청*** ("추천/공유/리뷰 남겨주세요" 류 — community-advocacy-manager 영구 가드, 자발 언급 게이트 오염 방지. "발견 후 재배포 합의"만 허용)
 
 ### Stage 0 → Stage 1 이행 트리거
 
@@ -68,6 +71,7 @@
 | 콘텐츠 launch | content-marketer | 블로그·SNS organic 발행 — risk-manager 사전 검토 |
 | SEO 키워드 매핑·메타데이터 | content-marketer | 분석가 어휘 internal-link 강화 |
 | 랜딩 v1 | content-marketer + product-designer | 외부 vs 내부 카피 영역 분리 |
+| advocate-led 소규모 쓰레드·채널 prototype | community-advocacy-manager | 3~5명 advocate 자기 톤 발화 (비공개)·발화 큐레이션 SOP |
 
 ### 비허용 (Stage 1 위반 시 즉시 ⚠️)
 
@@ -97,6 +101,7 @@
 | 결제 캠페인 | performance-marketer + CMO | 가격 가설(월 1.9~3.9만원) 정합 |
 | 본격 SEO·콘텐츠 캠페인 | content-marketer | 분석가 톤 일관성·"스트레스 관리" 입구화 X |
 | 인플루언서 협업 | performance-marketer + content-marketer | 분석가형 인플루언서(데이터 분석가·BA·연구자)·직무 narrowing X |
+| 커뮤니티 공간 launch·운영 | community-advocacy-manager | Discord·Slack·전용 플랫폼(risk-manager 합의)·advocate→moderator 전환·분석가 톤 가드 |
 
 ### 영구 가드 (모든 Stage 공통)
 
@@ -152,6 +157,8 @@
 | 외부 채널·랜딩·블로그·SNS·광고 | **CMO 조직 책임** | — |
 | 콘텐츠·SEO·브랜드 voice | **content-marketer** | — |
 | 채널 운영·CAC/LTV·attribution·IM 모집 | **performance-marketer** | data-analyst (통계 분석) |
+| advocate 관계·발화 발굴·커뮤니티 운영 | **community-advocacy-manager** | content-marketer (콘텐츠 hand-off) |
+| advocate cohort 분리·자발 언급 게이트 오염 방지 | **community-advocacy-manager** (식별·로깅) | strategy-manager (코딩)·data-analyst (cohort 측정) |
 | 측정 인프라·실험 통계 | 채널 분석 의뢰 | **data-analyst** (분석 책임) |
 | 자발 언급 코딩·정성 해석 | 어휘 오염 방지 | **strategy-manager** |
 

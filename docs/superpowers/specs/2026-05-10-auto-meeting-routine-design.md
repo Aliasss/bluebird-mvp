@@ -1,8 +1,9 @@
 # 자동 미팅 Routine 설계 (v1)
 
 **문서 버전**: v1 (2026-05-10)
-**대상 독자**: Claude Code, 파운더, 14 페르소나
-**목적**: 14명 페르소나 조직이 *사용자 명령 없이* 매일·매주 자동으로 모여 시스템·MVP 건강도를 점검하고 회의록·action을 archive하는 routine 시스템 설계 명세.
+**대상 독자**: Claude Code, 파운더, 15 페르소나
+**목적**: 15명 페르소나 조직이 *사용자 명령 없이* 매일·매주 자동으로 모여 시스템·MVP 건강도를 점검하고 회의록·action을 archive하는 routine 시스템 설계 명세.
+**갱신**: 2026-05-30 — community-advocacy-manager 신설로 14 → 15 페르소나 반영.
 
 **상위 기준점**: [`positioning-and-vision-v1.md`](../../strategy/positioning-and-vision-v1.md)·[`pmf-validation-plan.md`](../../strategy/pmf-validation-plan.md)·[`cmo-stage-guide-v1.md`](../../strategy/cmo-stage-guide-v1.md). 본 문서는 그 *운영 cadence·자동화 인프라*.
 
@@ -12,7 +13,7 @@
 
 ### 왜 필요한가
 
-- 14 페르소나는 사용자가 명시 호출해야만 작동 → *지속 시그널*이 발생하지 않음
+- 15 페르소나는 사용자가 명시 호출해야만 작동 → *지속 시그널*이 발생하지 않음
 - PMF 게이트(60일·90일·G3)는 daily/weekly 점검이 필요하나 사용자가 매일 모든 영역을 surface 요청하기 어려움
 - 본질 위협 신호(#1·#3·#5·#6) 누적 트렌드는 시계열 비교가 필요 — 일회성 대화로는 감지 어려움
 
@@ -46,7 +47,7 @@
                          │                          │                       │
                          ▼                          ▼                       ▼
                   Orchestrator 모드           Parallel Dispatch          간단 점검
-                  (Opus 1세션 채널링)          (14 페르소나 Opus 병렬)    (Sonnet 1세션)
+                  (Opus 1세션 채널링)          (15 페르소나 Opus 병렬)    (Sonnet 1세션)
                          │                          │                       │
                          ▼                          ▼                       ▼
                   YYYY-MM-DD-standup.md      YYYY-MM-DD-weekly-          _retrospect/
@@ -101,6 +102,7 @@ bluebird-daily-standup: 0 9 * * 1-4  (KST)
 | `app/(public)/`·`app/our-philosophy/`·`app/manual/`·랜딩 카피 | content-marketer · product-designer · strategy-manager |
 | `app/api/notifications/event/`·`lib/analytics/` | data-analyst · product-owner |
 | 가격·결제 관련 (`app/beta-incentive/`, README) | cmo · performance-marketer · cso |
+| IM 모집·advocate·커뮤니티·`docs/community/` | community-advocacy-manager · cmo · strategy-manager |
 | `migrations/` (Supabase) | senior-fullstack-engineer · senior-qa-engineer · risk-manager |
 | `docs/strategy/` 변경 | strategy-manager + 변경 영역 임원 |
 | `_pending/agenda.md` 명시 호명 | 호명된 페르소나 |
@@ -164,7 +166,7 @@ bluebird-weekly-allhands: 0 18 * * 5  (KST)
 ### 4.2 모델·dispatch 모드
 
 - Orchestrator: **Opus**
-- 14 페르소나 **parallel dispatch** (각 페르소나 frontmatter `model: opus` × 14)
+- 15 페르소나 **parallel dispatch** (각 페르소나 frontmatter `model: opus` × 15)
 - 토큰 소비의 ~80% 차지 — 본 시스템의 주된 비용 항목
 
 ### 4.3 Phase 1 — 주간 input 흡수
@@ -186,7 +188,7 @@ bluebird-weekly-allhands: 0 18 * * 5  (KST)
 # BlueBird 주간 All-Hands — YYYY-MM-DD
 
 **일시**: YYYY-MM-DD 18:00 KST
-**참여자**: CEO + 14명
+**참여자**: CEO + 15명
 **주재**: CEO (자동 routine, 사용자 부재 시 명목적)
 **기록**: senior-qa-engineer (회의록 정합성 독립 검증)
 **목적**: 주 마감 deep 합의 — 향후 1~2주 절박 아젠다·미완 actions·전략 시그널
@@ -212,6 +214,7 @@ bluebird-weekly-allhands: 0 18 * * 5  (KST)
 ### 2.12 senior-qa-engineer
 ### 2.13 content-marketer
 ### 2.14 performance-marketer
+### 2.15 community-advocacy-manager
 
 ## 3. 충돌 토론
 [Synthesizer가 충돌 지점 검출 → 트레이드오프 표 제시]
@@ -427,7 +430,7 @@ git rm 처리한 agenda 파일 (자동 비움 — 사용자 액션 불필요)
 | 항목 | 빈도 | 모델 | 토큰 추정 |
 |---|---|---|---|
 | Daily standup | 4회/주 | Opus | ~400~500k |
-| Weekly all-hands | 1회/주 | Opus × 14 | ~2.1M |
+| Weekly all-hands | 1회/주 | Opus × 15 | ~2.25M |
 | Saturday retrospect | 1회/주 | Sonnet | ~30k |
 | **합계** | — | — | **~2.5~2.6M / 주** |
 
@@ -452,3 +455,4 @@ git rm 처리한 agenda 파일 (자동 비움 — 사용자 액션 불필요)
 |---|---|---|
 | v1 | 2026-05-10 | 초안 — 14 페르소나 자동 미팅 routine 3개(daily standup·weekly all-hands·saturday retrospect) 설계, 파일 레이아웃, auto-push 검증, 비용 가드 |
 | v1.1 | 2026-05-10 | §6.3 `_pending/agenda.md` 사용법 명시 (파일명·마감·형식·처리 흐름·FAQ). 미래 일자 예약(`agenda-YYYY-MM-DD.md`) 지원 추가. README.md 사용자 가이드 분리. |
+| v1.2 | 2026-05-30 | community-advocacy-manager 신설 — 14 → 15 페르소나. dispatch 순서·§2.15 로스터·§3.4 변화 영역 매핑(IM 모집·advocate·커뮤니티)·비용 추정(×15) 갱신. weekly-allhands-prompt 재등록 필요. |

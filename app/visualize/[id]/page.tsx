@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase/client';
 import { calculateProspectValue, generateProspectTheoryCurve } from '@/lib/utils';
 import { DistortionTypeKorean, type DistortionAnalysis, type FrameType, type Log } from '@/types';
 import PageHeader from '@/components/ui/PageHeader';
+import Top from '@/components/ui/Top';
 import SkeletonCard from '@/components/ui/SkeletonCard';
 
 type PageState = {
@@ -228,42 +229,45 @@ export default function VisualizePage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <PageHeader title="시각화" />
-      <div className="max-w-5xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
-          <div className="flex items-baseline gap-2 mb-2 flex-wrap">
-            <h1 className="text-xl md:text-2xl font-bold text-text-primary">전망이론 시각화</h1>
-            <Link
-              href="/manual#dyn-02"
-              className="text-xs text-primary hover:underline"
-            >
-              전망이론이 뭐예요? →
-            </Link>
-          </div>
-          <p className="text-sm text-text-secondary">
-            동일한 사건도 왜곡 강도에 따라 손실 체감이 과장될 수 있습니다.
-          </p>
-          <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-background-secondary text-xs md:text-sm">
-            <span className="text-text-secondary">현재 프레임:</span>
-            <span className="font-semibold text-text-primary">
-              {state.frameType === 'loss'
-                ? '손실 프레임'
-                : state.frameType === 'gain'
-                  ? '이득 프레임'
-                  : '혼합 프레임'}
-            </span>
-          </div>
+      <PageHeader title="시각화" onBack={() => router.push(`/analyze/${params.id}`)} />
+      <Top
+        title="전망이론으로 본 지금"
+        sub="같은 사건도 '손실'로 볼 때 우리는 실제보다 훨씬 크게 아파요."
+      />
+      <div className="mx-auto w-full max-w-lg space-y-4 px-5 pb-16">
+        <div className="inline-flex items-center gap-2 rounded-full bg-background-secondary px-3 py-1 text-xs">
+          <span className="text-text-secondary">현재 프레임</span>
+          <span className="font-semibold text-text-primary">
+            {state.frameType === 'loss'
+              ? '손실 프레임'
+              : state.frameType === 'gain'
+                ? '이득 프레임'
+                : '혼합 프레임'}
+          </span>
         </div>
 
-        <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm">
+        <div className="rounded-card border border-background-tertiary bg-white p-3 sm:p-4">
           <ProspectValueChart
             curveData={chartMeta.curveData}
             userPoint={chartMeta.userPoint}
           />
+          <div className="mt-2 flex justify-center gap-5 text-xs text-text-secondary">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-[3px] w-3.5 rounded bg-primary" />가치 함수
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-distortion" />당신의 현재 위치
+            </span>
+          </div>
+          <div className="mt-2 text-center">
+            <Link href="/manual#dyn-02" className="text-xs text-primary hover:underline">
+              전망이론이 뭐예요? →
+            </Link>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm space-y-3">
+          <div className="rounded-card border border-background-tertiary bg-white p-5 space-y-3">
             <h2 className="text-base md:text-lg font-bold text-text-primary">해석 가이드</h2>
             <p className="text-sm text-text-secondary">
               빨간 점은 현재 답변 기준 주관적 평가 지점입니다. 0에 가까울수록 균형적 판단이며,
@@ -276,7 +280,7 @@ export default function VisualizePage() {
             </ul>
           </div>
 
-          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm space-y-3">
+          <div className="rounded-card border border-background-tertiary bg-white p-5 space-y-3">
             <h2 className="text-base md:text-lg font-bold text-text-primary">탐지된 왜곡 요약</h2>
             {state.distortions.length === 0 ? (
               <p className="text-xs md:text-sm text-text-secondary">명확한 왜곡이 탐지되지 않았습니다.</p>
@@ -300,7 +304,7 @@ export default function VisualizePage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm space-y-3">
+        <div className="rounded-card border border-background-tertiary bg-white p-5 space-y-3">
           <h2 className="text-base md:text-lg font-bold text-text-primary">Bluebird 이론 지표</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs md:text-sm">
             <div className="border border-background-tertiary rounded-xl p-3">
@@ -332,7 +336,7 @@ export default function VisualizePage() {
           )}
         </div>
 
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary shadow-none sm:shadow-sm space-y-3">
+        <div className="rounded-card border border-background-tertiary bg-white p-5 space-y-3">
           <h2 className="text-base md:text-lg font-bold text-text-primary">내가 입력한 답변</h2>
           {state.questions.length === 3 ? (
             <ol className="space-y-3">
@@ -352,23 +356,23 @@ export default function VisualizePage() {
           )}
         </div>
 
-        <div className="flex flex-col gap-3 w-full max-w-sm mx-auto">
+        <div className="flex w-full flex-col gap-3 pt-2">
           <button
             onClick={() => router.push(`/action/${params.id}`)}
-            className="w-full bg-success text-white font-semibold min-h-[44px] py-3 px-6 rounded-2xl text-sm"
+            className="w-full rounded-2xl bg-primary px-6 py-[17px] text-base font-semibold text-white transition-transform hover:bg-primary-dark active:scale-95 touch-manipulation"
           >
-            다음: 행동 설계
+            행동 하나로 확약하기
           </button>
           <div className="flex gap-3">
             <button
               onClick={() => router.push(`/analyze/${params.id}`)}
-              className="flex-1 bg-white border border-background-tertiary text-text-secondary font-medium min-h-[44px] py-3 px-4 rounded-2xl text-sm"
+              className="flex-1 rounded-2xl border border-background-tertiary py-3 px-4 text-sm font-medium text-text-secondary"
             >
               분석으로 돌아가기
             </button>
             <button
               onClick={() => router.push('/dashboard')}
-              className="flex-1 bg-white border border-background-tertiary text-text-secondary font-medium min-h-[44px] py-3 px-4 rounded-2xl text-sm"
+              className="flex-1 rounded-2xl border border-background-tertiary py-3 px-4 text-sm font-medium text-text-secondary"
             >
               대시보드
             </button>

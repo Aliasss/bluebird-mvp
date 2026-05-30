@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase/client';
 import { formatDate } from '@/lib/utils';
 import { formatActionPlanForDisplay } from '@/lib/intervention/action-plan';
 import BottomTabBar from '@/components/ui/BottomTabBar';
+import { groupActionsByPlannedAt } from '@/lib/journal/action-timeline';
 import type { Log, TriggerCategory } from '@/types';
 import { TriggerCategoryKorean } from '@/types';
 import {
@@ -25,6 +26,7 @@ type RecentActionItem = {
   is_completed: boolean;
   autonomy_score: number | null;
   created_at: string;
+  planned_at: string | null;
   logs?: {
     trigger?: string;
     log_type?: string | null;
@@ -66,7 +68,7 @@ export default function JournalPage() {
           .limit(50),
         supabase
           .from('intervention')
-          .select('id, log_id, final_action, is_completed, autonomy_score, created_at, logs!inner(trigger, user_id, log_type, trigger_category)')
+          .select('id, log_id, final_action, is_completed, autonomy_score, created_at, planned_at, logs!inner(trigger, user_id, log_type, trigger_category)')
           .eq('logs.user_id', user.id)
           .order('created_at', { ascending: false })
           .limit(50),
@@ -278,36 +280,46 @@ export default function JournalPage() {
                 </p>
               </div>
             ) : (
-              <div className="space-y-3">
-                {(showAllActions ? visibleActions : visibleActions.slice(0, 3)).map((item) => (
-                  <div
-                    key={item.id}
-                    onClick={() => router.push(`/action/${item.log_id}`)}
-                    className="bg-white border border-background-tertiary/80 rounded-xl p-4 shadow-sm hover:border-primary hover:shadow-md transition-all cursor-pointer"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <p className="text-sm font-medium text-text-primary line-clamp-1">
-                          {item.logs?.trigger || '행동 계획'}
-                        </p>
-                        {item.logs?.trigger_category && (
-                          <span className="text-[10px] text-text-tertiary bg-background-secondary px-1.5 py-0.5 rounded flex-shrink-0">
-                            {TriggerCategoryKorean[item.logs.trigger_category]}
-                          </span>
-                        )}
-                      </div>
-                      <span className={`text-xs font-semibold flex-shrink-0 ${item.is_completed ? 'text-success' : 'text-warning'}`}>
-                        {item.is_completed ? '완료' : '진행 중'}
-                      </span>
-                    </div>
-                    <p className="text-sm text-text-secondary line-clamp-2">
-                      {formatActionPlanForDisplay(item.final_action) || '행동 계획이 아직 작성되지 않았습니다.'}
-                    </p>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-xs text-text-secondary">{formatDate(item.created_at)}</span>
-                      <span className="text-xs text-primary">
-                        {item.autonomy_score ? `+${item.autonomy_score}점` : '점수 대기'}
-                      </span>
+              <div className="space-y-5">
+                {groupActionsByPlannedAt(
+                  showAllActions ? visibleActions : visibleActions.slice(0, 3),
+                  new Date(),
+                ).map((group) => (
+                  <div key={group.bucket} className="space-y-2">
+                    <p className="text-xs font-semibold text-text-tertiary px-1">{group.label}</p>
+                    <div className="space-y-3">
+                      {group.items.map((item) => (
+                        <div
+                          key={item.id}
+                          onClick={() => router.push(`/action/${item.log_id}`)}
+                          className="bg-white border border-background-tertiary/80 rounded-xl p-4 shadow-sm hover:border-primary hover:shadow-md transition-all cursor-pointer"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <p className="text-sm font-medium text-text-primary line-clamp-1">
+                                {item.logs?.trigger || '행동 계획'}
+                              </p>
+                              {item.logs?.trigger_category && (
+                                <span className="text-[10px] text-text-tertiary bg-background-secondary px-1.5 py-0.5 rounded flex-shrink-0">
+                                  {TriggerCategoryKorean[item.logs.trigger_category]}
+                                </span>
+                              )}
+                            </div>
+                            <span className={`text-xs font-semibold flex-shrink-0 ${item.is_completed ? 'text-success' : 'text-text-tertiary'}`}>
+                              {item.is_completed ? '완료' : '관찰 대기'}
+                            </span>
+                          </div>
+                          <p className="text-sm text-text-secondary line-clamp-2">
+                            {formatActionPlanForDisplay(item.final_action) || '행동 계획이 아직 작성되지 않았습니다.'}
+                          </p>
+                          <div className="flex items-center justify-between mt-2">
+                            <span className="text-xs text-text-secondary">{formatDate(item.created_at)}</span>
+                            <span className="text-xs text-primary">
+                              {item.autonomy_score ? `+${item.autonomy_score}점` : '점수 대기'}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ))}

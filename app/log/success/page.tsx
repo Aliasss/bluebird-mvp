@@ -3,9 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import PageHeader from '@/components/ui/PageHeader';
+import Top from '@/components/ui/Top';
+import Badge from '@/components/ui/Badge';
+import BottomCTA from '@/components/ui/BottomCTA';
 import { supabase } from '@/lib/supabase/client';
 
 type Step = 'situation' | 'action';
+
+const FIELD_CLASS =
+  'w-full min-h-[150px] resize-none border-none bg-transparent text-[19px] font-medium leading-[1.5] tracking-snug text-text-primary outline-none placeholder:text-text-tertiary';
 
 export default function SuccessLogPage() {
   const router = useRouter();
@@ -106,13 +112,13 @@ export default function SuccessLogPage() {
         <PageHeader title="성공 순간 기록" onBack={() => router.push('/dashboard')} />
         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
           <div className="text-5xl mb-4">✅</div>
-          <h1 className="text-xl font-bold text-text-primary mb-2">오늘은 이미 기록했어요</h1>
+          <h1 className="text-xl font-bold tracking-tight text-text-primary mb-2">오늘은 이미 기록했어요</h1>
           <p className="text-sm text-text-secondary mb-8">
             성공 순간 기록은 하루 1회입니다.<br />내일 또 이성이 이기는 순간을 기록해보세요.
           </p>
           <button
             onClick={() => router.push('/dashboard')}
-            className="bg-primary text-white font-semibold py-3 px-8 rounded-2xl touch-manipulation active:scale-95 transition-transform"
+            className="bg-primary text-white text-base font-semibold py-[17px] px-8 rounded-2xl touch-manipulation active:scale-95 transition-transform hover:bg-primary-dark"
           >
             대시보드로 돌아가기
           </button>
@@ -128,91 +134,84 @@ export default function SuccessLogPage() {
         onBack={handleBack}
         step={{ current: step === 'situation' ? 1 : 2, total: 2 }}
       />
-      <div className="flex-1 p-4 sm:p-6">
-        <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6">
-          {step === 'situation' ? (
-            <>
-              <div className="space-y-2">
-                <h1 className="text-xl md:text-2xl font-bold text-text-primary">
-                  어떤 상황이었나요?
-                </h1>
-                <p className="text-sm text-text-secondary">
-                  왜곡된 사고로 빠질 수 있었던 상황을 설명해주세요.
-                </p>
-              </div>
-              <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary">
+
+      <div className="mx-auto flex w-full max-w-lg flex-1 flex-col">
+        {step === 'situation' ? (
+          <>
+            <Top
+              title="어떤 상황이었나요?"
+              sub="왜곡된 사고로 빠질 수 있었던 상황을 설명해주세요."
+            />
+            <div className="flex-1 px-5 pb-44">
+              <div className="rounded-card border border-background-tertiary bg-white p-5">
                 <textarea
                   value={situation}
                   onChange={(e) => setSituation(e.target.value)}
                   placeholder="예: 발표에서 말이 조금 꼬였을 때"
-                  className="w-full h-40 p-4 border border-background-tertiary rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                  aria-label="상황을 입력하세요"
+                  className={FIELD_CLASS}
                   disabled={loading}
                   autoFocus
                 />
-                <div className="mt-2 text-right text-xs text-text-secondary">{situation.length}자</div>
-              </div>
-              <div className="bg-background-secondary rounded-xl p-4">
-                <p className="text-xs font-medium text-text-primary mb-2">💡 예시</p>
-                <ul className="space-y-1 text-xs text-text-secondary">
-                  <li>• 팀장이 내 보고서를 수정 없이 통과시켜 주지 않았을 때</li>
-                  <li>• 친구가 약속 시간보다 30분 늦게 도착했을 때</li>
-                  <li>• 내 아이디어가 회의에서 즉각 채택되지 않았을 때</li>
-                </ul>
               </div>
               {error && (
-                <div className="bg-danger bg-opacity-10 border border-danger rounded-xl p-4">
-                  <p className="text-xs text-danger">{error}</p>
+                <div className="mt-4 rounded-xl border border-danger bg-danger/10 p-4">
+                  <p className="text-sm text-danger">{error}</p>
                 </div>
               )}
-              <button
-                onClick={handleSituationNext}
-                disabled={situation.length < 5}
-                className="w-full bg-primary text-white font-semibold py-4 px-6 rounded-2xl touch-manipulation active:scale-95 transition-transform disabled:opacity-50"
-              >
-                다음
-              </button>
-            </>
-          ) : (
-            <>
-              <div className="space-y-2">
-                <h1 className="text-xl md:text-2xl font-bold text-text-primary">
-                  어떻게 이성적으로 대처했나요?
-                </h1>
-                <p className="text-sm text-text-secondary">
-                  시스템 2(이성)를 가동해 왜곡을 피한 방법을 적어주세요.
-                </p>
+            </div>
+          </>
+        ) : (
+          <>
+            <Top
+              title="어떻게 이성적으로 대처했나요?"
+              sub="시스템 2(이성)를 가동해 왜곡을 피한 방법을 적어주세요."
+            />
+            <div className="flex-1 px-5 pb-44">
+              <div className="mb-3 flex items-center gap-2">
+                <Badge tone="neutral">상황</Badge>
+                <span className="truncate text-[13px] text-text-secondary">{situation}</span>
               </div>
-              <div className="bg-background-secondary rounded-xl p-4">
-                <p className="text-[10px] font-medium text-text-secondary mb-1">상황</p>
-                <p className="text-xs text-text-primary">{situation}</p>
-              </div>
-              <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-background-tertiary">
+              <div className="rounded-card border border-background-tertiary bg-white p-5">
                 <textarea
                   value={system2Action}
                   onChange={(e) => setSystem2Action(e.target.value)}
                   placeholder="예: '한 번의 실수가 전체를 결정하지 않는다'고 스스로 상기했다"
-                  className="w-full h-40 p-4 border border-background-tertiary rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                  aria-label="대처 방법을 입력하세요"
+                  className={FIELD_CLASS}
                   disabled={loading}
                   autoFocus
                 />
-                <div className="mt-2 text-right text-xs text-text-secondary">{system2Action.length}자</div>
               </div>
               {error && (
-                <div className="bg-danger bg-opacity-10 border border-danger rounded-xl p-4">
-                  <p className="text-xs text-danger">{error}</p>
+                <div className="mt-4 rounded-xl border border-danger bg-danger/10 p-4">
+                  <p className="text-sm text-danger">{error}</p>
                 </div>
               )}
-              <button
-                onClick={handleSubmit}
-                disabled={loading || system2Action.length < 10}
-                className="w-full bg-success text-white font-semibold py-4 px-6 rounded-2xl touch-manipulation active:scale-95 transition-transform disabled:opacity-50"
-              >
-                {loading ? '저장 중...' : '성공 순간 저장하기 (+15점)'}
-              </button>
-            </>
-          )}
-        </div>
+            </div>
+          </>
+        )}
       </div>
+
+      <BottomCTA>
+        {step === 'situation' ? (
+          <button
+            onClick={handleSituationNext}
+            disabled={situation.trim().length < 5}
+            className="w-full rounded-2xl bg-primary px-6 py-[17px] text-base font-semibold text-white transition-transform hover:bg-primary-dark active:scale-95 touch-manipulation disabled:opacity-50"
+          >
+            다음
+          </button>
+        ) : (
+          <button
+            onClick={handleSubmit}
+            disabled={loading || system2Action.trim().length < 10}
+            className="w-full rounded-2xl bg-success px-6 py-[17px] text-base font-semibold text-white transition-transform active:scale-95 touch-manipulation disabled:opacity-50"
+          >
+            {loading ? '저장 중...' : '성공 순간 저장하기 (+15점)'}
+          </button>
+        )}
+      </BottomCTA>
     </main>
   );
 }

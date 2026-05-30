@@ -29,7 +29,7 @@ export default function InfoSheet({ title, body }: Props) {
             onClick={() => setOpen(false)}
           />
           {/* 바텀 시트 */}
-          <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 bg-white rounded-t-2xl p-6 shadow-2xl w-full max-w-lg">
+          <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 bg-white rounded-t-2xl p-6 shadow-elev2 w-full max-w-lg">
             <div className="w-10 h-1 bg-background-tertiary rounded-full mx-auto mb-5" />
             <h3 className="text-base font-bold text-text-primary mb-2">{title}</h3>
             <p className="text-sm text-text-secondary leading-relaxed">{body}</p>

@@ -226,7 +226,7 @@ export default function OnboardingActClient({ act, slides }: Props) {
           {!isLastSlideInAct ? (
             <button
               onClick={next}
-              className="w-full bg-primary text-white text-sm font-semibold py-4 rounded-2xl active:scale-95 transition-transform touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              className="w-full bg-primary text-white text-base font-semibold py-[17px] rounded-2xl hover:bg-primary-dark active:scale-95 transition-transform touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             >
               다음
             </button>
@@ -234,7 +234,7 @@ export default function OnboardingActClient({ act, slides }: Props) {
             <>
               <button
                 onClick={handleNextAct}
-                className="w-full bg-primary text-white text-sm font-semibold py-4 rounded-2xl active:scale-95 transition-transform touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="w-full bg-primary text-white text-base font-semibold py-[17px] rounded-2xl hover:bg-primary-dark active:scale-95 transition-transform touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               >
                 작동 원리 더 알아보기
               </button>
@@ -249,7 +249,7 @@ export default function OnboardingActClient({ act, slides }: Props) {
             <>
               <button
                 onClick={handleNextAct}
-                className="w-full bg-primary text-white text-sm font-semibold py-4 rounded-2xl active:scale-95 transition-transform touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="w-full bg-primary text-white text-base font-semibold py-[17px] rounded-2xl hover:bg-primary-dark active:scale-95 transition-transform touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               >
                 누적 가치 더 알아보기
               </button>
@@ -263,7 +263,7 @@ export default function OnboardingActClient({ act, slides }: Props) {
           ) : (
             <button
               onClick={handleFinishAct3}
-              className="w-full bg-primary text-white text-sm font-semibold py-4 rounded-2xl active:scale-95 transition-transform touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              className="w-full bg-primary text-white text-base font-semibold py-[17px] rounded-2xl hover:bg-primary-dark active:scale-95 transition-transform touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             >
               지금 첫 디버깅 시작하기
             </button>

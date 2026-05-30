@@ -46,7 +46,7 @@ export default function ManualPage() {
 
         {/* 사이드바 */}
         <aside className="lg:sticky lg:top-8 lg:self-start">
-          <div className="bg-white border border-background-tertiary rounded-2xl p-4 space-y-2">
+          <div className="bg-white border border-background-tertiary rounded-card p-4 space-y-2">
             <p className="text-xs text-text-secondary mb-1">목차</p>
             <a href="#preface" className="block text-sm text-text-primary hover:text-primary transition-colors py-0.5">
               <span className="lg:hidden">서문</span>
@@ -74,7 +74,7 @@ export default function ManualPage() {
         <div className="space-y-6 sm:space-y-8">
 
           {/* 헤더 */}
-          <section className="bg-white rounded-2xl p-5 sm:p-8 border border-background-tertiary">
+          <section className="bg-white rounded-card p-5 sm:p-8 border border-background-tertiary">
             <p className="text-xs uppercase tracking-wide text-text-secondary mb-2">Bluebird Knowledge Base</p>
             <h1 className="text-2xl sm:text-3xl font-bold text-text-primary leading-tight mb-1">
               {MANUAL_HEADER.title}
@@ -83,7 +83,7 @@ export default function ManualPage() {
           </section>
 
           {/* 서문 */}
-          <section id="preface" className="bg-white rounded-2xl p-5 sm:p-8 border border-background-tertiary space-y-4">
+          <section id="preface" className="bg-white rounded-card p-5 sm:p-8 border border-background-tertiary space-y-4">
             <h2 className="text-lg sm:text-xl font-semibold text-text-primary">0. 서문: 왜 당신의 뇌는 디버깅이 필요한가?</h2>
             {MANUAL_PREFACE.paragraphs.map((p, i) => (
               <p key={i} className="text-sm sm:text-base text-text-secondary leading-relaxed">{p}</p>
@@ -95,7 +95,7 @@ export default function ManualPage() {
             <section
               key={section.id}
               id={section.id}
-              className="bg-white rounded-2xl p-5 sm:p-8 border border-background-tertiary space-y-4 sm:space-y-5"
+              className="bg-white rounded-card p-5 sm:p-8 border border-background-tertiary space-y-4 sm:space-y-5"
             >
               <h2 className="text-lg sm:text-xl font-semibold text-text-primary">{section.title}</h2>
               <p className="text-sm sm:text-base text-text-secondary leading-relaxed">{section.intro}</p>

@@ -158,7 +158,7 @@ export default function CheckinHistoryPage() {
 
       {/* 탭 — sticky */}
       <div className="sticky top-[56px] z-10 bg-background border-b border-background-tertiary">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 flex gap-1">
+        <div className="max-w-lg mx-auto px-4 sm:px-6 flex gap-1">
           {([
             { id: 'morning' as const, label: '🌅 아침', count: morningCheckins.length },
             { id: 'evening' as const, label: '🌙 저녁', count: eveningCheckins.length },
@@ -179,7 +179,7 @@ export default function CheckinHistoryPage() {
       </div>
 
       <div className="flex-1 p-4 sm:p-6">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-lg mx-auto">
           {tab === 'morning' ? (
             <MorningView
               morningCheckins={morningCheckins}
@@ -232,7 +232,7 @@ function MorningView({
       </div>
 
       {/* 최근 7일 일관성 칩 */}
-      <section className="bg-white rounded-2xl p-4 border border-background-tertiary">
+      <section className="bg-white rounded-card p-4 border border-background-tertiary">
         <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wide mb-3">
           최근 7일
         </p>
@@ -256,7 +256,7 @@ function MorningView({
 
       {/* 30일 mood 추이 line chart */}
       {chartData.length > 0 ? (
-        <section className="bg-white rounded-2xl p-4 border border-background-tertiary">
+        <section className="bg-white rounded-card p-4 border border-background-tertiary">
           <div className="flex items-baseline justify-between mb-3">
             <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wide">
               최근 30일 기분 추이
@@ -307,7 +307,7 @@ function MorningView({
           </p>
         </section>
       ) : (
-        <section className="bg-background-secondary border border-background-tertiary rounded-2xl p-4 text-center">
+        <section className="bg-background-secondary border border-background-tertiary rounded-card p-4 text-center">
           <p className="text-sm text-text-secondary">
             아직 점수가 기록된 모닝 체크인이 없어요.
           </p>
@@ -378,7 +378,7 @@ function EveningView({
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-white border border-background-tertiary rounded-2xl p-3 text-center">
+    <div className="bg-white border border-background-tertiary rounded-card p-3 text-center">
       <p className="text-base font-bold text-text-primary">{value}</p>
       <p className="text-[10px] text-text-tertiary mt-0.5 leading-tight">{label}</p>
     </div>
@@ -401,7 +401,7 @@ function EmptyState({
       <p className="text-xs text-text-secondary mb-6">매일 체크인하면 추이가 쌓입니다.</p>
       <button
         onClick={onClick}
-        className="bg-primary text-white font-semibold py-3 px-8 rounded-2xl touch-manipulation active:scale-95 transition-transform"
+        className="bg-primary text-white text-base font-semibold py-[17px] px-8 rounded-2xl touch-manipulation active:scale-95 transition-transform hover:bg-primary-dark"
       >
         체크인 하기
       </button>

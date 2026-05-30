@@ -28,7 +28,7 @@ export default function WaitlistPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 bg-white border-b border-background-tertiary">
+      <header className="sticky top-0 z-40 bg-background border-b border-background-tertiary">
         <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-primary tracking-tight">
             Project Bluebird

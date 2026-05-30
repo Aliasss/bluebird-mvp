@@ -89,7 +89,7 @@ export default function DeleteAccountPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 bg-white border-b border-background-tertiary">
+      <header className="sticky top-0 z-40 bg-background border-b border-background-tertiary">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
           <button
             onClick={() => router.back()}

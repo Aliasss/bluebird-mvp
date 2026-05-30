@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase/client';
 import { formatDate } from '@/lib/utils';
 import { formatActionPlanForDisplay } from '@/lib/intervention/action-plan';
 import BottomTabBar from '@/components/ui/BottomTabBar';
+import Badge from '@/components/ui/Badge';
 import { groupActionsByPlannedAt } from '@/lib/journal/action-timeline';
 import type { Log, TriggerCategory } from '@/types';
 import { TriggerCategoryKorean } from '@/types';
@@ -235,20 +236,27 @@ export default function JournalPage() {
                     onClick={() => router.push(`/analyze/${log.id}`)}
                     className="rounded-card border border-background-tertiary bg-white p-4 transition-colors hover:border-primary cursor-pointer"
                   >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <p className="text-sm font-medium text-text-primary line-clamp-1">{log.trigger}</p>
-                        {log.trigger_category && (
-                          <span className="text-[10px] text-text-tertiary bg-background-secondary px-1.5 py-0.5 rounded flex-shrink-0">
-                            {TriggerCategoryKorean[log.trigger_category as TriggerCategory]}
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-xs text-text-secondary whitespace-nowrap ml-2 flex-shrink-0">
+                    <div className="mb-2 flex items-center justify-between gap-2">
+                      {log.trigger_category ? (
+                        <Badge tone="primary">{TriggerCategoryKorean[log.trigger_category as TriggerCategory]}</Badge>
+                      ) : (
+                        <span />
+                      )}
+                      <span className="flex-shrink-0 whitespace-nowrap text-xs text-text-tertiary">
                         {formatDate(log.created_at)}
                       </span>
                     </div>
-                    <p className="text-sm text-text-secondary line-clamp-2">{log.thought}</p>
+                    <p className="line-clamp-1 text-[15px] font-medium text-text-primary">{log.trigger}</p>
+                    <p className="mt-0.5 line-clamp-2 text-sm text-text-secondary">{log.thought}</p>
+                    {typeof log.pain_score === 'number' && (
+                      <div className="mt-2.5 flex items-center gap-2">
+                        <span className="text-xs text-text-tertiary">고통</span>
+                        <div className="h-[5px] flex-1 overflow-hidden rounded-full bg-background-secondary">
+                          <div className="h-full rounded-full bg-primary" style={{ width: `${log.pain_score * 10}%` }} />
+                        </div>
+                        <span className="text-xs font-bold tabular-nums text-text-secondary">{log.pain_score}</span>
+                      </div>
+                    )}
                   </div>
                 ))}
                 {visibleLogs.length > 3 && !showAllLogs && (

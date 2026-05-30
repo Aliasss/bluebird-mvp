@@ -177,11 +177,11 @@ export default function CheckinPage() {
         onBack={() => router.push('/dashboard')}
       />
       <div className="flex-1 p-4 sm:p-6">
-        <div className="max-w-2xl mx-auto space-y-6">
+        <div className="max-w-lg mx-auto space-y-6">
           {type === 'morning' ? (
             <>
               <div>
-                <h1 className="text-xl md:text-2xl font-bold text-text-primary mb-1">
+                <h1 className="text-2xl font-bold tracking-tight text-text-primary mb-1">
                   오늘 나침반은 어디를 향하나요?
                 </h1>
                 <p className="text-sm text-text-secondary">오늘 하루를 시작하는 마음 태도를 선택하세요.</p>
@@ -240,7 +240,7 @@ export default function CheckinPage() {
           ) : (
             <>
               <div>
-                <h1 className="text-xl md:text-2xl font-bold text-text-primary mb-1">
+                <h1 className="text-2xl font-bold tracking-tight text-text-primary mb-1">
                   오늘 시스템 2를 켠 순간이 있었나요?
                 </h1>
                 <p className="text-sm text-text-secondary">이성적으로 생각한 짧은 순간을 기록해보세요. 10초면 됩니다.</p>
@@ -268,7 +268,7 @@ export default function CheckinPage() {
           <button
             onClick={handleSubmit}
             disabled={loading || (type === 'morning' && (!selectedMood || selectedLevel === null)) || (type === 'evening' && !moment.trim())}
-            className="w-full bg-primary text-white font-semibold py-4 px-6 rounded-2xl touch-manipulation active:scale-95 transition-transform disabled:opacity-50"
+            className="w-full bg-primary text-white text-base font-semibold py-[17px] px-6 rounded-2xl touch-manipulation active:scale-95 transition-transform hover:bg-primary-dark disabled:opacity-50"
           >
             {loading ? '저장 중...' : '체크인 완료'}
           </button>

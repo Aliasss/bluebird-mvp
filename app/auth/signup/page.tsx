@@ -116,7 +116,7 @@ export default function SignupPage() {
               <p className="text-sm text-text-secondary leading-relaxed">
                 <span className="font-semibold text-text-primary">{email}</span>로<br />
                 인증 링크를 보냈어요.<br />
-                링크를 클릭하면 항해를 시작할 수 있어요.
+                링크를 클릭하면 바로 시작할 수 있어요.
               </p>
               <p className="text-xs text-text-tertiary">스팸 폴더도 확인해보세요</p>
               <p className="text-xs text-warning bg-warning/10 border border-warning/30 rounded-lg px-3 py-2 leading-snug text-left">

@@ -547,7 +547,7 @@ export default function AnalyzePage() {
         <div className="max-w-md w-full space-y-6 text-center">
           <div className="text-6xl">⚠️</div>
           <h2 className="text-lg md:text-xl font-bold text-text-primary">
-            잠깐, 항해에 문제가 생겼어요
+            잠깐, 분석에 문제가 생겼어요
           </h2>
           <p className="text-text-secondary">
             {error || '다시 시도하거나 홈으로 돌아가볼까요?'}

@@ -21,7 +21,7 @@ export default function InstallPage() {
         </div>
 
         {/* iOS */}
-        <div className="bg-white border border-background-tertiary rounded-2xl p-5 space-y-4">
+        <div className="rounded-card border border-background-tertiary bg-white p-5 space-y-4">
           <p className="text-sm font-semibold text-text-primary">iPhone / iPad (Safari)</p>
           <div className="space-y-3">
             <div className="flex items-start gap-3">
@@ -40,7 +40,7 @@ export default function InstallPage() {
         </div>
 
         {/* Android */}
-        <div className="bg-white border border-background-tertiary rounded-2xl p-5 space-y-4">
+        <div className="rounded-card border border-background-tertiary bg-white p-5 space-y-4">
           <p className="text-sm font-semibold text-text-primary">Android (Chrome)</p>
           <div className="space-y-3">
             <div className="flex items-start gap-3">
@@ -60,7 +60,7 @@ export default function InstallPage() {
 
         <button
           onClick={() => router.back()}
-          className="w-full bg-primary text-white font-semibold py-4 px-6 rounded-2xl touch-manipulation active:scale-95 transition-transform"
+          className="w-full bg-primary text-white text-base font-semibold py-[17px] px-6 rounded-2xl touch-manipulation active:scale-95 transition-transform hover:bg-primary-dark"
         >
           돌아가기
         </button>

@@ -26,9 +26,9 @@ export default function BetaIncentivePage() {
   return (
     <main className="min-h-screen bg-background">
       {/* 헤더 */}
-      <header className="sticky top-0 z-40 bg-white border-b border-background-tertiary">
-        <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold text-primary tracking-tight">
+      <header className="sticky top-0 z-40 bg-background border-b border-background-tertiary">
+        <div className="max-w-2xl mx-auto px-5 sm:px-6 py-3 flex items-center justify-between">
+          <Link href="/" className="text-[17px] font-extrabold text-primary tracking-tight">
             Project Bluebird
           </Link>
         </div>
@@ -52,7 +52,7 @@ export default function BetaIncentivePage() {
         </section>
 
         {/* 혜택 1 */}
-        <article className="bg-white rounded-2xl border border-background-tertiary p-6 space-y-3">
+        <article className="bg-white rounded-card border border-background-tertiary p-6 space-y-3">
           <h2 className="text-lg font-bold text-text-primary tracking-tight">
             혜택 1. 결제 활성화 후 6개월 무상 사용권
           </h2>
@@ -62,7 +62,7 @@ export default function BetaIncentivePage() {
         </article>
 
         {/* 혜택 2 */}
-        <article className="bg-white rounded-2xl border border-background-tertiary p-6 space-y-3">
+        <article className="bg-white rounded-card border border-background-tertiary p-6 space-y-3">
           <h2 className="text-lg font-bold text-text-primary tracking-tight">
             혜택 2. 매뉴얼 v1.0 우선 제공
           </h2>
@@ -72,7 +72,7 @@ export default function BetaIncentivePage() {
         </article>
 
         {/* 약속 무효 조건 */}
-        <article className="bg-white rounded-2xl border border-background-tertiary p-6 space-y-3">
+        <article className="bg-white rounded-card border border-background-tertiary p-6 space-y-3">
           <h2 className="text-lg font-bold text-text-primary tracking-tight">
             약속 무효 조건
           </h2>
@@ -88,7 +88,7 @@ export default function BetaIncentivePage() {
         </article>
 
         {/* 인터뷰 완주의 정의 */}
-        <article className="bg-white rounded-2xl border border-background-tertiary p-6 space-y-3">
+        <article className="bg-white rounded-card border border-background-tertiary p-6 space-y-3">
           <h2 className="text-lg font-bold text-text-primary tracking-tight">
             인터뷰 완주의 정의
           </h2>
@@ -99,7 +99,7 @@ export default function BetaIncentivePage() {
         </article>
 
         {/* 안내 */}
-        <section className="rounded-2xl border border-background-tertiary bg-background-secondary p-6 space-y-3">
+        <section className="rounded-card border border-background-tertiary bg-background-secondary p-6 space-y-3">
           <h2 className="text-sm font-semibold text-text-primary">안내</h2>
           <p className="text-xs text-text-secondary leading-relaxed">
             본 안내는 정식 법률 자문을 대체하지 않습니다. 자세한 사항은{' '}

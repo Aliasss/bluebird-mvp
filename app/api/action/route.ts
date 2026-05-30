@@ -4,6 +4,8 @@ import { consumeRateLimit, getClientIp } from '@/lib/security/rate-limit';
 import { AUTONOMY_NOTE_BONUS, calcAutonomyScore } from '@/lib/intervention/autonomy-score';
 import { logServerError } from '@/lib/logging/server-logger';
 import { trackCognitiveFunnel } from '@/lib/analytics/server';
+import { parseActionPlan } from '@/lib/intervention/action-plan';
+import { parseWhenToPlannedAt } from '@/lib/intervention/when-parser';
 import { z } from 'zod';
 
 type ActionRequestBody = {
@@ -97,13 +99,19 @@ export async function POST(request: Request) {
       );
     }
 
+    // planned_at — final_action JSON의 when을 best-effort 파싱 (실패 시 null = 날짜 미지정).
+    // ⚠️ 정렬·그룹화 전용, 알림 미사용.
+    const plan = parseActionPlan(effectiveAction);
+    const plannedAt = plan ? parseWhenToPlannedAt(plan.when, new Date()) : null;
+
     const actionPayload: {
       final_action: string;
+      planned_at: string | null;
       is_completed?: boolean;
       autonomy_score?: number;
       completion_note?: string;
       completion_reaction?: string;
-    } = { final_action: effectiveAction };
+    } = { final_action: effectiveAction, planned_at: plannedAt };
 
     // breakdown — response 에 포함해 UI 산식 투명성 확보 (액션 β 2026-05-21 검토)
     let scoreBreakdown: {

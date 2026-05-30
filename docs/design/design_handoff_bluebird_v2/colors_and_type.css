@@ -1,0 +1,188 @@
+/* ============================================================
+   PROJECT BLUEBIRD — Design Tokens
+   인지 패턴 분석 PWA · "Refined Minimalism / Digital Stoicism"
+   Source of truth: bluebird-mvp/tailwind.config.ts + docs/design/tokens.md
+   ------------------------------------------------------------
+   Design intent: 사용자는 불안 상태로 진입한다. 강한 채도·과한 모션·
+   dramatic shadow는 System 1을 자극해 도구 목적과 충돌한다.
+   따라서 단일 액센트, 절제된 elevation, 낮은 인지 부하를 유지한다.
+   ============================================================ */
+
+/* ---- Font: Pretendard Variable (한·영 통합) -----------------
+   원본은 jsdelivr CDN의 dynamic-subset 변수 폰트를 사용한다.
+   로컬 폰트 파일 대신 동일 CDN을 참조한다 (제품과 1:1 일치). */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css");
+
+:root {
+  /* ----- Brand / Accent ------------------------------------ */
+  --primary:        #1E40AF;  /* Electric Cobalt Blue — 유일한 액센트 */
+  --primary-dark:   #1E3A8A;  /* hover / pressed */
+  --primary-light:  #3B82F6;  /* 보조 강조 */
+  --primary-tint:   #1E40AF14; /* 8% — 부드러운 강조 영역 (배경) */
+  --primary-border: #1E40AF33; /* 20% — 강조 카드 테두리 */
+
+  /* system2 (Lucid Cyan) — /our-philosophy 페이지 전용 액센트.
+     다른 화면 사용 금지 (액센트 dilution 방지). */
+  --system2:        #0891B2;
+  --system2-dark:   #0E7490;
+  --system2-light:  #22D3EE;
+
+  /* distortion (Rose) — 차트의 사용자 포인트 / 위험 데이터점 전용 */
+  --distortion:     #E11D48;
+
+  /* ----- Semantic state (알림 시점에만 노출) ----------------- */
+  --success:        #16A34A;
+  --success-dark:   #15803D;
+  --success-light:  #4ADE80;
+  --warning:        #D97706;
+  --warning-dark:   #B45309;
+  --warning-light:  #FCD34D;
+  --danger:         #DC2626;
+  --danger-dark:    #B91C1C;
+  --danger-light:   #F87171;
+
+  /* ----- Backgrounds (Slate) ------------------------------- */
+  --bg:             #F8FAFC;  /* 페이지 배경 */
+  --bg-secondary:   #F1F5F9;  /* 인용·메타 박스 */
+  --bg-tertiary:    #E2E8F0;  /* 테두리·구분선 */
+  --surface:        #FFFFFF;  /* 카드 표면 */
+
+  /* ----- Text (Slate) -------------------------------------- */
+  --text-primary:   #0F172A;  /* 본문 1순위 */
+  --text-secondary: #475569;  /* 본문 2순위·부연 */
+  --text-tertiary:  #64748B;  /* 캡션·메타 (WCAG AA on --bg) */
+
+  /* ----- Typography ---------------------------------------- */
+  --font-sans: "Pretendard Variable", "Pretendard", -apple-system,
+               BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, sans-serif;
+
+  /* Weights */
+  --fw-medium:    500;  /* 라벨, 강조 본문 */
+  --fw-semibold:  600;  /* 섹션 제목, 카드 헤딩 */
+  --fw-bold:      700;  /* 페이지 제목(h1), 핵심 수치 */
+  --fw-extrabold: 800;  /* 워드마크, 큰 수치 */
+
+  /* Letter-spacing (한국어 미세 조정) */
+  --tracking-body:    -0.011em; /* 글로벌 본문 기본 */
+  --tracking-snug:    -0.01em;
+  --tracking-tight:   -0.02em;  /* 부제·라벨 */
+  --tracking-tighter: -0.03em;  /* 큰 헤딩 (≥ 1.5rem) */
+
+  /* ----- Radius (모서리 위계) ------------------------------ */
+  --radius-card:  16px; /* rounded-2xl — 카드·패널 (top-level) */
+  --radius-ctrl:  12px; /* rounded-xl  — 버튼·입력·작은 카드 */
+  --radius-pill:  9999px; /* rounded-full — 배지·아바타·아이콘 버튼 */
+
+  /* ----- Elevation (절제된 2단계만) ------------------------ */
+  --shadow-card:  0 2px 8px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-elev2: 0 8px 24px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.06);
+
+  /* ----- Spacing (4px base) -------------------------------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* ----- Motion (200–300ms, 절제) -------------------------- */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur:  200ms;
+
+  /* Mobile container */
+  --container-app: 32rem; /* max-w-lg — 모바일 앱 본문 폭 */
+}
+
+/* ============================================================
+   Base type styles — 시맨틱 매핑
+   ============================================================ */
+.bb-body {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background: var(--bg);
+  letter-spacing: var(--tracking-body);
+  font-feature-settings: "ss01", "tnum"; /* 한·영 자간 + 숫자 폭 균일 */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Headings */
+.bb-h1 { font-weight: var(--fw-bold);     font-size: 1.875rem; line-height: 1.15; letter-spacing: var(--tracking-tighter); color: var(--text-primary); } /* 30px 워드마크/랜딩 */
+.bb-h2 { font-weight: var(--fw-bold);     font-size: 1.25rem;  line-height: 1.25; letter-spacing: var(--tracking-tight);   color: var(--text-primary); } /* 20px 인사말/페이지 제목 */
+.bb-h3 { font-weight: var(--fw-semibold); font-size: 1.125rem; line-height: 1.3;  letter-spacing: var(--tracking-tight);   color: var(--text-primary); } /* 18px 섹션 제목 */
+.bb-h4 { font-weight: var(--fw-semibold); font-size: 0.875rem; line-height: 1.4;  color: var(--text-primary); } /* 14px 카드 헤딩 */
+
+/* Body */
+.bb-p       { font-weight: 400;             font-size: 1rem;     line-height: 1.6;  color: var(--text-primary); }
+.bb-p-sec   { font-weight: 400;             font-size: 0.875rem; line-height: 1.55; color: var(--text-secondary); }
+.bb-label   { font-weight: var(--fw-medium); font-size: 0.75rem;  line-height: 1.4;  color: var(--text-secondary); }
+.bb-caption { font-weight: 400;             font-size: 0.625rem; line-height: 1.4;  color: var(--text-tertiary); } /* 10px 메타 */
+.bb-overline{ font-weight: var(--fw-semibold); font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-tertiary); }
+
+/* Numeric stat (tnum) — 통계 카드의 큰 수치 */
+.bb-stat { font-weight: var(--fw-extrabold); font-size: 1.5rem; letter-spacing: var(--tracking-tight); font-variant-numeric: tabular-nums; color: var(--primary); }
+
+/* ============================================================
+   Component primitives
+   ============================================================ */
+.bb-card {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  border: 1px solid transparent;
+}
+.bb-card--flat { /* 그림자 없는 평면 카드도 합법 */
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--bg-tertiary);
+  box-shadow: none;
+}
+.bb-card--accent { /* 강조 정보 패널 (primary tint) */
+  background: var(--primary-tint);
+  border: 1px solid var(--primary-border);
+  border-radius: var(--radius-card);
+}
+
+.bb-btn {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-semibold);
+  font-size: 0.875rem;
+  border-radius: var(--radius-ctrl);
+  padding: 12px 24px;
+  border: none;
+  cursor: pointer;
+  transition: transform var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+.bb-btn:active { transform: scale(0.95); } /* 클릭 피드백 */
+.bb-btn--primary   { background: var(--primary); color: #fff; }
+.bb-btn--primary:hover { background: var(--primary-dark); }
+.bb-btn--secondary { background: var(--surface); color: var(--primary);    border: 1px solid var(--primary-border); }
+.bb-btn--ghost     { background: var(--surface); color: var(--text-secondary); border: 1px solid var(--bg-tertiary); }
+
+.bb-input {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  color: var(--text-primary);
+  background: var(--surface);
+  border: 1px solid var(--bg-tertiary);
+  border-radius: var(--radius-ctrl);
+  padding: 16px;
+  width: 100%;
+  transition: box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.bb-input:focus {
+  outline: none;
+  border-color: transparent;
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+.bb-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.6875rem;
+  font-weight: var(--fw-semibold);
+  border-radius: var(--radius-pill);
+  padding: 4px 10px;
+}

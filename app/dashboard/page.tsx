@@ -311,36 +311,37 @@ function DashboardContent() {
   return (
     <main className="min-h-screen bg-background">
       {successToast && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-success text-white text-sm font-semibold px-6 py-3 rounded-2xl shadow-lg">
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-success text-white text-sm font-semibold px-6 py-3 rounded-2xl shadow-elev2">
           성공 순간이 기록됐습니다 +15점 (분석 보너스 포함)
         </div>
       )}
       {checkinToast && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-primary text-white text-sm font-semibold px-6 py-3 rounded-2xl shadow-lg">
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-primary text-white text-sm font-semibold px-6 py-3 rounded-2xl shadow-elev2">
           체크인 완료. 연속 기록이 유지됩니다.
         </div>
       )}
 
       {/* 헤더 */}
-      <header className="sticky top-0 z-40 bg-white border-b border-background-tertiary">
-        <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
-          <h1 className="text-lg font-bold text-primary">Project Bluebird</h1>
+      <header className="sticky top-0 z-40 bg-background">
+        <div className="max-w-lg mx-auto flex items-center justify-between px-5 pt-4 pb-1">
+          <h1 className="text-[17px] font-extrabold tracking-tight text-primary">Project Bluebird</h1>
           <button
             onClick={() => router.push('/me')}
-            className="text-xs text-text-tertiary"
+            aria-label="내 프로필"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-tint text-sm font-bold text-primary"
           >
-            {greeting?.name}님
+            {greeting?.name?.[0]?.toUpperCase()}
           </button>
         </div>
       </header>
 
       {/* 메인 콘텐츠 */}
-      <div className="max-w-lg mx-auto px-4 py-5 pb-28 space-y-4">
+      <div className="max-w-lg mx-auto px-5 py-5 pb-28 space-y-4">
 
         {/* 인사말 */}
-        <div>
-          <p className="text-xl font-bold text-text-primary tracking-tight">
-            {greeting?.name}님, {greeting?.message}
+        <div className="pt-1">
+          <p className="text-2xl font-bold leading-snug tracking-tight text-text-primary">
+            {greeting?.name}님,<br />{greeting?.message}
           </p>
         </div>
 
@@ -464,49 +465,61 @@ function DashboardContent() {
           const { rank, progressPct, pointsToNext } = getRankResult(autonomyScore);
           return (
             <>
-              {/* CPO 검토(2026-05-16): 자율성 지수 콘텐츠가 더 많아 1:2 비대칭 적용.
-                  연속 기록 1칸 · 자율성 2칸 — 본질 위계(단계 3 surface) 정합 + description 줄바꿈 완화. */}
-              <div className="grid grid-cols-3 gap-3">
-                <div className="bg-white rounded-2xl p-4 shadow-card">
-                  <p className="text-xs text-text-secondary mb-1">연속 기록</p>
-                  <p className="text-2xl font-extrabold text-primary tracking-tight">{streak.current}일</p>
-                  <p className="text-[10px] text-text-tertiary mt-1">
+              {/* 자율성 지수 — 그라데이션 Hero 스탯 (v2) */}
+              <div
+                className="rounded-card p-[22px] text-white"
+                style={{
+                  background: 'linear-gradient(160deg,#1E3A8A 0%,#1E40AF 60%,#3B82F6 140%)',
+                  boxShadow: '0 10px 30px rgba(30,64,175,0.28)',
+                }}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-medium text-white/80">
+                      <InfoTooltip text={AUTONOMY_SCORE_TOOLTIP}>자율성 지수</InfoTooltip>
+                    </p>
+                    <p className="mt-1 flex items-baseline gap-1 text-[40px] font-extrabold leading-none tracking-tight tabular-nums">
+                      {autonomyScore}
+                      <span className="text-lg font-bold opacity-85">점</span>
+                    </p>
+                  </div>
+                  <span className="flex-shrink-0 rounded-full bg-white/[0.18] px-[11px] py-1.5 text-xs font-bold">
+                    {rank.title}
+                  </span>
+                </div>
+                <div className="mt-[18px] h-1.5 overflow-hidden rounded-full bg-white/20">
+                  <div className="h-full rounded-full bg-white transition-all duration-500" style={{ width: `${progressPct}%` }} />
+                </div>
+                <p className="mt-2.5 text-xs leading-snug text-white/80">
+                  {pointsToNext !== null
+                    ? `다음 단계까지 ${pointsToNext}점 · ${rank.description}`
+                    : `최종 단계 · ${rank.description}`}
+                </p>
+              </div>
+
+              {/* 2칸 스탯: 연속 기록 / 이번 주 Δ고통 */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-card border border-background-tertiary bg-white p-4">
+                  <p className="text-xs text-text-secondary">연속 기록</p>
+                  <p className="mt-0.5 text-2xl font-extrabold tracking-tight text-text-primary tabular-nums">
+                    {streak.current}<span className="ml-0.5 text-sm font-bold text-text-tertiary">일</span>
+                  </p>
+                  <p className="mt-1 text-[10px] text-text-tertiary">
                     {streak.doneToday ? '오늘 기록 완료' : streak.best > 0 ? `최고 ${streak.best}일` : '오늘 시작해보세요'}
                   </p>
                 </div>
-                <div className="bg-white rounded-2xl p-4 shadow-card col-span-2">
-                  <p className="text-xs text-text-secondary mb-1">
-                    <InfoTooltip text={AUTONOMY_SCORE_TOOLTIP}>자율성 지수</InfoTooltip>
+                <div
+                  onClick={() => router.push('/insights#delta-pain')}
+                  className="cursor-pointer rounded-card border border-background-tertiary bg-white p-4 transition-colors hover:border-primary"
+                >
+                  <p className="text-xs text-text-secondary">
+                    <InfoTooltip text={DELTA_PAIN_WEEKLY_TOOLTIP}>이번 주 Δ고통</InfoTooltip>
                   </p>
-                  <p className="text-xl font-extrabold text-warning tracking-tight">{autonomyScore}점</p>
-                  {/* CPO-2 (2026-05-16): 단계명을 prominent하게 + 역량 description 1줄 추가 */}
-                  <p className="text-xs font-bold text-primary mt-1">{rank.title}</p>
-                  <p className="text-[10px] text-text-secondary mt-0.5 leading-tight line-clamp-2">{rank.description}</p>
-                  <div className="mt-2 h-1 bg-background-secondary rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-warning rounded-full transition-all duration-500"
-                      style={{ width: `${progressPct}%` }}
-                    />
-                  </div>
-                  <p className="text-[10px] text-text-tertiary mt-1">
-                    {pointsToNext !== null ? `다음 단계까지 ${pointsToNext}점` : '최종 단계 도달'}
+                  <p className="mt-0.5 text-2xl font-extrabold tracking-tight text-primary tabular-nums">
+                    {weeklyPositiveDeltaPain}<span className="ml-0.5 text-sm font-bold text-text-tertiary">점</span>
                   </p>
+                  <p className="mt-1 text-[10px] text-text-tertiary">자세히 보기 →</p>
                 </div>
-              </div>
-              {/* CPO 검토(2026-05-16): 카드 클릭 시 인사이트 페이지 Δpain 섹션으로 이동.
-                  InfoTooltip 추가로 카드 콘텐츠 자체에서 즉시 의미 surface. */}
-              <div
-                onClick={() => router.push('/insights#delta-pain')}
-                className="bg-white rounded-2xl p-4 shadow-card cursor-pointer hover:border-primary hover:shadow-md border border-transparent transition-all"
-              >
-                <p className="text-xs text-text-secondary mb-1">
-                  <InfoTooltip text={DELTA_PAIN_WEEKLY_TOOLTIP}>이번 주 고통 변화량 누적</InfoTooltip>
-                </p>
-                <p className="text-2xl font-extrabold text-primary tracking-tight">
-                  {weeklyPositiveDeltaPain}
-                  <span className="text-sm text-text-tertiary ml-1">점</span>
-                </p>
-                <p className="text-[10px] text-text-tertiary mt-1">7일 내 재평가 완료 기준 · 자세히 보기 →</p>
               </div>
             </>
           );

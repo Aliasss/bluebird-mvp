@@ -131,9 +131,10 @@ export default function JournalPage() {
   return (
     <main className="min-h-screen bg-background">
       {/* 헤더 */}
-      <header className="sticky top-0 z-40 bg-white border-b border-background-tertiary">
-        <div className="max-w-lg mx-auto px-4 py-3">
-          <h1 className="text-lg font-bold text-text-primary tracking-tight">기록 일지</h1>
+      <header className="sticky top-0 z-40 bg-background border-b border-background-tertiary">
+        <div className="max-w-lg mx-auto px-5 pt-3 pb-2">
+          <p className="text-[13px] font-extrabold tracking-tight text-primary">일지</p>
+          <h1 className="text-xl font-bold tracking-tight text-text-primary">기록 일지</h1>
         </div>
         {/* 탭 */}
         <div className="max-w-lg mx-auto px-4 flex gap-4 border-t border-background-tertiary">
@@ -232,7 +233,7 @@ export default function JournalPage() {
                   <div
                     key={log.id}
                     onClick={() => router.push(`/analyze/${log.id}`)}
-                    className="bg-white border border-background-tertiary/80 rounded-xl p-4 shadow-sm hover:border-primary hover:shadow-md transition-all cursor-pointer"
+                    className="rounded-card border border-background-tertiary bg-white p-4 transition-colors hover:border-primary cursor-pointer"
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-1.5 min-w-0">
@@ -292,7 +293,7 @@ export default function JournalPage() {
                         <div
                           key={item.id}
                           onClick={() => router.push(`/action/${item.log_id}`)}
-                          className="bg-white border border-background-tertiary/80 rounded-xl p-4 shadow-sm hover:border-primary hover:shadow-md transition-all cursor-pointer"
+                          className="rounded-card border border-background-tertiary bg-white p-4 transition-colors hover:border-primary cursor-pointer"
                         >
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-1.5 min-w-0">

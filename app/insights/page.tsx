@@ -281,7 +281,7 @@ export default function InsightsPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 bg-white border-b border-background-tertiary">
+      <header className="sticky top-0 z-40 bg-background border-b border-background-tertiary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <h1 className="text-xl font-bold text-primary">Project Bluebird</h1>
           <div className="flex items-center gap-4">
@@ -292,6 +292,15 @@ export default function InsightsPage() {
       </header>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-24 space-y-6">
+
+        {/* 사고 지문 헤드라인 (v2) */}
+        <div>
+          <p className="text-[13px] font-extrabold tracking-tight text-primary">인사이트</p>
+          <h2 className="text-2xl font-bold tracking-tight text-text-primary">당신의 사고 지문</h2>
+          <p className="mt-1 text-sm text-text-secondary">
+            트리거 도메인과 왜곡 유형을 교차해 반복되는 패턴을 보여드려요.
+          </p>
+        </div>
 
         {/* 아키타입 패널 — 클릭 시 5가지 아키타입 전체 비교 페이지로 */}
         <ArchetypePanel
@@ -322,7 +331,7 @@ export default function InsightsPage() {
         {period !== 'all' ? (
           <div className="grid grid-cols-3 gap-3">
             {/* 평균 왜곡 강도 변화 */}
-            <div className="bg-white border border-background-tertiary rounded-xl p-4 text-center">
+            <div className="bg-white border border-background-tertiary rounded-card p-4 text-center">
               <p className="text-xs text-text-secondary mb-1">왜곡 강도 변화</p>
               {growth.intensityDelta !== null ? (
                 <p className={`text-lg font-bold ${growth.intensityDelta < 0 ? 'text-success' : growth.intensityDelta > 0 ? 'text-danger' : 'text-text-secondary'}`}>
@@ -334,7 +343,7 @@ export default function InsightsPage() {
               <p className="text-[10px] text-text-tertiary mt-0.5">전{periodLabel} 대비</p>
             </div>
             {/* 완료율 변화 */}
-            <div className="bg-white border border-background-tertiary rounded-xl p-4 text-center">
+            <div className="bg-white border border-background-tertiary rounded-card p-4 text-center">
               <p className="text-xs text-text-secondary mb-1">완료율 변화</p>
               {growth.completionDelta !== null ? (
                 <p className={`text-lg font-bold ${growth.completionDelta > 0 ? 'text-success' : growth.completionDelta < 0 ? 'text-danger' : 'text-text-secondary'}`}>
@@ -346,7 +355,7 @@ export default function InsightsPage() {
               <p className="text-[10px] text-text-tertiary mt-0.5">전{periodLabel} 대비</p>
             </div>
             {/* 가장 개선된 왜곡 */}
-            <div className="bg-white border border-background-tertiary rounded-xl p-4 text-center">
+            <div className="bg-white border border-background-tertiary rounded-card p-4 text-center">
               <p className="text-xs text-text-secondary mb-1">가장 개선</p>
               <p className="text-xs font-bold text-success leading-tight mt-1">
                 {growth.mostImprovedType ?? '—'}
@@ -360,15 +369,15 @@ export default function InsightsPage() {
 
         {/* 요약 카드 */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="bg-white border border-background-tertiary rounded-xl p-4 text-center">
+          <div className="bg-white border border-background-tertiary rounded-card p-4 text-center">
             <p className="text-xs text-text-secondary mb-1">총 분석 횟수</p>
             <p className="text-2xl font-bold text-text-primary">{totalAnalyses}</p>
           </div>
-          <div className="bg-white border border-background-tertiary rounded-xl p-4 text-center">
+          <div className="bg-white border border-background-tertiary rounded-card p-4 text-center">
             <p className="text-xs text-text-secondary mb-1">주요 왜곡</p>
             <p className="text-sm font-bold text-primary leading-tight mt-1">{topDistortion}</p>
           </div>
-          <div className="bg-white border border-background-tertiary rounded-xl p-4 text-center">
+          <div className="bg-white border border-background-tertiary rounded-card p-4 text-center">
             <p className="text-xs text-text-secondary mb-1">행동 완료율</p>
             <p className="text-2xl font-bold text-text-primary">{completionRate}%</p>
           </div>
@@ -378,7 +387,7 @@ export default function InsightsPage() {
         <PatternReport rows={patternRows} periodLabel={periodLabel} />
 
         {/* 왜곡 유형 분포 */}
-        <div className="bg-white border border-background-tertiary rounded-xl p-4 sm:p-6">
+        <div className="bg-white border border-background-tertiary rounded-card p-4 sm:p-6">
           <h2 className="text-base font-bold text-text-primary mb-4">왜곡 유형 분포 ({periodLabel})</h2>
           {distortionFreq.every((d) => d.count === 0) ? (
             <p className="text-sm text-text-secondary text-center py-8">아직 분석 데이터가 없습니다.</p>
@@ -406,7 +415,7 @@ export default function InsightsPage() {
         </div>
 
         {/* 자율성 지수 추이 */}
-        <div className="bg-white border border-background-tertiary rounded-xl p-4 sm:p-6">
+        <div className="bg-white border border-background-tertiary rounded-card p-4 sm:p-6">
           <h2 className="text-base font-bold text-text-primary mb-4">
             <InfoTooltip text={AUTONOMY_SCORE_TOOLTIP}>자율성 지수</InfoTooltip>
             {' '}누적 추이 ({periodLabel})
@@ -439,7 +448,7 @@ export default function InsightsPage() {
         </div>
 
         {/* 왜곡 강도 레이더 */}
-        <div className="bg-white border border-background-tertiary rounded-xl p-4 sm:p-6">
+        <div className="bg-white border border-background-tertiary rounded-card p-4 sm:p-6">
           <h2 className="text-base font-bold text-text-primary mb-4">왜곡 유형별 평균 강도 ({periodLabel})</h2>
           {intensityData.every((d) => d.avgIntensity === 0) ? (
             <p className="text-sm text-text-secondary text-center py-8">아직 분석 데이터가 없습니다.</p>
@@ -456,7 +465,7 @@ export default function InsightsPage() {
         </div>
 
         {/* Δpain 시계열 — id="delta-pain" anchor (대시보드 고통 카드 클릭 시 scroll 목표) */}
-        <div id="delta-pain" className="bg-white border border-background-tertiary rounded-xl p-4 sm:p-6 scroll-mt-20">
+        <div id="delta-pain" className="bg-white border border-background-tertiary rounded-card p-4 sm:p-6 scroll-mt-20">
           <div className="space-y-1 mb-4">
             <h2 className="text-base font-bold text-text-primary">인지 유연성 변화 (고통 변화량)</h2>
             <p className="text-xs text-text-secondary">양수면 고통 감소, 음수면 증가. 0 기준선은 변화 없음.</p>
@@ -482,7 +491,7 @@ export default function InsightsPage() {
         </div>
 
         {/* 텍스트 인사이트 */}
-        <div className="bg-background-secondary border border-background-tertiary rounded-xl p-4 sm:p-6 space-y-2">
+        <div className="bg-background-secondary border border-background-tertiary rounded-card p-4 sm:p-6 space-y-2">
           <h2 className="text-base font-bold text-text-primary mb-2">요약 인사이트</h2>
           <p className="text-sm text-text-secondary">
             최근 {periodLabel}간 가장 자주 나타난 왜곡은 <span className="font-semibold text-text-primary">{topDistortion}</span>입니다.

@@ -16,6 +16,8 @@ import {
   type TriggerCategory,
 } from '@/types';
 import PageHeader from '@/components/ui/PageHeader';
+import Top from '@/components/ui/Top';
+import Badge from '@/components/ui/Badge';
 import SkeletonCard from '@/components/ui/SkeletonCard';
 import InfoSheet from '@/components/ui/InfoSheet';
 import { SafetyNotice } from '@/components/safety/SafetyNotice';
@@ -578,8 +580,19 @@ export default function AnalyzePage() {
   }
 
   return (
-    <main className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
+    <main className="min-h-screen bg-background">
+      <PageHeader title="분석 결과" backHref="/dashboard" />
+      <Top
+        title="분석이 완료됐어요"
+        sub={
+          distortions.length > 1
+            ? `${distortions.length}개 왜곡이 동시에 작동하고 있어요.`
+            : distortions.length === 1
+              ? '한 가지 왜곡 패턴이 보여요.'
+              : '뚜렷한 왜곡 패턴은 보이지 않아요.'
+        }
+      />
+      <div className="mx-auto w-full max-w-lg space-y-4 px-5 pb-16">
         {/* Phase 1.2: 트리거 재방문 배너 — 같은 카테고리 × 같은 dominant 왜곡 60일 내 매칭 */}
         {revisit && (
           <Link
@@ -606,17 +619,16 @@ export default function AnalyzePage() {
           </Link>
         )}
 
-        <div className="bg-white rounded-2xl p-5 shadow-card">
-          <h1 className="text-xl font-bold text-text-primary mb-4 tracking-tight">AI 분석 결과</h1>
-          <p className="text-xs md:text-sm text-text-secondary mb-1.5 sm:mb-2">어떤 일이 있었나요</p>
-          <p className="text-text-primary mb-4">{logData?.trigger}</p>
-          <p className="text-xs md:text-sm text-text-secondary mb-1.5 sm:mb-2">그 순간 든 생각</p>
-          <p className="text-text-primary leading-relaxed">
+        <div className="rounded-card border border-background-tertiary bg-white p-5">
+          <p className="mb-1.5 text-xs text-text-secondary">어떤 일이 있었나요</p>
+          <p className="mb-4 text-text-primary">{logData?.trigger}</p>
+          <Badge tone="neutral">기록한 생각</Badge>
+          <p className="mt-3 leading-relaxed text-text-primary">
             {renderThoughtWithHighlights(logData?.thought ?? '', distortions)}
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 shadow-card">
+        <div className="rounded-card border border-background-tertiary bg-white p-5">
           <h2 className="text-lg font-bold text-text-primary mb-4 tracking-tight">이론 기반 해석</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 text-xs md:text-sm">
             <div className="bg-background-secondary rounded-xl p-4">
@@ -732,7 +744,7 @@ export default function AnalyzePage() {
           </div>
         )}
 
-        <div className="bg-white rounded-2xl p-5 shadow-card">
+        <div className="rounded-card border border-background-tertiary bg-white p-5">
           <h2 className="text-lg font-bold text-text-primary mb-4 tracking-tight">발견된 생각의 패턴</h2>
           {distortions.length === 0 ? (
             <p className="text-text-secondary">이번 기록에서는 뚜렷한 왜곡 패턴이 보이지 않아요.</p>
@@ -790,7 +802,7 @@ export default function AnalyzePage() {
           )}
         </div>
 
-        <div className="bg-white rounded-2xl p-5 shadow-card">
+        <div className="rounded-card border border-background-tertiary bg-white p-5">
           <h2 className="text-lg font-bold text-text-primary mb-4 tracking-tight">생각을 점검하는 질문</h2>
           {questions.length === 0 ? (
             <p className="text-text-secondary">질문을 만들지 못했어요. 다시 시도해주세요.</p>

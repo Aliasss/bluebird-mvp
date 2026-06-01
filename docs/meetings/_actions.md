@@ -5,10 +5,10 @@
 ## Open
 
 ### carry-over (standup 2026-05-10 출처)
-- [ ] [CEO] [due-2026-05-17] Phase 3 수행: VAPID 키 생성·등록 + Vercel 환경변수 설정 + 크론 활성화 — **A-2 처리방침 PR 머지 후 활성화 (F-8과 정합)** (출처: 2026-05-10 standup)
-- [ ] [CEO] [due-2026-05-17] IM.1 사용자 모집 시작: 알빈 인적 네트워크 50명 1차 초대 — **5/19 조건부 GO로 재조정 예정 (F-16과 정합)** (출처: 2026-05-10 standup)
-- [ ] [senior-fullstack-engineer] [due-2026-05-24] `app/privacy/page.tsx` push subscription 데이터 처리 항목 추가 (출처: 2026-05-10 standup §2.3)
-- [ ] [senior-qa-engineer] [due-2026-05-24] iOS 실기기 push 수신 E2E 검증 — Phase 3 완료 후 (출처: 2026-05-10 standup §2.2)
+- [ ] [CEO] [due-2026-05-17] Phase 3 수행: VAPID 키 생성·등록 + Vercel 환경변수 설정 + 크론 활성화 — **A-2 처리방침 PR 머지 후 활성화 (F-8과 정합)** (출처: 2026-05-10 standup) (⚠️ 3주 미완 — 재할당/취소 결정 필요)
+- [ ] [CEO] [due-2026-05-17] IM.1 사용자 모집 시작: 알빈 인적 네트워크 50명 1차 초대 — **5/19 조건부 GO로 재조정 예정 (F-16과 정합)** (출처: 2026-05-10 standup) (⚠️ 3주 미완 — 재할당/취소 결정 필요)
+- [ ] [senior-fullstack-engineer] [due-2026-05-24] `app/privacy/page.tsx` push subscription 데이터 처리 항목 추가 (출처: 2026-05-10 standup §2.3) (⚠️ 3주 미완 — 재할당/취소 결정 필요)
+- [ ] [senior-qa-engineer] [due-2026-05-24] iOS 실기기 push 수신 E2E 검증 — Phase 3 완료 후 (출처: 2026-05-10 standup §2.2) (⚠️ 3주 미완 — 재할당/취소 결정 필요)
 
 ### 신규 actions (2026-05-15 weekly-allhands)
 <!-- F-1·F-2·F-3·F-4 산출 완료 (commit 9c72a7a). 2026-05-16 ad-hoc all-hands §5 #1 결의로 [x] 처리 -->
@@ -35,6 +35,10 @@
 - [ ] [senior-fullstack-engineer] [due-2026-05-19] F-21 B-1 service_role 인벤토리 + rls-audit.ts 확장 (출처: 2026-05-15 weekly-allhands §5 #F-21)
 - [ ] [content-marketer] [due-2026-05-17] F-22 D-4 이메일 카피 3종 (선정·미통과·follow-up) (출처: 2026-05-15 weekly-allhands §5 #F-22)
 - [ ] [PO] [due-2026-05-15] F-23 _actions.md 5/10 23 actions 개별화 (출처: 2026-05-15 weekly-allhands §5 #F-23)
+
+### 신규 actions (2026-06-01 standup)
+- [ ] [CEO] [due-2026-06-03] 2026-05-10 carry-over 4건(VAPID 설정·IM.1 모집·privacy page push항목·iOS E2E) 재할당/취소 결정 — 22일 경과, ⚠️ 3주 미완 기준 초과 (출처: 2026-06-01 standup)
+- [ ] [CEO] [due-2026-06-03] F-16 GO/NO-GO blocking 요인(F-5·F-9·F-10) 상태 확인 + IM.1 모집 재시작 일정 확정 (출처: 2026-06-01 standup)
 
 ## Closed (this week)
 
